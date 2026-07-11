@@ -6,15 +6,11 @@
 
 	type SupportedTags = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' | 'label';
 
-	type VariantType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body-lg' | 'body-md' | 'body-sm' | 'caption' | 'code';
-	type WeightType = 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-	type ColorType = 'primary' | 'secondary' | 'brand' | 'muted' | 'error' | 'success' | 'warning' | 'info' | 'inherit';
-
 	interface Props extends Omit<HTMLAttributes<HTMLElement>, 'color'> {
 		tag?: SupportedTags;
-		variant?: VariantType;
-		weight?: WeightType;
-		color?: ColorType;
+		variant?: TypographyVariants['variant'];
+		weight?: TypographyVariants['weight'];
+		color?: TypographyVariants['color'];
 		children?: Snippet;
 	}
 

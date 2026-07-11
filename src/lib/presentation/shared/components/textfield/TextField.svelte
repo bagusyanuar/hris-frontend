@@ -3,6 +3,8 @@
 	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/presentation/shared/utils/cn';
 	import { textfieldInputVariants, type TextfieldInputVariants } from './textfield.variants';
+	import Label from '../label/Label.svelte';
+	import HelperText from '../helpertext/HelperText.svelte';
 
 	interface Props extends Omit<HTMLInputAttributes, 'size' | 'prefix'>, TextfieldInputVariants {
 		value?: string | number | string[];
@@ -38,13 +40,16 @@
 	
 	// Error state overrides the variant
 	let currentVariant = $derived(error ? 'error' : variant);
+
+	// Check if input is required to show the asterisk on the label
+	let isRequired = $derived(!!restProps.required);
 </script>
 
 <div class={cn('flex w-full flex-col gap-1.5', wrapperClass)}>
 	{#if label}
-		<label for={inputId} class="text-sm font-medium text-slate-700 dark:text-slate-300">
+		<Label for={inputId} required={isRequired}>
 			{label}
-		</label>
+		</Label>
 	{/if}
 
 	<div class="relative flex items-center">
@@ -79,8 +84,8 @@
 	</div>
 
 	{#if error}
-		<p class="text-xs font-medium text-rose-500">{error}</p>
+		<HelperText variant="error">{error}</HelperText>
 	{:else if helperText}
-		<p class="text-xs text-slate-500 dark:text-slate-400">{helperText}</p>
+		<HelperText>{helperText}</HelperText>
 	{/if}
 </div>
