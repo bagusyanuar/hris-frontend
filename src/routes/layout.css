@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  /* Brand Theme Tokens (Emerald brand colors by default - Light Mode) */
+  --color-brand-primary: var(--color-emerald-600);
+  --color-brand-hover: var(--color-emerald-700);
+  --color-brand-light: var(--color-emerald-50);
+  --color-brand-text: var(--color-emerald-700);
+  --color-brand-border: var(--color-emerald-100);
+
+  /* Neutral layout and container theme tokens - Light Mode */
+  --color-neutral-bg: var(--color-slate-50);
+  --color-neutral-card: var(--color-white);
+  --color-neutral-border: var(--color-slate-100);
+}
+
+/* Dark Mode Overrides (Triggered by adding 'dark' class to html/body) */
+.dark {
+  /* Brand Theme Tokens - Dark Mode adjustments for better contrast/visibility */
+  --color-brand-primary: var(--color-emerald-500);
+  --color-brand-hover: var(--color-emerald-400);
+  --color-brand-light: color-mix(in srgb, var(--color-emerald-500) 15%, transparent);
+  --color-brand-text: var(--color-emerald-400);
+  --color-brand-border: color-mix(in srgb, var(--color-emerald-500) 25%, transparent);
+
+  /* Neutral layout and container theme tokens - Dark Mode */
+  --color-neutral-bg: var(--color-slate-950);
+  --color-neutral-card: var(--color-slate-900);
+  --color-neutral-border: var(--color-slate-800);
+  
+  /* Update text elements to slate-100 for readability in dark mode */
+  color: var(--color-slate-100);
+}
+
