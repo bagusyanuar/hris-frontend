@@ -34,7 +34,72 @@ Define theme tokens using CSS variables inside the main entrypoint CSS (e.g., `s
 
 ---
 
-## 2. Component Design Specifications
+## 2. Component Variant Management (CVA & cn Utility)
+For clean, modular, and type-safe components, always split styling variants from Svelte components using `class-variance-authority` and the `cn` helper (`clsx` + `tailwind-merge`):
+
+### A. Suffix Suffix Convention (`.variants.ts`)
+Store all variants definitions in a separate TypeScript file adjacent to the Svelte component, named `<component-name>.variants.ts` (e.g. `button.variants.ts`).
+
+Example variant file structure:
+```typescript
+import { cva, type VariantProps } from 'class-variance-authority';
+
+export const buttonVariants = cva(
+  'base-classes-here',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-brand-primary text-white hover:bg-brand-hover',
+        secondary: 'bg-brand-light text-brand-text hover:bg-brand-light/80',
+      },
+      size: {
+        sm: 'px-3 py-1.5 text-xs',
+        md: 'px-4 py-2 text-sm',
+      }
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    }
+  }
+);
+
+export type ButtonVariants = VariantProps<typeof buttonVariants>;
+```
+
+### B. Clean Svelte Component Integration
+Import variants and merge class names inside the `.svelte` file using the `$lib/presentation/shared/utils/cn` helper.
+
+```html
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  import type { HTMLButtonAttributes } from 'svelte/elements';
+  import { cn } from '$lib/presentation/shared/utils/cn';
+  import { buttonVariants, type ButtonVariants } from './button.variants';
+
+  interface Props extends HTMLButtonAttributes, ButtonVariants {
+    children?: Snippet;
+  }
+
+  let {
+    variant,
+    size,
+    class: className = '',
+    children,
+    ...restProps
+  }: Props = $props();
+</script>
+
+<button class={cn(buttonVariants({ variant, size }), className)} {...restProps}>
+  {#if children}
+    {@render children()}
+  {/if}
+</button>
+```
+
+---
+
+## 3. Component Design Specifications
 
 ### A. The Dashboard Card (Standard Container)
 Cards use the abstract colors to remain flexible:
@@ -89,7 +154,7 @@ For dropdowns, dialogs, and popovers:
 
 ---
 
-## 3. Height Consistency & Proportional Spacing (White Space)
+## 4. Height Consistency & Proportional Spacing (White Space)
 To maintain alignment when interactive components (Buttons, Inputs, Selects) are placed side-by-side:
 
 ### A. Strict Height Consistency
@@ -105,7 +170,7 @@ Always design inline interactive elements to have matching line-height, font-siz
 
 ---
 
-## 4. Accessibility (A11y) Guidelines
+## 5. Accessibility (A11y) Guidelines
 All components must be fully accessible by design:
 - **Contrast**: Text elements inside colored containers (e.g. `bg-brand-primary` or state badges) must have a minimum contrast ratio of 4.5:1.
 - **Keyboard Navigation**:
@@ -116,7 +181,7 @@ All components must be fully accessible by design:
 
 ---
 
-## 5. Best Practices Checklist
+## 6. Best Practices Checklist
 - [ ] **Avoid Hardcoded Colors**: Always prefer abstract token classes (`bg-brand-primary`, `bg-brand-light`, `text-brand-text`, `border-brand-border`) over hardcoded color utilities like `bg-emerald-600` inside component templates.
 - [ ] **Spacious Padding**: Minimum `p-6` for normal cards. Don't crowd info.
 - [ ] **Hover Transitions**: Apply `transition-all duration-200 active:scale-[0.98]` to all hoverable elements.
