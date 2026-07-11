@@ -8,9 +8,13 @@ Please read the following rules:
 - Project configuration, language, and package management guidelines: [config.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/config.md)
 - Naming conventions for directories, files, components, and variables: [naming.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/naming.md)
 - UI Design, styling, card-based layout, and brand color guidelines: [ui-design.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/ui-design.md)
+- Reusable UI component catalog and fallback slicing rules: [components.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/components.md)
 
 ## 2. Architecture Rules
 - Frontend Domain-Driven Design (DDD) Clean Architecture: [ddd.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/architecture/ddd.md)
 
 ## 3. Svelte Rules
 - Guidelines for working with Svelte 5 and using Svelte MCP tools: [mcp.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/mcp.md)
+
+## 4. Development Workflow
+- **Task Completion & Auto-Commit:** Upon completing any implementation, bug fix, or documentation update, you MUST trigger the [auto-commit](file:///Users/dystopia/svelte/hris-frontend/.agents/skills/auto-commit/SKILL.md) skill to stage, commit atomically per context, and optionally push changes. Do not leave uncommitted files at the end of a successful task.
