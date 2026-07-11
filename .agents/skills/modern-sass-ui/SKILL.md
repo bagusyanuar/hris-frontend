@@ -89,8 +89,37 @@ For dropdowns, dialogs, and popovers:
 
 ---
 
-## 3. Best Practices Checklist
+## 3. Height Consistency & Proportional Spacing (White Space)
+To maintain alignment when interactive components (Buttons, Inputs, Selects) are placed side-by-side:
+
+### A. Strict Height Consistency
+Always design inline interactive elements to have matching line-height, font-size, and vertical paddings. Do not allow inputs or buttons to have different heights when placed next to each other.
+- **Small size (sm)**: Target height `32px` (2rem). Class pattern: `py-1.5 px-3 text-xs` or `py-2 px-3.5 text-xs`.
+- **Medium size (md)**: Target height `40px` (2.5rem). Class pattern: `py-2.5 px-5 text-sm`.
+- **Large size (lg)**: Target height `48px` (3rem). Class pattern: `py-3.5 px-6 text-base`.
+
+### B. Proportional Spacing (White Space)
+- **Form Layouts**: Use `space-y-5` or `gap-5` for grouping inputs vertically.
+- **Inside Card**: Use a minimum of `p-6` (24px) for desktop layout containers, and `p-4` (16px) for mobile.
+- **Element Relationships**: Keep related labels closer to inputs (`mb-1.5` / `mb-2`) than the gap between fields (`mb-5` / `mb-6`).
+
+---
+
+## 4. Accessibility (A11y) Guidelines
+All components must be fully accessible by design:
+- **Contrast**: Text elements inside colored containers (e.g. `bg-brand-primary` or state badges) must have a minimum contrast ratio of 4.5:1.
+- **Keyboard Navigation**:
+  - All interactive elements must have visible focus rings (`focus-visible:ring-2 focus-visible:ring-offset-2`).
+  - Use `focus-visible:ring-brand-primary` for brand elements and `focus-visible:ring-slate-500` for neutral elements.
+- **Form Labels**: Every input field must have an associated `<label>` element with a matching `for` attribute, or an `aria-label`/`aria-labelledby` if visually hidden.
+- **Status Indicators**: Never rely solely on color to convey information. Use icons or text labels inside badges (e.g., success badge should include text, not just green background).
+
+---
+
+## 5. Best Practices Checklist
 - [ ] **Avoid Hardcoded Colors**: Always prefer abstract token classes (`bg-brand-primary`, `bg-brand-light`, `text-brand-text`, `border-brand-border`) over hardcoded color utilities like `bg-emerald-600` inside component templates.
 - [ ] **Spacious Padding**: Minimum `p-6` for normal cards. Don't crowd info.
-- [ ] **Hover Transitions**: Apply `transition-all duration-200` to all hoverable elements.
-- [ ] **A11y (Accessibility)**: Ensure text on `bg-brand-primary` or inside `bg-brand-light` meets contrast guidelines.
+- [ ] **Hover Transitions**: Apply `transition-all duration-200 active:scale-[0.98]` to all hoverable elements.
+- [ ] **Consistent Heights**: Verify that input fields, selectors, and buttons placed side-by-side share the exact same height class (`py-2.5` for Medium/40px).
+- [ ] **A11y Focus Rings**: Every button and input must have a clear `focus-visible` outline or ring style.
+

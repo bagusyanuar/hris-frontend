@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { provideAuthStore } from '$lib/infrastructure/auth';
+	import { Button } from '$lib/presentation/shared/components/button';
 
 	// Mengambil Store secara langsung via Dependency Provider
 	const store = provideAuthStore();
@@ -39,12 +40,13 @@
 					<h3 class="text-xl font-bold text-slate-800">Selamat datang, {store.user?.name}!</h3>
 					<p class="text-slate-500">Kamu berhasil login sebagai {store.user?.role}.</p>
 					
-					<button
+					<Button
+						variant="danger"
+						class="w-full"
 						onclick={() => store.logout()}
-						class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
 					>
 						Keluar
-					</button>
+					</Button>
 				</div>
 			{:else}
 				<!-- Form Login -->
@@ -65,7 +67,7 @@
 							</div>
 						</div>
 					{/if}
-
+ 
 					<div>
 						<label for="email" class="block text-sm font-medium text-slate-700">Email address</label>
 						<div class="mt-1">
@@ -99,10 +101,11 @@
 					</div>
 
 					<div>
-						<button
+						<Button
 							type="submit"
+							variant="primary"
+							class="w-full"
 							disabled={store.isLoading}
-							class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 						>
 							{#if store.isLoading}
 								<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -113,7 +116,7 @@
 							{:else}
 								Masuk
 							{/if}
-						</button>
+						</Button>
 					</div>
 				</form>
 			{/if}
