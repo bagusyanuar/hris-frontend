@@ -59,3 +59,17 @@ This is the central reference catalog of all reusable presentation components in
   ```svelte
   <CurrencyField bind:value={salary} label="Basic Salary" />
   ```
+
+### 5. Typography
+- **Path:** [Typography.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/typography/Typography.svelte)
+- **Props:**
+  - `tag`: `'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' | 'label'` (optional; automatically inferred from variant if not provided)
+  - `variant`: `'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body-lg' | 'body-md' | 'body-sm' | 'caption' | 'code'` (defaults to `'body-md'`)
+  - `weight`: `'light' | 'normal' | 'medium' | 'semibold' | 'bold'` (optional)
+  - `color`: `'primary' | 'secondary' | 'brand' | 'muted' | 'error' | 'success' | 'warning' | 'info' | 'inherit'` (defaults to `'primary'`)
+  - `children`: `Snippet` (text/element content)
+- **Example:**
+  ```svelte
+  <Typography variant="h1" color="brand">Welcome to HRIS</Typography>
+  ```
+
