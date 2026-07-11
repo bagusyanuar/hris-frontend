@@ -56,3 +56,4 @@ src/lib/
 - **`runes/[Domain]Store.svelte.ts`**: Class managing reactive UI states (e.g., `$state(isLoading)`, `$state(error)`) wrapping the Core UseCase.
 - **`pages/` & `components/`**: Component views utilizing the reactive runes, instantiating them via `provide[Domain]Store()`.
 - **`src/routes/` page controller**: thinning route file simply rendering the page component (e.g., `<EmployeePage />`) without manual instantiation or props passing.
+- **Typography Component**: All text elements (headings, titles, descriptions, labels, spans, paragraphs, etc.) must be rendered using the central `<Typography>` component rather than raw HTML typography tags to ensure design and styling consistency.

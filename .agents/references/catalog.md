@@ -73,3 +73,52 @@ This is the central reference catalog of all reusable presentation components in
   <Typography variant="h1" color="brand">Welcome to HRIS</Typography>
   ```
 
+### 6. Label
+- **Path:** [Label.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/label/Label.svelte)
+- **Props:**
+  - `required`: `boolean` (optional; displays a red asterisk next to the label content if true)
+  - `children`: `Snippet` (label text/content)
+- **Example:**
+  ```svelte
+  <Label required={true}>First Name</Label>
+  ```
+
+### 7. HelperText
+- **Path:** [HelperText.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/helpertext/HelperText.svelte)
+- **Props:**
+  - `variant`: `'default' | 'error'` (defaults to `'default'`)
+  - `children`: `Snippet` (text content)
+- **Example:**
+  ```svelte
+  <HelperText variant="error">This field is required</HelperText>
+  ```
+
+### 8. Checkbox
+- **Path:** [Checkbox.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/checkbox/Checkbox.svelte)
+- **Props:**
+  - `checked`: `boolean` (bindable; reflects checked state)
+  - `label`: `string` (optional; displays a label next to the checkbox)
+  - `description`: `string` (optional; displays secondary descriptive subtext)
+  - `error`: `string` (optional; displays a red validation error)
+- **Example:**
+  ```svelte
+  <Checkbox bind:checked={agreed} label="Terms & Conditions" description="Agree to terms" />
+  ```
+
+### 9. Radio
+- **Path:** [Radio.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/radio/Radio.svelte)
+- **Props:**
+  - `value`: `any` (the value this radio represents)
+  - `group`: `any` (bindable; the shared active group value)
+  - `label`: `string` (optional; label text)
+  - `description`: `string` (optional; secondary description subtext)
+  - `error`: `string` (optional; validation error message)
+- **Example:**
+  ```svelte
+  <Radio bind:group={selectedValue} value="option1" label="Option One" />
+  ```
+
+
+
+
+

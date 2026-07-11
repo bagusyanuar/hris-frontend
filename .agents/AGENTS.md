@@ -16,5 +16,3 @@ Please read the following rules:
 ## 3. Svelte Rules
 - Guidelines for working with Svelte 5 and using Svelte MCP tools: [mcp.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/mcp.md)
 
-## 4. Development Workflow
-- **Task Completion & Auto-Commit:** Upon completing any implementation, bug fix, or documentation update, you MUST trigger the [auto-commit](file:///Users/dystopia/svelte/hris-frontend/.agents/skills/auto-commit/SKILL.md) skill to stage, commit atomically per context, and optionally push changes. Do not leave uncommitted files at the end of a successful task.
