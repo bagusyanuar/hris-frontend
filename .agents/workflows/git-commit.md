@@ -20,8 +20,12 @@ This workflow automates the commit process when triggered by the `/commit` slash
 4. **Staging & Commit per Context:**
    - For each group of changes:
      - Formulate a precise Conventional Commit message.
+     - Identify and list a detailed description of the changes.
      - Stage only the relevant files: `git add <files>`.
-     - Commit the staged files: `git commit -m "<message>"`.
+     - Commit the staged files, including a list of change descriptions in the commit body:
+       ```bash
+       git commit -m "<subject>" -m "- <change description 1>" -m "- <change description 2>"
+       ```
 
 5. **Push:**
    - Run `git push` to upload all commits to the remote repository.

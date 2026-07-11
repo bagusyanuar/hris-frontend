@@ -17,8 +17,12 @@ Use this skill when you have completed coding tasks and want to commit the chang
 2. **Step 2: Commit Sequentially (Atomic Commits)**
    - For each group of changes:
      - Formulate a specific **Conventional Commit** message for that group (e.g., `feat(button): add variant` or `docs(api): update employee docs`).
+     - Identify and list a detailed description of the changes for the files in the group.
      - Stage *only* the files related to this specific context: `git add <file1> <file2>`.
-     - Commit the staged files: `git commit -m "<message>"`.
+     - Commit the staged files, including a list of change descriptions in the commit body:
+       ```bash
+       git commit -m "<subject>" -m "- <change description 1>" -m "- <change description 2>"
+       ```
      - *Note:* Do not use `git add .` unless all changes in the workspace strictly belong to the exact same context.
 
 3. **Step 3: Push to Remote**
