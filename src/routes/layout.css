@@ -2,6 +2,9 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+/* Enable class-based dark mode instead of OS preference media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Brand Theme Tokens (Emerald brand colors by default - Light Mode) */
   --color-brand-primary: var(--color-emerald-600);
