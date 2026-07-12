@@ -59,6 +59,8 @@
 	},
 	"dependencies": {
 		"@iconify/svelte": "^5.2.2",
+		"@tanstack/svelte-query": "^6.1.36",
+		"axios": "^1.18.1",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"imask": "^7.6.1",
