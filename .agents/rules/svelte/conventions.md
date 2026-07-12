@@ -65,3 +65,30 @@ $effect(() => {
 
 - Prefer `{#snippet}` blocks over `<slot>` for content projection in Svelte 5.
 - Use `{@render children()}` to render the default snippet.
+
+---
+
+## 5. Keyed Each Blocks
+
+Always use keyed `{#each}` blocks to ensure Svelte can track element identities during updates, preventing rendering bugs and lint/compiler warnings.
+
+### ✅ Correct
+
+```svelte
+{#each items as item (item.id)}
+  <li>{item.name}</li>
+{/each}
+
+{#each ['A', 'B', 'C'] as label (label)}
+  <span>{label}</span>
+{/each}
+```
+
+### ❌ Incorrect
+
+```svelte
+{#each items as item}
+  <li>{item.name}</li>
+{/each}
+```
+
