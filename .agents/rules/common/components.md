@@ -20,3 +20,22 @@ Whenever you need to render a UI element (e.g., inputs, buttons, selections, loa
    - Instead, create a new reusable component under [shared/components](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components).
    - Ensure the new component follows our design system standards (Tailwind v4 abstract tokens, Svelte 5 Runes, strict TypeScript, and barrel exports).
    - **Immediately update** the [Component Catalog](file:///Users/dystopia/svelte/hris-frontend/.agents/references/catalog.md) to register your new component for future sessions.
+
+---
+
+## 🔌 Data Binding & Architecture Mapping Rules
+
+When binding complex UI components (such as `Combobox` which expects `{ value, label }` objects) to the Core Layer models:
+
+1. **Presentation Layer Decoupling**:
+   - UI component bindings should use presentation-specific state types (e.g., `Option` or `Option[]`).
+   - Do NOT modify the Core domain models/entities to store UI-specific properties (like `{ value, label }`). Core models should remain pure and use primitive identifiers (e.g., `departmentId: string`, `roleIds: string[]`).
+
+2. **Rune/State Class Mapping**:
+   - Manage the `{ value, label }` representation within Svelte 5 Custom Runes or UI State Classes in the Presentation layer.
+   - Map these UI states back to domain primitives when invoking use cases or preparing payloads to submit.
+   - Example:
+     ```typescript
+     // Mapping selected Option state back to Core model ID
+     const departmentId = selectedOption?.value as string || '';
+     ```

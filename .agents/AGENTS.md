@@ -16,4 +16,5 @@ Please read the following rules:
 
 ## 3. Svelte Rules
 - Guidelines for working with Svelte 5 and using Svelte MCP tools: [mcp.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/mcp.md)
+- Svelte 5 coding conventions, runes patterns, and lint-safe idioms: [conventions.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/conventions.md)
 
