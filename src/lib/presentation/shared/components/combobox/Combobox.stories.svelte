@@ -23,6 +23,7 @@
 	import type { Option } from './Combobox.svelte';
 
 	let selectedFramework = $state<Option>({ value: 'svelte', label: 'Svelte' });
+	let selectedFrameworks = $state<Option[]>([{ value: 'svelte', label: 'Svelte' }]);
 	let errorFramework = $state<Option | undefined>(undefined);
 	let sizeFramework = $state<Option | undefined>(undefined);
 </script>
@@ -37,6 +38,20 @@
 			helperText="Choose the frontend framework you are developing with."
 		/>
 		<p class="text-sm text-slate-500">Selected: <strong class="text-slate-900">{selectedFramework ? JSON.stringify(selectedFramework) : 'None'}</strong></p>
+	</div>
+</Story>
+
+<Story name="Multiple">
+	<div class="max-w-sm space-y-4">
+		<Combobox
+			options={frameworks}
+			bind:value={selectedFrameworks}
+			multiple
+			label="Choose Frameworks (Multiple)"
+			placeholder="Search framework..."
+			helperText="Choose the frontend frameworks you are developing with."
+		/>
+		<p class="text-sm text-slate-500">Selected: <strong class="text-slate-900">{selectedFrameworks ? JSON.stringify(selectedFrameworks) : 'None'}</strong></p>
 	</div>
 </Story>
 

@@ -13,9 +13,9 @@ export const comboboxInputVariants = cva(
 					'border-emerald-500 focus-within:border-emerald-500 hover:border-emerald-600 focus-within:hover:border-emerald-500 dark:border-emerald-500/80 dark:focus-within:hover:border-emerald-500/80'
 			},
 			size: {
-				sm: 'h-9 px-3 text-xs',
-				md: 'h-11 px-4 text-sm',
-				lg: 'h-12 px-4 text-base'
+				sm: 'min-h-9 py-1 px-3 text-xs',
+				md: 'min-h-11 py-1.5 px-4 text-sm',
+				lg: 'min-h-12 py-2 px-4 text-base'
 			}
 		},
 		defaultVariants: {

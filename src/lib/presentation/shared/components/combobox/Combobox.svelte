@@ -13,7 +13,7 @@
 
 	interface Props extends ComboboxInputVariants {
 		options: Option[];
-		value?: Option | undefined;
+		value?: Option | Option[] | undefined;
 		placeholder?: string;
 		label?: string;
 		error?: string;
@@ -25,6 +25,7 @@
 		id?: string;
 		clearable?: boolean;
 		prefix?: string;
+		multiple?: boolean;
 	}
 
 	let {
@@ -42,7 +43,8 @@
 		wrapperClass = '',
 		id,
 		clearable = true,
-		prefix
+		prefix,
+		multiple = false
 	}: Props = $props();
 
 	// Generate a unique ID if one isn't provided (for linking label to input)
@@ -55,12 +57,29 @@
 	let isOpen = $state(false);
 	let searchQuery = $state('');
 
-	// Get label of currently selected option
-	let selectedOption = $derived(value ? options.find((opt) => opt.value === value?.value) || value : undefined);
+	// Check if an option is selected
+	function isSelected(opt: Option): boolean {
+		if (multiple) {
+			const arr = (value as Option[]) || [];
+			return arr.some((item) => item.value === opt.value);
+		} else {
+			return value ? (value as Option).value === opt.value : false;
+		}
+	}
+
+	// Get label of currently selected option (for single select)
+	let selectedOption = $derived(!multiple && value ? options.find((opt) => opt.value === (value as Option).value) || (value as Option) : undefined);
 	let selectedLabel = $derived(selectedOption ? selectedOption.label : '');
 
 	// Determine what is displayed in the input field
-	let displayValue = $derived(isOpen ? searchQuery : selectedLabel);
+	let displayValue = $derived(multiple ? searchQuery : (isOpen ? searchQuery : selectedLabel));
+
+	// Determine current placeholder
+	let currentPlaceholder = $derived(
+		multiple
+			? (((value as Option[]) || []).length > 0 ? '' : placeholder)
+			: (selectedLabel || placeholder)
+	);
 
 	// Reactive filtering based on search query
 	let filteredOptions = $derived(
@@ -82,14 +101,36 @@
 	}
 
 	function selectOption(opt: Option) {
-		value = opt;
-		searchQuery = '';
-		isOpen = false;
+		if (multiple) {
+			const currentVal = (value as Option[]) || [];
+			if (currentVal.some((item) => item.value === opt.value)) {
+				value = currentVal.filter((item) => item.value !== opt.value);
+			} else {
+				value = [...currentVal, opt];
+			}
+			searchQuery = '';
+		} else {
+			value = opt;
+			searchQuery = '';
+			isOpen = false;
+		}
 	}
+
+	function removeOption(opt: Option, e: MouseEvent) {
+		e.stopPropagation();
+		const currentVal = (value as Option[]) || [];
+		value = currentVal.filter((item) => item.value !== opt.value);
+	}
+
+	let hasValue = $derived(
+		multiple
+			? ((value as Option[]) || []).length > 0
+			: (value !== undefined && value !== null)
+	);
 
 	function clearSelection(e: MouseEvent) {
 		e.stopPropagation();
-		value = undefined;
+		value = multiple ? [] : undefined;
 		searchQuery = '';
 	}
 
@@ -146,26 +187,48 @@
 			{#if prefix}
 				<Icon icon={prefix} class="mr-2 h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
 			{/if}
-			<input
-				id={inputId}
-				type="text"
-				{disabled}
-				value={displayValue}
-				placeholder={selectedLabel || placeholder}
-				oninput={handleInput}
-				onfocus={() => {
-					if (!disabled) {
-						isOpen = true;
-						searchQuery = '';
-					}
-				}}
-				onkeydown={handleKeyDown}
-				class="flex-1 min-w-0 border-none bg-transparent p-0 pr-12 text-inherit placeholder:text-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed dark:placeholder:text-slate-500"
-			/>
+
+			<!-- Selected tags/chips + Input field -->
+			<div class="flex flex-wrap items-center gap-1.5 flex-1 min-w-0 pr-12 py-1">
+				{#if multiple && Array.isArray(value)}
+					{#each value as opt (opt.value)}
+						<span
+							class="inline-flex items-center gap-1 rounded-md bg-brand-light pl-2 pr-0.5 py-0.5 text-xs font-medium text-brand-text border border-brand-border"
+						>
+							{opt.label}
+							<button
+								type="button"
+								onclick={(e) => removeOption(opt, e)}
+								class="flex h-3.5 w-3.5 items-center justify-center rounded-full text-brand-text/60 hover:bg-brand-primary/10 hover:text-brand-text"
+								aria-label="Remove {opt.label}"
+							>
+								<Icon icon="lucide:x" class="h-2.5 w-2.5" />
+							</button>
+						</span>
+					{/each}
+				{/if}
+
+				<input
+					id={inputId}
+					type="text"
+					{disabled}
+					value={displayValue}
+					placeholder={currentPlaceholder}
+					oninput={handleInput}
+					onfocus={() => {
+						if (!disabled) {
+							isOpen = true;
+							searchQuery = '';
+						}
+					}}
+					onkeydown={handleKeyDown}
+					class="flex-1 min-w-[60px] border-none bg-transparent p-0 text-inherit placeholder:text-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed dark:placeholder:text-slate-500"
+				/>
+			</div>
 
 			<!-- Controls (Clear & Chevron) -->
 			<div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-				{#if clearable && value !== undefined && value !== null && !disabled}
+				{#if clearable && hasValue && !disabled}
 					<button
 						type="button"
 						onclick={clearSelection}
@@ -202,13 +265,43 @@
 						type="button"
 						onclick={() => selectOption(opt)}
 						class={cn(
-							'w-full rounded-md px-3 py-2 text-left text-sm transition-colors duration-150 focus:outline-none',
-							opt.value === value?.value
+							'w-full rounded-md px-3 py-2 text-left text-sm transition-colors duration-150 focus:outline-none flex items-center justify-between',
+							isSelected(opt)
 								? 'bg-brand-light text-brand-text font-medium dark:bg-brand-primary/20 dark:text-brand-primary'
 								: 'text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100'
 						)}
 					>
-						{opt.label}
+						<div class="flex items-center gap-2">
+							{#if multiple}
+								<!-- Checkbox Visual -->
+								<div
+									class={cn(
+										'h-4 w-4 rounded border flex items-center justify-center transition-all duration-200 shrink-0',
+										isSelected(opt)
+											? 'bg-brand-primary border-brand-primary text-white'
+											: 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900'
+									)}
+								>
+									{#if isSelected(opt)}
+										<svg
+											class="h-2.5 w-2.5"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="4"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<polyline points="20 6 9 17 4 12"></polyline>
+										</svg>
+									{/if}
+								</div>
+							{/if}
+							<span>{opt.label}</span>
+						</div>
+						{#if !multiple && isSelected(opt)}
+							<Icon icon="lucide:check" class="h-4 w-4 text-brand-primary" />
+						{/if}
 					</button>
 				{:else}
 					<div class="px-3 py-2.5 text-center text-sm text-slate-400 dark:text-slate-500">
