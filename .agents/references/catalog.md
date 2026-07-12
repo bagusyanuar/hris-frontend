@@ -146,3 +146,21 @@ This is the central reference catalog of all reusable presentation components in
     prefix="lucide:search"
   />
   ```
+
+### 11. Toast / Toaster
+- **Path:** [Toaster.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/toast/Toaster.svelte) / [toast.svelte.ts](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/toast/toast.svelte.ts)
+- **Methods:**
+  - `toast.success(message: string, title?: string, duration?: number)`
+  - `toast.error(message: string, title?: string, duration?: number)`
+  - `toast.warning(message: string, title?: string, duration?: number)`
+  - `toast.info(message: string, title?: string, duration?: number)`
+  - `toast.dismiss(id: string)`
+- **Description:**
+  - Standard Svelte 5 reactive notification toast manager. Must mount `<Toaster />` in the root layout file.
+- **Example:**
+  ```typescript
+  import { toast } from '$lib/presentation/shared/components/toast';
+
+  toast.success('Settings saved successfully!', 'Success');
+  ```
+
