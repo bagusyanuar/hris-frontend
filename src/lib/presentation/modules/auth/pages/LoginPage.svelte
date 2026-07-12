@@ -34,7 +34,7 @@
 		<div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--color-brand-primary),transparent_45%)] opacity-30"></div>
 		<div class="absolute -top-40 -left-40 w-96 h-96 bg-brand-primary rounded-full filter blur-3xl opacity-10"></div>
 		<div class="absolute bottom-10 right-10 w-80 h-80 bg-emerald-700 rounded-full filter blur-3xl opacity-15"></div>
-		<div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+		<div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[24px_24px]"></div>
 
 		<!-- Top Header -->
 		<div class="relative z-10 flex items-center gap-3">
