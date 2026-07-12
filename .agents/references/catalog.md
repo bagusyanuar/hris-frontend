@@ -118,7 +118,31 @@ This is the central reference catalog of all reusable presentation components in
   <Radio bind:group={selectedValue} value="option1" label="Option One" />
   ```
 
-
-
-
-
+### 10. Combobox
+- **Path:** [Combobox.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/combobox/Combobox.svelte)
+- **Props:**
+  - `options`: `Option[]` (list of selectable options, where `Option` is `{ value: string | number; label: string }`)
+  - `value`: `Option | undefined` (bindable; active selected option object)
+  - `placeholder`: `string` (defaults to `"Select option..."`)
+  - `label`: `string` (optional label text)
+  - `error`: `string` (optional validation error message)
+  - `helperText`: `string` (optional descriptive helper text)
+  - `disabled`: `boolean` (disables interaction)
+  - `required`: `boolean` (displays red asterisk on the label)
+  - `variant`: `'default' | 'error' | 'success'` (visual status styling)
+  - `size`: `'sm' | 'md' | 'lg'` (input size)
+  - `clearable`: `boolean` (defaults to `true`; shows/hides the clear button)
+  - `prefix`: `string` (optional; Iconify icon name to display on the left side)
+- **Example:**
+  ```svelte
+  <Combobox
+    options={[
+      { value: 'svelte', label: 'Svelte' },
+      { value: 'react', label: 'React' }
+    ]}
+    bind:value={selectedFramework}
+    label="Frontend Framework"
+    placeholder="Choose framework..."
+    prefix="lucide:search"
+  />
+  ```
