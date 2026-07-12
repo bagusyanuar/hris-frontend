@@ -35,8 +35,8 @@ The application defaults to **Light Mode** and fully supports **Dark Mode** via 
 
 ## 3. Card-based Layout Guidelines
 Every content card must have:
-- **Border & Shadow**: Soft borders (`border border-neutral-border`) combined with a soft, modern shadow (`shadow-xs` or `shadow-sm`).
-- **Rounding**: Consistent rounded corners, preferably `rounded-2xl` or `rounded-xl`.
+- **Borders & Shadows**: Soft borders (`border border-neutral-border`). **IMPORTANT**: Avoid using drop shadows (`shadow-sm`, etc.) on parent/layout containers (such as the Sidebar, Page Header, and Main Content wrap in Bento Grid) to keep the app minimal; rely entirely on border lines for structural definition.
+- **Rounding**: Consistent rounded corners, preferably `rounded-xl`.
 - **Padding**: Generous spacing inside the card, minimum `p-6` (24px) for desktop, `p-4` (16px) for mobile.
 - **Structure**:
   - **Header**: Optional, but if present, contains a descriptive title (`text-base font-semibold text-slate-900`) and optional actions (e.g. menu, filter button).
@@ -44,8 +44,8 @@ Every content card must have:
   - **Footer**: Optional action area separated by a soft border or simple spacing.
 
 ```html
-<!-- Example of a Standard Card in Svelte using Abstract Tokens -->
-<div class="rounded-2xl border border-neutral-border bg-neutral-card p-6 shadow-sm transition-all duration-200 hover:shadow-md">
+<!-- Example of a Standard Card in Svelte using Abstract Tokens (No Shadow) -->
+<div class="rounded-xl border border-neutral-border bg-neutral-card p-6 transition-all duration-200">
   <div class="mb-4 flex items-center justify-between">
     <h3 class="text-base font-semibold text-slate-900">Card Title</h3>
     <span class="rounded-full bg-brand-light px-2.5 py-0.5 text-xs font-medium text-brand-text">Status</span>
@@ -56,7 +56,27 @@ Every content card must have:
 </div>
 ```
 
-## 4. Typography & Spacing
+## 4. Bento Grid & Floating Panels Layout
+For premium SaaS dashboards, use the **Bento Grid / Floating Panels** layout:
+- **Outer Viewport**: `h-screen flex p-3 gap-3 overflow-hidden bg-neutral-bg`.
+- **Panels**: The Sidebar, Page Header, and Workspace content scroll area are styled as individual floating cards (`bg-neutral-card border border-neutral-border rounded-xl`).
+- **Internal Scrolling**: Set `overflow-y-auto` and `flex-1` on individual panels (like Sidebar menu and Main workspace body) instead of scrolling the whole window.
+
+## 5. Custom Scrollbars
+Never use browser default scrollbars on scrollable panels.
+- Add global styling for Webkit and Firefox scrollbars to make them extremely thin and subtle:
+  ```css
+  :global(*::-webkit-scrollbar) {
+    width: 4px;
+    height: 4px;
+  }
+  :global(*::-webkit-scrollbar-thumb) {
+    background: var(--color-neutral-border);
+    border-radius: 9999px;
+  }
+  ```
+
+## 6. Typography & Spacing
 - **Font**: Use clean, modern geometric fonts (e.g., `font-sans`).
 - **Mandatory Typography Component**: **ALL** text content (headings, body copy, descriptions, captions, spans, labels, etc.) must be rendered using the `Typography` component. Never use raw HTML text tags (`<h1>`, `<p>`, `<span>`, `<label>`) with manual classes or custom styles directly in pages or components.
 - **Consistency**: Maintain a strict spacing rhythm (e.g., `gap-4`, `space-y-6`, `p-6`). Do not use ad-hoc pixel values; rely entirely on Tailwind CSS utility spacing values.

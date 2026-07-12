@@ -152,6 +152,35 @@ For dropdowns, dialogs, and popovers:
 </div>
 ```
 
+### D. Bento Grid & Floating Panels Layout
+For modern dashboards, style panels as independent floating cards:
+- **Outer Wrapper**: Use `h-screen flex p-3 gap-3 overflow-hidden bg-neutral-bg` to enclose the layouts.
+- **Card Styling**: Aside (sidebar), header, and main content panels should have `bg-neutral-card border border-neutral-border rounded-xl` without drop shadows (`shadow-*`) to keep the design minimal and clean.
+- **Scrolling**: Enable `overflow-y-auto` only on the active panels (sidebar menu, workspace content area) so the layout stays locked within the viewport height.
+
+### E. Custom Global Scrollbars
+For consistent appearance across platforms, apply thin, custom scrollbars using global styles in your Svelte views:
+```css
+:global(*::-webkit-scrollbar) {
+  width: 4px;
+  height: 4px;
+}
+:global(*::-webkit-scrollbar-track) {
+  background: transparent;
+}
+:global(*::-webkit-scrollbar-thumb) {
+  background: var(--color-neutral-border, #e2e8f0);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+:global(*::-webkit-scrollbar-thumb:hover) {
+  background: var(--color-slate-300, #cbd5e1);
+}
+:global(.dark *::-webkit-scrollbar-thumb) {
+  background: var(--color-neutral-border, #334155);
+}
+```
+
 ---
 
 ## 4. Height Consistency & Proportional Spacing (White Space)
