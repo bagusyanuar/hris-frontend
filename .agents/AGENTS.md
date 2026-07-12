@@ -5,6 +5,7 @@ CRITICAL: As an AI agent, you MUST read, load, and follow the specific rules spl
 Please read the following rules:
 
 ## 1. Common Rules
+- Project goals, context, and HRIS domain vision: [project-vision.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/project-vision.md)
 - Project configuration, language, and package management guidelines: [config.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/config.md)
 - Naming conventions for directories, files, components, and variables: [naming.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/naming.md)
 - UI Design, styling, card-based layout, and brand color guidelines: [ui-design.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/ui-design.md)
