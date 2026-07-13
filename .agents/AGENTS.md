@@ -13,6 +13,7 @@ Please read the following rules:
 
 ## 2. Architecture Rules
 - Frontend Domain-Driven Design (DDD) Clean Architecture: [ddd.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/architecture/ddd.md)
+- SvelteKit UI Layout Architecture: [layout.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/architecture/layout.md)
 
 ## 3. Svelte Rules
 - Guidelines for working with Svelte 5 and using Svelte MCP tools: [mcp.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/mcp.md)
