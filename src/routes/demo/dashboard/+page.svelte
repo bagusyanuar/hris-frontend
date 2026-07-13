@@ -2,14 +2,21 @@
 	import { Typography } from '$lib/presentation/shared/components/typography';
 	import { Card } from '$lib/presentation/shared/components/card';
 	import { Button } from '$lib/presentation/shared/components/button';
-	import { slide } from 'svelte/transition';
+	import { slide, fly } from 'svelte/transition';
+	import { onMount } from 'svelte';
 	import Icon from '@iconify/svelte';
 
 	// State for theme and sidebar
 	let isDark = $state(false);
+
+	onMount(() => {
+		isDark = document.documentElement.classList.contains('dark');
+	});
+
 	let isCollapsed = $state(false);
 	let isMobileOpen = $state(false);
 	let isProfileDropdownOpen = $state(false);
+	let isNotificationsOpen = $state(false);
 
 	// Track expandable items (e.g. Payroll tree)
 	let isPayrollExpanded = $state(false);
@@ -27,11 +34,41 @@
 		const html = document.documentElement;
 		if (isDark) {
 			html.classList.add('dark');
+			localStorage.setItem('theme', 'dark');
 		} else {
 			html.classList.remove('dark');
+			localStorage.setItem('theme', 'light');
 		}
 	}
+
+	// DOM element references for detecting clicks outside
+	let orgSwitcherEl = $state<HTMLElement | null>(null);
+	let profileWidgetEl = $state<HTMLElement | null>(null);
+	let notifWidgetEl = $state<HTMLElement | null>(null);
+
+	function handleWindowClick(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (isOrgDropdownOpen && orgSwitcherEl && !orgSwitcherEl.contains(target)) {
+			isOrgDropdownOpen = false;
+		}
+		if (isProfileDropdownOpen && profileWidgetEl && !profileWidgetEl.contains(target)) {
+			isProfileDropdownOpen = false;
+		}
+		if (isNotificationsOpen && notifWidgetEl && !notifWidgetEl.contains(target)) {
+			isNotificationsOpen = false;
+		}
+	}
+
+	// Organization Switcher states
+	let organizations = [
+		{ id: '1', name: 'Panorama Veteran', short: 'PV', color: 'bg-emerald-600 dark:bg-emerald-500 text-white' },
+		{ id: '2', name: 'Panorama Pasar Kliwon', short: 'PK', color: 'bg-blue-600 dark:bg-blue-500 text-white' }
+	];
+	let activeOrg = $state(organizations[0]);
+	let isOrgDropdownOpen = $state(false);
 </script>
+
+<svelte:window onclick={handleWindowClick} />
 
 <div class="h-screen flex bg-neutral-bg p-3 gap-3 overflow-hidden text-slate-900 transition-colors duration-200">
 	<!-- DESKTOP SIDEBAR -->
@@ -42,11 +79,14 @@
 
 
 		<!-- Brand Logo Header -->
-		<div class="flex items-center gap-3 px-2 py-3 overflow-hidden select-none">
+		<div class="flex items-center select-none transition-all duration-300
+			{isCollapsed ? 'justify-center px-0 py-3' : 'gap-3 px-2 py-3'}"
+		>
 			<div
-				class="flex items-center justify-center shrink-0 w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+				class="flex items-center justify-center shrink-0 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-all duration-300
+					{isCollapsed ? 'w-9 h-9' : 'w-10 h-10'}"
 			>
-				<Icon icon="lucide:layers" class="w-6 h-6" />
+				<Icon icon="lucide:layers" class="transition-all duration-300 {isCollapsed ? 'w-5 h-5' : 'w-6 h-6'}" />
 			</div>
 			{#if !isCollapsed}
 				<div class="flex flex-col min-w-0">
@@ -57,6 +97,64 @@
 					<span class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest mt-1"
 						>HRIS Ecosystem</span
 					>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Organization Switcher -->
+		<div class="mt-4 relative" bind:this={orgSwitcherEl}>
+			<button
+				onclick={() => (isOrgDropdownOpen = !isOrgDropdownOpen)}
+				class="w-full flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-900/60 border border-neutral-border hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl transition-all duration-150 text-left cursor-pointer
+					{isCollapsed ? 'justify-center p-0 h-10 w-10 mx-auto bg-transparent border-none hover:bg-slate-50 dark:hover:bg-slate-900' : ''}"
+			>
+				<div
+					class="w-8 h-8 rounded-lg {activeOrg.color} flex items-center justify-center font-bold text-xs shrink-0"
+				>
+					{activeOrg.short}
+				</div>
+				{#if !isCollapsed}
+					<div class="flex-1 min-w-0">
+						<div class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+							{activeOrg.name}
+						</div>
+						<div class="text-[9px] text-slate-500 truncate mt-0.5">HRIS Portal</div>
+					</div>
+					<Icon icon="lucide:chevrons-up-down" class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+				{/if}
+			</button>
+
+			<!-- Organization Dropdown -->
+			{#if isOrgDropdownOpen}
+				<div
+					transition:fly={{ x: 12, duration: 200 }}
+					class="absolute top-0 left-full ml-3 min-w-[220px] w-max bg-neutral-card border border-neutral-border rounded-xl shadow-lg z-50 p-1.5 flex flex-col gap-1"
+				>
+					<div class="px-2 py-1 text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+						Select Organization
+					</div>
+					{#each organizations as org (org.id)}
+						<button
+							onclick={() => {
+								activeOrg = org;
+								isOrgDropdownOpen = false;
+							}}
+							class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 text-left text-xs cursor-pointer
+								{activeOrg.id === org.id
+									? 'bg-brand-light dark:bg-emerald-500/10 text-brand-text dark:text-emerald-400 font-medium'
+									: 'text-slate-600 dark:text-slate-300'}"
+						>
+							<div class="flex items-center gap-2.5 whitespace-nowrap">
+								<div class="w-6 h-6 rounded-md {org.color} flex items-center justify-center font-bold text-[10px] shrink-0">
+									{org.short}
+								</div>
+								<span>{org.name}</span>
+							</div>
+							{#if activeOrg.id === org.id}
+								<Icon icon="lucide:check" class="w-3.5 h-3.5 text-brand-text dark:text-emerald-400 shrink-0 ml-4" />
+							{/if}
+						</button>
+					{/each}
 				</div>
 			{/if}
 		</div>
@@ -79,7 +177,8 @@
 					{#each [{ name: 'Dashboard', icon: 'lucide:grid' }, { name: 'Staff Directory', icon: 'lucide:users' }, { name: 'Onboarding', icon: 'lucide:user-plus' }, { name: 'Time & Attendance', icon: 'lucide:clock' }, { name: 'Performance', icon: 'lucide:trending-up' }] as item (item.name)}
 						<button
 							onclick={() => (activeMenu = item.name)}
-							class="w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all duration-150 group cursor-pointer
+							class="w-full flex items-center rounded-xl text-left transition-all duration-150 group cursor-pointer
+								{isCollapsed ? 'justify-center p-2.5' : 'gap-3 p-2.5'}
 								{activeMenu === item.name
 								? 'bg-brand-light dark:bg-emerald-500/10 text-brand-text dark:text-emerald-400 font-medium'
 								: 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
@@ -112,13 +211,14 @@
 					<div class="w-full flex flex-col">
 						<button
 							onclick={() => (isPayrollExpanded = !isPayrollExpanded)}
-							class="w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all duration-150 group cursor-pointer
+							class="w-full flex items-center rounded-xl text-left transition-all duration-150 group cursor-pointer
+								{isCollapsed ? 'justify-center p-2.5' : 'justify-between p-2.5'}
 								{activeMenu === 'Run Payroll' || activeMenu === 'Payslips'
 								? 'bg-brand-light/50 dark:bg-emerald-500/5 text-brand-text dark:text-emerald-400 font-medium'
 								: 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
 							title={isCollapsed ? 'Payroll' : ''}
 						>
-							<div class="flex items-center gap-3">
+							<div class="flex items-center {isCollapsed ? '' : 'gap-3'}">
 								<Icon
 									icon="lucide:banknote"
 									class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-105"
@@ -159,7 +259,8 @@
 					<!-- Expenses -->
 					<button
 						onclick={() => (activeMenu = 'Expenses')}
-						class="w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all duration-150 group cursor-pointer
+						class="w-full flex items-center rounded-xl text-left transition-all duration-150 group cursor-pointer
+							{isCollapsed ? 'justify-center p-2.5' : 'gap-3 p-2.5'}
 							{activeMenu === 'Expenses'
 							? 'bg-brand-light dark:bg-emerald-500/10 text-brand-text dark:text-emerald-400 font-medium'
 							: 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
@@ -177,7 +278,8 @@
 					<!-- Invoicing -->
 					<button
 						onclick={() => (activeMenu = 'Invoicing')}
-						class="w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all duration-150 group cursor-pointer
+						class="w-full flex items-center rounded-xl text-left transition-all duration-150 group cursor-pointer
+							{isCollapsed ? 'justify-center p-2.5' : 'gap-3 p-2.5'}
 							{activeMenu === 'Invoicing'
 							? 'bg-brand-light dark:bg-emerald-500/10 text-brand-text dark:text-emerald-400 font-medium'
 							: 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
@@ -208,7 +310,8 @@
 					{#each [{ name: 'General Settings', icon: 'lucide:settings' }, { name: 'Integrations', icon: 'lucide:puzzle' }, { name: 'Access Control', icon: 'lucide:shield' }] as item (item.name)}
 						<button
 							onclick={() => (activeMenu = item.name)}
-							class="w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all duration-150 group cursor-pointer
+							class="w-full flex items-center rounded-xl text-left transition-all duration-150 group cursor-pointer
+								{isCollapsed ? 'justify-center p-2.5' : 'gap-3 p-2.5'}
 								{activeMenu === item.name
 								? 'bg-brand-light dark:bg-emerald-500/10 text-brand-text dark:text-emerald-400 font-medium'
 								: 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
@@ -228,53 +331,56 @@
 		</nav>
 
 		<!-- Profile Widget Footer -->
-		<div class="mt-auto pt-4 border-t border-neutral-border relative">
-			<button
-				onclick={() => !isCollapsed && (isProfileDropdownOpen = !isProfileDropdownOpen)}
-				class="w-full flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl transition-all duration-150 text-left cursor-pointer
-					{isCollapsed ? 'justify-center hover:bg-transparent p-0' : ''}"
-			>
-				<div
-					class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold shrink-0 relative"
+		<div class="mt-auto pt-4 border-t border-neutral-border">
+			<div class="relative" bind:this={profileWidgetEl}>
+				<button
+					onclick={() => (isProfileDropdownOpen = !isProfileDropdownOpen)}
+					class="w-full flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl transition-all duration-150 text-left cursor-pointer
+						{isCollapsed ? 'justify-center hover:bg-transparent p-0' : ''}"
 				>
-					<span>A</span>
-					<!-- Active Indicator Dot -->
-					<span
-						class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-neutral-card"
-					></span>
-				</div>
-				{#if !isCollapsed}
-					<div class="flex-1 min-w-0">
-						<div
-							class="text-xs font-bold text-slate-900 dark:text-slate-100 leading-normal truncate"
-						>
-							administrator
-						</div>
-						<div class="text-[10px] text-slate-400 leading-none truncate mt-0.5">ADMINISTRATOR</div>
+					<div
+						class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold shrink-0 relative"
+					>
+						<span>A</span>
+						<!-- Active Indicator Dot -->
+						<span
+							class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-neutral-card"
+						></span>
 					</div>
-					<Icon icon="lucide:chevrons-up-down" class="w-4 h-4 text-slate-400 shrink-0" />
-				{/if}
-			</button>
+					{#if !isCollapsed}
+						<div class="flex-1 min-w-0">
+							<div
+								class="text-xs font-bold text-slate-900 dark:text-slate-100 leading-normal truncate"
+							>
+								administrator
+							</div>
+							<div class="text-[10px] text-slate-400 leading-none truncate mt-0.5">ADMINISTRATOR</div>
+						</div>
+						<Icon icon="lucide:chevrons-up-down" class="w-4 h-4 text-slate-400 shrink-0" />
+					{/if}
+				</button>
 
-			<!-- Profile Dropdown (mockup) -->
-			{#if isProfileDropdownOpen && !isCollapsed}
-				<div
-					class="absolute bottom-full left-0 right-0 mb-2 bg-neutral-card border border-neutral-border rounded-xl shadow-lg z-50 p-1.5 flex flex-col gap-1"
-				>
-					<button
-						class="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 text-left text-xs text-slate-600 dark:text-slate-300 cursor-pointer"
+				<!-- Profile Dropdown (mockup) -->
+				{#if isProfileDropdownOpen}
+					<div
+						transition:fly={{ x: -12, duration: 200 }}
+						class="absolute bottom-0 left-full ml-3 w-48 bg-neutral-card border border-neutral-border rounded-xl shadow-lg z-50 p-1.5 flex flex-col gap-1"
 					>
-						<Icon icon="lucide:user" class="w-4 h-4" />
-						<span>My Profile</span>
-					</button>
-					<button
-						class="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 text-left text-xs text-rose-600 dark:text-rose-400 cursor-pointer"
-					>
-						<Icon icon="lucide:log-out" class="w-4 h-4" />
-						<span>Log Out</span>
-					</button>
-				</div>
-			{/if}
+						<button
+							class="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 text-left text-xs text-slate-600 dark:text-slate-300 cursor-pointer"
+						>
+							<Icon icon="lucide:user" class="w-4 h-4" />
+							<span>My Profile</span>
+						</button>
+						<button
+							class="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 text-left text-xs text-rose-600 dark:text-rose-400 cursor-pointer"
+						>
+							<Icon icon="lucide:log-out" class="w-4 h-4" />
+							<span>Log Out</span>
+						</button>
+					</div>
+				{/if}
+			</div>
 
 			<!-- System Versioning -->
 			{#if !isCollapsed}
@@ -522,25 +628,56 @@
 				</button>
 
 				<!-- Dummy Notifications -->
-				<button
-					class="p-2 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative cursor-pointer"
-				>
-					<Icon icon="lucide:bell" class="w-5 h-5" />
-					<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
-				</button>
-
-				<div class="h-8 w-px bg-neutral-border mx-1"></div>
-
-				<div class="flex items-center gap-2">
-					<div
-						class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 font-bold flex items-center justify-center text-xs"
+				<div class="relative" bind:this={notifWidgetEl}>
+					<button
+						onclick={() => (isNotificationsOpen = !isNotificationsOpen)}
+						class="p-2 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative cursor-pointer"
 					>
-						A
-					</div>
-					<span class="hidden sm:inline text-xs font-semibold text-slate-700 dark:text-slate-200"
-						>Admin</span
-					>
+						<Icon icon="lucide:bell" class="w-5 h-5" />
+						<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+					</button>
+
+					<!-- Notifications Popover -->
+					{#if isNotificationsOpen}
+						<div
+							transition:fly={{ y: -12, duration: 200 }}
+							class="absolute top-full right-0 mt-2 w-72 bg-neutral-card border border-neutral-border rounded-xl shadow-lg z-50 flex flex-col overflow-hidden"
+						>
+							<div class="px-3 py-2.5 border-b border-neutral-border flex justify-between items-center bg-slate-50 dark:bg-slate-900/40">
+								<span class="font-bold text-xs text-slate-800 dark:text-slate-100">Notifications</span>
+								<button class="text-[10px] text-emerald-600 font-semibold hover:underline cursor-pointer">Mark all read</button>
+							</div>
+							<div class="flex flex-col max-h-[300px] overflow-y-auto no-scrollbar">
+								<!-- Dummy Notif 1 -->
+								<button class="w-full text-left px-3 py-3 border-b border-neutral-border hover:bg-slate-50 dark:hover:bg-slate-900/60 cursor-pointer flex gap-3 opacity-100 bg-emerald-500/5">
+									<div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+										<Icon icon="lucide:user-plus" class="w-4 h-4" />
+									</div>
+									<div class="flex flex-col min-w-0">
+										<span class="text-xs text-slate-800 dark:text-slate-200 font-medium">New Employee Onboarding</span>
+										<span class="text-[10px] text-slate-500 leading-tight mt-0.5">Please review onboarding documents for Sarah Lincoln.</span>
+										<span class="text-[9px] text-emerald-600 font-medium mt-1.5">2 mins ago</span>
+									</div>
+								</button>
+								<!-- Dummy Notif 2 -->
+								<button class="w-full text-left px-3 py-3 hover:bg-slate-50 dark:hover:bg-slate-900/60 cursor-pointer flex gap-3 opacity-75">
+									<div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+										<Icon icon="lucide:calendar-clock" class="w-4 h-4" />
+									</div>
+									<div class="flex flex-col min-w-0">
+										<span class="text-xs text-slate-800 dark:text-slate-200 font-medium">Leave Request Pending</span>
+										<span class="text-[10px] text-slate-500 leading-tight mt-0.5">John Doe requested 3 days off for vacation.</span>
+										<span class="text-[9px] text-slate-400 mt-1.5">1 hour ago</span>
+									</div>
+								</button>
+							</div>
+							<div class="px-3 py-2 border-t border-neutral-border text-center bg-slate-50 dark:bg-slate-900/40">
+								<button class="text-[10px] text-slate-500 hover:text-emerald-600 font-semibold cursor-pointer">View all notifications</button>
+							</div>
+						</div>
+					{/if}
 				</div>
+
 			</div>
 		</header>
 
