@@ -24,8 +24,18 @@
 	let isDark = $state(false);
 
 	const branches = [
-		{ id: '1', name: 'Panorama Veteran', short: 'PV', color: 'bg-emerald-600 dark:bg-emerald-500 text-white' },
-		{ id: '2', name: 'Panorama Pasar Kliwon', short: 'PK', color: 'bg-blue-600 dark:bg-blue-500 text-white' }
+		{
+			id: '1',
+			name: 'Panorama Veteran',
+			short: 'PV',
+			color: 'bg-emerald-600 dark:bg-emerald-500 text-white'
+		},
+		{
+			id: '2',
+			name: 'Panorama Pasar Kliwon',
+			short: 'PK',
+			color: 'bg-blue-600 dark:bg-blue-500 text-white'
+		}
 	];
 	let activeBranch = $state(branches[0]);
 
@@ -46,7 +56,9 @@
 	});
 </script>
 
-<div class="h-screen flex bg-slate-100 dark:bg-slate-950 p-3 gap-3 overflow-hidden text-slate-900 transition-colors duration-200">
+<div
+	class="h-screen flex bg-slate-100 dark:bg-slate-950 p-3 gap-3 overflow-hidden text-slate-900 transition-colors duration-200"
+>
 	<!-- REUSABLE SIDEBAR -->
 	<Sidebar bind:isCollapsed>
 		<SidebarBrand />
@@ -54,46 +66,24 @@
 
 		<SidebarNav>
 			<SidebarGroup title="Employees">
-				<SidebarItem
-					label="Dashboard"
-					icon="lucide:grid"
-					href="/"
-				/>
-				<SidebarItem
-					label="Staff Directory"
-					icon="lucide:users"
-					href="/employees"
-				/>
-				<SidebarItem
-					label="Time & Attendance"
-					icon="lucide:clock"
-					href="#time"
-				/>
+				<SidebarItem label="Dashboard" icon="lucide:grid" href="/" />
+				<SidebarItem label="Staff Directory" icon="lucide:users" href="/employees" />
+				<SidebarItem label="Time & Attendance" icon="lucide:clock" href="#time" />
 			</SidebarGroup>
 
 			<SidebarGroup title="Finance">
 				<SidebarExpandable
 					label="Payroll"
 					icon="lucide:banknote"
-					isActive={page.url.pathname.includes('/payroll') || page.url.hash.includes('payroll') || page.url.hash.includes('payslips')}
+					isActive={page.url.pathname.includes('/payroll') ||
+						page.url.hash.includes('payroll') ||
+						page.url.hash.includes('payslips')}
 				>
-					<SidebarItem
-						label="Run Payroll"
-						isSubItem
-						href="#run-payroll"
-					/>
-					<SidebarItem
-						label="Payslips"
-						isSubItem
-						href="#payslips"
-					/>
+					<SidebarItem label="Run Payroll" isSubItem href="#run-payroll" />
+					<SidebarItem label="Payslips" isSubItem href="#payslips" />
 				</SidebarExpandable>
 
-				<SidebarItem
-					label="Expenses"
-					icon="lucide:wallet"
-					href="#expenses"
-				/>
+				<SidebarItem label="Expenses" icon="lucide:wallet" href="#expenses" />
 			</SidebarGroup>
 		</SidebarNav>
 
@@ -111,9 +101,9 @@
 			<!-- Left actions + Search Bar -->
 			<div class="flex items-center gap-3">
 				<NavbarMobileToggle bind:isOpen={isMobileOpen} />
-				<NavbarSidebarToggle bind:isCollapsed={isCollapsed} />
+				<NavbarSidebarToggle bind:isCollapsed />
 				<NavbarBreadcrumbs {activeMenu} />
-				<NavbarSearch bind:searchQuery bind:activeMenu={activeMenu} />
+				<NavbarSearch bind:searchQuery bind:activeMenu />
 			</div>
 
 			<!-- Right actions -->
@@ -124,7 +114,9 @@
 		</Navbar>
 
 		<!-- MAIN PAGE BODY -->
-		<main class="flex-1 overflow-y-auto bg-neutral-card border border-neutral-border rounded-xl p-6 md:p-8 space-y-6 scrollable-content bg-white dark:bg-slate-900 transition-colors">
+		<main
+			class="flex-1 overflow-y-auto border border-neutral-border rounded-xl p-6 md:p-8 space-y-6 scrollable-content bg-white dark:bg-slate-900 transition-colors"
+		>
 			{@render children()}
 		</main>
 	</div>
