@@ -1,10 +1,45 @@
-# Svelte 5 Coding Conventions
+# Svelte 5 & TypeScript Coding Conventions
 
-Rules and patterns for writing clean, lint-free Svelte 5 code using runes.
+Rules and patterns for writing clean, type-safe, lint-free Svelte 5 and TypeScript code.
 
 ---
 
-## 1. Tracking Dependencies in `$effect` / `$derived`
+## 1. Keyed Each Blocks (CRITICAL)
+
+Always use keyed `{#each}` blocks to ensure Svelte can track element identities during updates, preventing rendering bugs and lint/compiler warnings. 
+Every `{#each}` block MUST have a key expression.
+
+### ✅ Correct
+
+```svelte
+{#each items as item (item.id)}
+  <li>{item.name}</li>
+{/each}
+
+{#each ['A', 'B', 'C'] as label (label)}
+  <span>{label}</span>
+{/each}
+```
+
+### ❌ Incorrect
+
+```svelte
+{#each items as item}
+  <li>{item.name}</li>
+{/each}
+```
+
+---
+
+## 2. TypeScript & Typesafety (CRITICAL)
+
+- **ABSOLUTELY NO `any` ALLOWED UNDER ANY CIRCUMSTANCES.** Even for quick fixes or third-party libraries, use proper typing, `unknown` with a type guard, or utility/generic types.
+- Ensure all callback props, event handlers, and helper function parameters are explicitly typed.
+- Prefer strict interfaces for Svelte component props.
+
+---
+
+## 3. Tracking Dependencies in `$effect` / `$derived`
 
 When you need to read a reactive value inside `$effect` solely to register it as a dependency (without using the value), use the `void` operator.
 
@@ -44,7 +79,7 @@ $effect(() => {
 
 ---
 
-## 2. Runes Usage
+## 4. Runes Usage
 
 - Use `$state()` for component-local mutable state.
 - Use `$derived()` for computed values.
@@ -54,41 +89,16 @@ $effect(() => {
 
 ---
 
-## 3. Event Handling
+## 5. Event Handling
 
 - Use callback props (e.g., `onclick`, `onchange`) instead of `createEventDispatcher`.
 - For DOM events, use Svelte 5's `on:event` or shorthand `onevent` attribute syntax.
 
 ---
 
-## 4. Snippets over Slots
+## 6. Snippets over Slots
 
 - Prefer `{#snippet}` blocks over `<slot>` for content projection in Svelte 5.
 - Use `{@render children()}` to render the default snippet.
 
----
-
-## 5. Keyed Each Blocks
-
-Always use keyed `{#each}` blocks to ensure Svelte can track element identities during updates, preventing rendering bugs and lint/compiler warnings.
-
-### ✅ Correct
-
-```svelte
-{#each items as item (item.id)}
-  <li>{item.name}</li>
-{/each}
-
-{#each ['A', 'B', 'C'] as label (label)}
-  <span>{label}</span>
-{/each}
-```
-
-### ❌ Incorrect
-
-```svelte
-{#each items as item}
-  <li>{item.name}</li>
-{/each}
-```
 
