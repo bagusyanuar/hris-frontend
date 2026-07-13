@@ -19,9 +19,9 @@ Dokumen ini merangkum rencana arsitektur untuk memecah UI Sidebar yang ada di ha
 - **Fungsi**: Menampilkan logo perusahaan dan nama aplikasi (TALENTFLOW).
 - **Tanggung Jawab**: Menangani logika penyusutan ukuran ikon saat sidebar masuk ke mode mini (*collapsed*).
 
-### `SidebarOrgSwitcher.svelte`
-- **Fungsi**: Komponen dropdown khusus untuk memilih cabang/organisasi.
-- **Tanggung Jawab**: Memiliki state internal sendiri untuk daftar perusahaan, tombol pemicu, dan *flyout pop-up* di sebelah kanan.
+### `SidebarBranchSwitcher.svelte`
+- **Fungsi**: Komponen dropdown khusus untuk memilih cabang.
+- **Tanggung Jawab**: Memiliki state internal sendiri untuk daftar cabang, tombol pemicu, dan *flyout pop-up* di sebelah kanan.
 
 ---
 
@@ -60,7 +60,7 @@ Nantinya, implementasi di halaman `+page.svelte` (atau di dalam Root Layout) aka
 ```svelte
 <Sidebar bind:isCollapsed>
     <SidebarBrand />
-    <SidebarOrgSwitcher {organizations} bind:activeOrg />
+    <SidebarBranchSwitcher {branches} bind:activeBranch />
     
     <SidebarNav>
         <SidebarGroup title="EMPLOYEES" />
