@@ -1,20 +1,32 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
-	import { scale } from 'svelte/transition';
 	import { cn } from '$lib/presentation/shared/utils/cn';
 	import { Typography } from '$lib/presentation/shared/components/typography';
 	import Icon from '@iconify/svelte';
+	import { dialogVariants } from './dialog.variants';
+
 
 	interface Props {
 		open: boolean;
 		title?: string;
 		size?: 'sm' | 'md' | 'lg' | 'xl';
+		position?: 'center' | 'top' | 'right';
+		closable?: boolean;
 		children: Snippet;
 		footer?: Snippet;
 		onclose?: () => void;
 	}
 
-	let { open = $bindable(false), title, size = 'md', children, footer, onclose }: Props = $props();
+	let {
+		open = $bindable(false),
+		title,
+		size = 'md',
+		position = 'center',
+		closable = true,
+		children,
+		footer,
+		onclose
+	}: Props = $props();
 
 	let dialogElement: HTMLDialogElement | undefined = $state();
 
@@ -36,33 +48,31 @@
 	}
 
 	function handleBackdropClick(e: MouseEvent) {
-		if (e.target === dialogElement) {
+		if (closable && e.target === dialogElement) {
 			handleClose();
 		}
 	}
 
-	const sizeClasses = {
-		sm: 'max-w-md',
-		md: 'max-w-lg',
-		lg: 'max-w-2xl',
-		xl: 'max-w-4xl'
-	};
+
 </script>
 
-{#if open}
-	<dialog
-		bind:this={dialogElement}
-		onclose={handleClose}
-		onclick={handleBackdropClick}
-		class={cn(
-			'w-full overflow-hidden rounded-xl border border-neutral-border bg-neutral-card p-0 shadow-xl outline-hidden',
-			'backdrop:bg-slate-950/40 backdrop:backdrop-blur-xs',
-			sizeClasses[size]
-		)}
-		transition:scale={{ duration: 150, start: 0.95 }}
-	>
-		<!-- Header -->
-		<div class="flex items-center justify-between border-b border-neutral-border px-6 py-4">
+<dialog
+	bind:this={dialogElement}
+	onclose={handleClose}
+	onclick={handleBackdropClick}
+	oncancel={(e) => {
+		if (!closable) {
+			e.preventDefault();
+		}
+	}}
+	class={cn(
+		dialogVariants({ size, position }),
+		`pos-${position}`
+	)}
+>
+	<!-- Header -->
+	{#if title || closable}
+		<div class="flex items-center justify-between border-b border-neutral-border px-5 py-3.5">
 			{#if title}
 				<Typography variant="h4" weight="semibold" color="primary">
 					{title}
@@ -70,28 +80,107 @@
 			{:else}
 				<div></div>
 			{/if}
-			<button
-				type="button"
-				onclick={handleClose}
-				class="rounded-lg p-1.5 text-slate-400 hover:bg-neutral-bg hover:text-slate-600 transition-colors duration-200"
-				aria-label="Close dialog"
-			>
-				<Icon icon="lucide:x" class="h-5 w-5" />
-			</button>
+			{#if closable}
+				<button
+					type="button"
+					onclick={handleClose}
+					class="rounded-lg p-1 text-slate-400 hover:bg-neutral-bg hover:text-slate-600 transition-colors duration-200 focus:outline-none cursor-pointer"
+					aria-label="Close dialog"
+				>
+					<Icon icon="lucide:x" class="h-5 w-5" />
+				</button>
+			{/if}
 		</div>
+	{/if}
 
-		<!-- Body -->
-		<div class="px-6 py-5 overflow-y-auto max-h-[70vh]">
-			{@render children()}
+	<!-- Body -->
+	<div class="px-5 py-4 overflow-y-auto max-h-[70vh]">
+		{@render children()}
+	</div>
+
+	<!-- Footer -->
+	{#if footer}
+		<div
+			class="flex justify-end gap-3 border-t border-neutral-border bg-slate-50/50 dark:bg-slate-900/20 px-5 py-3.5"
+		>
+			{@render footer()}
 		</div>
+	{/if}
+</dialog>
 
-		<!-- Footer -->
-		{#if footer}
-			<div
-				class="flex justify-end gap-3 border-t border-neutral-border bg-slate-50/50 dark:bg-slate-900/20 px-6 py-4"
-			>
-				{@render footer()}
-			</div>
-		{/if}
-	</dialog>
-{/if}
+<style>
+	dialog {
+		transition:
+			opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+			transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+			display 300ms allow-discrete,
+			overlay 300ms allow-discrete;
+		opacity: 0;
+	}
+
+	/* center position */
+	dialog.pos-center {
+		transform: scale(0.95);
+	}
+	dialog.pos-center[open] {
+		opacity: 1;
+		transform: scale(1);
+	}
+	@starting-style {
+		dialog.pos-center[open] {
+			opacity: 0;
+			transform: scale(0.95);
+		}
+	}
+
+	/* top position */
+	dialog.pos-top {
+		transform: translateY(-30px);
+	}
+	dialog.pos-top[open] {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	@starting-style {
+		dialog.pos-top[open] {
+			opacity: 0;
+			transform: translateY(-30px);
+		}
+	}
+
+	/* right position */
+	dialog.pos-right {
+		transform: translateX(100%);
+	}
+	dialog.pos-right[open] {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	@starting-style {
+		dialog.pos-right[open] {
+			opacity: 0;
+			transform: translateX(100%);
+		}
+	}
+
+	/* Backdrop */
+	dialog::backdrop {
+		transition:
+			background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+			backdrop-filter 300ms cubic-bezier(0.4, 0, 0.2, 1),
+			display 300ms allow-discrete,
+			overlay 300ms allow-discrete;
+		background-color: transparent;
+		backdrop-filter: blur(0px);
+	}
+	dialog[open]::backdrop {
+		background-color: rgba(2, 6, 23, 0.4); /* slate-950/40 */
+		backdrop-filter: blur(4px); /* backdrop-blur-xs */
+	}
+	@starting-style {
+		dialog[open]::backdrop {
+			background-color: transparent;
+			backdrop-filter: blur(0px);
+		}
+	}
+</style>

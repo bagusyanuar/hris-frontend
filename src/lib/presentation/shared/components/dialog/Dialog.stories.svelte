@@ -12,7 +12,12 @@
 			size: {
 				control: 'select',
 				options: ['sm', 'md', 'lg', 'xl']
-			}
+			},
+			position: {
+				control: 'select',
+				options: ['center', 'top', 'right']
+			},
+			closable: { control: 'boolean' }
 		}
 	});
 </script>
@@ -20,6 +25,9 @@
 <script lang="ts">
 	let isDefaultOpen = $state(false);
 	let isLargeOpen = $state(false);
+	let isTopOpen = $state(false);
+	let isRightOpen = $state(false);
+	let isNonClosableOpen = $state(false);
 </script>
 
 <Story name="Interactive Demo">
@@ -50,6 +58,65 @@
 			</p>
 			{#snippet footer()}
 				<Button variant="ghost" onclick={() => (isLargeOpen = false)}>Close</Button>
+			{/snippet}
+		</Dialog>
+	</div>
+</Story>
+
+<Story name="Top Positioned Dialog">
+	<div class="p-6">
+		<Button onclick={() => (isTopOpen = true)} variant="outline">Open Top Dialog</Button>
+
+		<Dialog bind:open={isTopOpen} title="Search / Command Palette" size="md" position="top">
+			<p class="text-sm text-slate-600 dark:text-slate-400">
+				This dialog is positioned at the top of the screen (`position="top"`). It is ideal for search bars,
+				quick action command palettes, or minimal notifications.
+			</p>
+			{#snippet footer()}
+				<Button variant="outline" onclick={() => (isTopOpen = false)}>Cancel</Button>
+			{/snippet}
+		</Dialog>
+	</div>
+</Story>
+
+<Story name="Right Drawer Dialog">
+	<div class="p-6">
+		<Button onclick={() => (isRightOpen = true)}>Open Right Drawer</Button>
+
+		<Dialog bind:open={isRightOpen} title="Employee Details" size="sm" position="right">
+			<div class="space-y-4">
+				<p class="text-sm text-slate-600 dark:text-slate-400">
+					This dialog acts as a slide-out drawer (`position="right"`). It takes full screen height and slides
+					smoothly from the right side.
+				</p>
+				<div class="border border-neutral-border rounded-lg p-3 bg-neutral-bg">
+					<p class="text-xs text-slate-500">Karyawan Info</p>
+					<p class="text-sm font-semibold">Bagus Yanuar</p>
+				</div>
+			</div>
+			{#snippet footer()}
+				<Button variant="outline" class="w-full" onclick={() => (isRightOpen = false)}>Close Drawer</Button>
+			{/snippet}
+		</Dialog>
+	</div>
+</Story>
+
+<Story name="Non-Closable Dialog">
+	<div class="p-6">
+		<Button onclick={() => (isNonClosableOpen = true)} variant="danger">
+			Open Non-Closable Dialog
+		</Button>
+
+		<Dialog bind:open={isNonClosableOpen} title="Important Action Required" size="sm" closable={false}>
+			<p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+				This dialog cannot be closed by pressing ESC or clicking on the backdrop (`closable={'{false}'}`).
+				You must explicitly interact with the action buttons below to proceed.
+			</p>
+			{#snippet footer()}
+				<Button variant="ghost" onclick={() => (isNonClosableOpen = false)}>Cancel</Button>
+				<Button variant="danger" onclick={() => (isNonClosableOpen = false)}>
+					Confirm Acknowledge
+				</Button>
 			{/snippet}
 		</Dialog>
 	</div>
