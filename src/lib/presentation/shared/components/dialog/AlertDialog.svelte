@@ -6,7 +6,6 @@
 	import Icon from '@iconify/svelte';
 	import { alertDialogVariants, alertIconVariants } from './alert-dialog.variants';
 
-
 	interface Props {
 		open: boolean;
 		title: string;
@@ -22,8 +21,8 @@
 
 		// Custom snippets
 		children?: Snippet; // Overrides description if provided
-		actions?: Snippet;  // Overrides footer buttons if provided
-		icon?: Snippet;     // Overrides default icon if provided
+		actions?: Snippet; // Overrides footer buttons if provided
+		icon?: Snippet; // Overrides default icon if provided
 
 		// Events
 		onconfirm?: () => void | Promise<void>;
@@ -96,7 +95,7 @@
 >
 	<div class="flex items-start gap-3.5">
 		<!-- Left Column: Icon -->
-		<div class="flex-shrink-0">
+		<div class="shrink-0">
 			{#if icon}
 				{@render icon()}
 			{:else}
@@ -132,11 +131,7 @@
 					<Button variant="outline" onclick={handleCancel} disabled={isLoading}>
 						{cancelText}
 					</Button>
-					<Button
-						variant={computedConfirmVariant}
-						{isLoading}
-						onclick={handleConfirm}
-					>
+					<Button variant={computedConfirmVariant} {isLoading} onclick={handleConfirm}>
 						{confirmText}
 					</Button>
 				{/if}
