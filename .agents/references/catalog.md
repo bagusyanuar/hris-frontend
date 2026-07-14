@@ -164,3 +164,25 @@ This is the central reference catalog of all reusable presentation components in
   toast.success('Settings saved successfully!', 'Success');
   ```
 
+### 12. Dialog
+- **Path:** [Dialog.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dialog/Dialog.svelte)
+- **Props:**
+  - `open`: `boolean` (bindable; controls the visibility of the dialog)
+  - `title`: `string` (optional; displays a header title using Typography component)
+  - `size`: `'sm' | 'md' | 'lg' | 'xl'` (defaults to `'md'`; defines the max-width of the modal)
+  - `children`: `Snippet` (dialog main content)
+  - `footer`: `Snippet` (optional; displays an action bar at the bottom)
+  - `onclose`: `() => void` (optional callback triggered when the dialog is closed)
+- **Description:**
+  - Standard accessibility-compliant modal dialog using HTML5 native `<dialog>` element. Manages backdrop blur, focus trapping, escape-key support, and scaling animations.
+- **Example:**
+  ```svelte
+  <Dialog bind:open={isOpen} title="Confirm Action" size="sm">
+    <p>Are you sure you want to proceed?</p>
+    {#snippet footer()}
+      <Button variant="outline" onclick={() => isOpen = false}>Cancel</Button>
+      <Button onclick={confirmAction}>Proceed</Button>
+    {/snippet}
+  </Dialog>
+  ```
+
