@@ -81,3 +81,20 @@ Never use browser default scrollbars on scrollable panels.
 - **Mandatory Typography Component**: **ALL** text content (headings, body copy, descriptions, captions, spans, labels, etc.) must be rendered using the `Typography` component. Never use raw HTML text tags (`<h1>`, `<p>`, `<span>`, `<label>`) with manual classes or custom styles directly in pages or components.
 - **Consistency**: Maintain a strict spacing rhythm (e.g., `gap-4`, `space-y-6`, `p-6`). Do not use ad-hoc pixel values; rely entirely on Tailwind CSS utility spacing values.
 - **Micro-animations**: All interactive elements (buttons, cards, links, tabs) must have smooth transitions: `transition-all duration-200 ease-in-out` with hover scale or background shifts.
+
+---
+
+## 7. Collapsed Sidebar Tooltips & Hover Flyouts Guidelines
+
+When implementing tooltips or flyout panels in a collapsed/mini-sidebar layout, follow these critical UX and styling patterns:
+
+1. **Hover Bridge Pattern (CRITICAL)**:
+   - Avoid using margins (e.g., `ml-2`) to create space between the sidebar trigger button and the absolute-positioned hover panel. Margin gaps create a dead-zone that triggers a `mouseout` event when the cursor crosses over, causing the panel to flicker or close immediately.
+   - **Solution**: Wrap the hover panel in a parent container with left padding (e.g., `pl-2`) that acts as an invisible interactive bridge. This ensures the hover state stays active as the mouse moves into the submenu.
+2. **Preventing Overflow Clipping**:
+   - Scrollable sidebar lists (`overflow-y-auto` or `overflow-hidden`) will clip absolute children extending outside the sidebar width (like tooltips or submenus).
+   - **Solution**: Conditionally disable vertical overflow when the sidebar is collapsed (e.g., `{sidebar.isCollapsed ? 'overflow-visible' : 'overflow-y-auto'}`).
+3. **Contrast in Dark Mode**:
+   - Tooltips and floating panels must stand out against parent containers. Do not use the same background token (e.g., `bg-neutral-card`) as the sidebar.
+   - **Solution**: In Light Mode, use a clean white card with a subtle border and shadow. In Dark Mode, use a contrasting background (e.g., `dark:bg-slate-950`) accompanied by a subtle brand-colored border (e.g., `dark:border-emerald-500/30`) to make it pop.
+
