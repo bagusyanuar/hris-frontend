@@ -22,6 +22,10 @@ This project enforces strict naming conventions to keep the codebase clean, read
 ## 3. Svelte Components & Svelte 5 Modules
 - **Rule**: Svelte components (`.svelte`) and Svelte 5 module files (`.svelte.ts` used for custom runes or reactive controllers) must use `PascalCase`.
 - *Example*: `LoginPage.svelte`, `FormLogin.svelte`, `AuthStore.svelte.ts` (or `AuthRune.svelte.ts`).
+- **Folder Rule**: Custom state modules or UI state helpers must be placed in a `/runes` folder inside the presentation layer. Do NOT name these folders `hooks`, as the term `hooks` is reserved for SvelteKit server/client request-handling middleware (e.g., `hooks.server.ts`).
+
+## 4. Routing & Links
+- **Rule**: For client-side routing, prefer standard anchor tags (`<a href="...">`) instead of using dynamic tags or button elements with click handlers calling programmatic navigation (like `goto`), unless programmatic control is strictly required. This allows SvelteKit to perform native prefetching, improves SEO, and provides native browser link behavior (e.g., hover preview, open in new tab).
 
 ## 4. Interfaces & Types (Core Layer)
 - **Rule**: All Interfaces in the Core layer must start with a capital `I` prefix (e.g. `IAuthRepository`).

@@ -101,4 +101,18 @@ $effect(() => {
 - Prefer `{#snippet}` blocks over `<slot>` for content projection in Svelte 5.
 - Use `{@render children()}` to render the default snippet.
 
+---
+
+## 7. Custom Runes & Folders
+- Place all custom reusable UI states and reactive controllers under `/runes` folders (e.g. `src/lib/presentation/modules/employee/runes/`).
+- Avoid using the term `hooks` for UI-state modules to prevent naming collisions and conceptual confusion with SvelteKit's request/response middleware `hooks` (`src/hooks.server.ts`).
+
+---
+
+## 8. SvelteKit Client-Side Routing
+- Always use standard anchor tags (`<a href="...">`) for normal page transitions to enable SvelteKit's prefetching and routing optimizations.
+- Use `$app/state` or `$app/navigation` selectively:
+  - Import `page` from `$app/state` to retrieve query parameters or the current pathname reatively.
+  - Import `goto` from `$app/navigation` only when programmatic redirection is required (e.g. redirecting after a successful form submission).
+
 
