@@ -186,3 +186,36 @@ This is the central reference catalog of all reusable presentation components in
   </Dialog>
   ```
 
+### 13. AlertDialog
+- **Path:** [AlertDialog.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dialog/AlertDialog.svelte)
+- **Props:**
+  - `open`: `boolean` (bindable; controls the visibility of the alert dialog)
+  - `title`: `string` (header title)
+  - `description`: `string` (optional; simple message paragraph)
+  - `variant`: `'info' | 'warning' | 'danger' | 'success'` (defaults to `'warning'`; styles icon and confirm button)
+  - `closable`: `boolean` (defaults to `false`; if true, allows closing using the ESC key)
+  - `confirmText`: `string` (defaults to `'Confirm'`)
+  - `cancelText`: `string` (defaults to `'Cancel'`)
+  - `confirmVariant`: `'default' | 'destructive' | 'outline' | 'secondary'` (optional; default is inferred from variant)
+  - `isLoading`: `boolean` (defaults to `false`; shows a spinner on the confirm button and disables the cancel button)
+  - `children`: `Snippet` (optional; overrides `description` for custom body markup)
+  - `actions`: `Snippet` (optional; overrides default Cancel/Confirm action buttons)
+  - `icon`: `Snippet` (optional; overrides default variant indicator icon)
+  - `onconfirm`: `() => void | Promise<void>` (optional callback when confirm is clicked)
+  - `oncancel`: `() => void` (optional callback when cancel/close is triggered)
+- **Description:**
+  - Compact, modern landscape/horizontal alert dialog for critical confirmation dialogs. Prevents backdrop closing by default, and structures visual importance via HSL-accented indicator circles. Includes built-in scale & opacity exit and entry transitions.
+- **Example:**
+  ```svelte
+  <AlertDialog
+    bind:open={isConfirmOpen}
+    title="Discard Changes?"
+    description="You have unsaved changes that will be permanently lost."
+    variant="warning"
+    confirmText="Discard"
+    cancelText="Keep Editing"
+    onconfirm={discardData}
+  />
+  ```
+
+
