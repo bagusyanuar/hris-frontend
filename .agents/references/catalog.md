@@ -218,4 +218,155 @@ This is the central reference catalog of all reusable presentation components in
   />
   ```
 
+### 14. Switch
+- **Path:** [Switch.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/switch/Switch.svelte)
+- **Props:**
+  - `checked`: `boolean` (bindable; reflects active state)
+  - `label`: `string` (optional label text)
+  - `description`: `string` (optional secondary description subtext)
+  - `error`: `string` (optional validation error message)
+- **Description:**
+  - Standard accessibility-compliant switch toggle component. Fully supports key focus, sliding micro-animations, custom labels, descriptions, and error states.
+- **Example:**
+  ```svelte
+  <Switch bind:checked={isNotificationsEnabled} label="Enable Notifications" description="Receive real-time alerts." />
+  ```
+
+### 15. Card
+- **Path:** [Card.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/card/Card.svelte)
+- **Props:**
+  - `title`: `string` (optional title text)
+  - `description`: `string` (optional secondary/muted description text)
+  - `padding`: `'default' | 'none' | 'sm' | 'lg'` (defines internal padding padding)
+  - `rounded`: `'default' | 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'` (defines border-radius)
+  - `shadow`: `'default' | 'none' | 'sm' | 'md' | 'lg'` (defines shadow depth)
+  - `hoverable`: `boolean` (adds interactive hover translation and shadow)
+  - `children`: `Snippet` (main card contents)
+  - `header`: `Snippet` (optional custom header content overrides `title` and `description`)
+  - `footer`: `Snippet` (optional custom footer contents; adds top border separator)
+- **Description:**
+  - Standard container component designed for the modern card-based SaaS interface. Supports title/description presets, custom headers, footers, hover states, and fully customized borders, padding, and shading.
+- **Example:**
+  ```svelte
+  <Card title="Quick Stats" description="Daily system activity updates" hoverable>
+    <p>Main card content here...</p>
+    {#snippet footer()}
+      <Button size="sm" variant="ghost">View Details</Button>
+    {/snippet}
+  </Card>
+  ```
+
+### 16. DatePicker
+- **Path:** [DatePicker.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/date-picker/DatePicker.svelte)
+- **Props:**
+  - `value`: `DateValue | undefined` (bindable; active selected date value)
+  - `type`: `'date' | 'month' | 'year'` (defaults to `'date'`; selects date granularity)
+  - `placeholder`: `string` (defaults to context-aware default)
+  - `label`: `string` (optional label text)
+  - `error`: `string` (optional validation error message)
+  - `helperText`: `string` (optional helper caption)
+  - `disabled`: `boolean` (disables interactions)
+  - `required`: `boolean` (shows red asterisk on label)
+  - `variant`: `'default' | 'error' | 'success'`
+  - `size`: `'sm' | 'md' | 'lg'`
+  - `displayFormat`: `(date: DateValue) => string` (custom date format renderer)
+  - `minValue` / `maxValue`: `DateValue | undefined` (range boundary restrictions)
+  - `align`: `'start' | 'center' | 'end'` (alignment of calendar dropdown relative to input)
+- **Description:**
+  - Accessible date selection popover component built on top of `bits-ui` calendar components. Fully styled, supporting month/year navigation dropdowns.
+- **Example:**
+  ```svelte
+  <DatePicker bind:value={birthDate} label="Date of Birth" required />
+  ```
+
+### 17. DateRangePicker
+- **Path:** [DateRangePicker.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/date-picker/DateRangePicker.svelte)
+- **Props:**
+  - `value`: `DateRange | undefined` (bindable; active range `{ start: DateValue, end: DateValue }`)
+  - `placeholder`: `string` (defaults to `"Pilih rentang tanggal..."`)
+  - `label`: `string` (optional label text)
+  - `error`: `string` (optional validation error message)
+  - `helperText`: `string` (optional helper caption)
+  - `disabled`: `boolean` (disables interaction)
+  - `required`: `boolean` (shows red asterisk)
+  - `variant`: `'default' | 'error' | 'success'`
+  - `size`: `'sm' | 'md' | 'lg'`
+  - `displayFormat`: `(date: DateValue) => string`
+  - `minValue` / `maxValue`: `DateValue | undefined`
+  - `align`: `'start' | 'center' | 'end'`
+- **Description:**
+  - Form-friendly date range selector. Automatically manages date-range highlighting states and formats date labels in human-readable dd/MM/yyyy.
+- **Example:**
+  ```svelte
+  <DateRangePicker bind:value={leaveRange} label="Leave Period" />
+  ```
+
+### 18. Dropdown
+- **Path:** [Dropdown.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropdown/Dropdown.svelte) / [DropdownItem.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropdown/DropdownItem.svelte) / [DropdownDivider.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropdown/DropdownDivider.svelte)
+- **Props (Dropdown):**
+  - `align`: `'left' | 'right'` (defaults to `'left'`; alignment of the popup box)
+  - `portal`: `boolean` (defaults to `true`; mounts menu to document body)
+  - `trigger`: `Snippet<[toggle: () => void, isOpen: boolean]>` (trigger node builder)
+  - `content`: `Snippet` (dropdown item list content)
+- **Props (DropdownItem):**
+  - `variant`: `'default' | 'danger'` (danger styles item with red text/hover state)
+  - `disabled`: `boolean`
+  - `onclick`: `() => void`
+- **Description:**
+  - Elegant popup/context menu element with smooth `@starting-style` transitions, click-outside dismissal, focus trapping, and portal rendering.
+- **Example:**
+  ```svelte
+  <Dropdown align="right">
+    {#snippet trigger(toggle)}
+      <Button onclick={toggle} variant="outline">Actions</Button>
+    {/snippet}
+    {#snippet content()}
+      <DropdownItem onclick={editItem}>Edit Profile</DropdownItem>
+      <DropdownDivider />
+      <DropdownItem onclick={deleteItem} variant="danger">Delete Account</DropdownItem>
+    {/snippet}
+  </Dropdown>
+  ```
+
+### 19. Navbar
+- **Path:** [Navbar.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/navbar/Navbar.svelte) (along with breadcrumbs, toggles, notifications, and search components in the `navbar/` folder)
+- **Description:**
+  - Desktop-optimized headers containing brand titles, breadcrumbs, search, notification triggers, and user theme toggles.
+- **Example:**
+  ```svelte
+  <Navbar>
+    <div class="flex items-center gap-3">
+      <NavbarSidebarToggle />
+      <NavbarBreadcrumbs items={[{ label: 'Dashboard' }]} />
+    </div>
+    <div class="flex items-center gap-4">
+      <NavbarSearch />
+      <NavbarThemeToggle />
+      <NavbarNotifications />
+    </div>
+  </Navbar>
+  ```
+
+### 20. Sidebar / DashboardSidebar
+- **Path:** [Sidebar.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/sidebar/Sidebar.svelte) / [DashboardSidebar.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/sidebar/DashboardSidebar.svelte)
+- **Props (DashboardSidebar):**
+  - `isCollapsed`: `boolean` (bindable)
+  - `branches`: `Branch[]` (active branches context list)
+  - `activeBranch`: `Branch` (bindable; currently selected branch context)
+  - `user`: `UserProfile` (`{ name, role, initials }`)
+  - `onProfileClick`: `() => void`
+  - `onLogoutClick`: `() => void`
+- **Description:**
+  - Sidebar container supporting collapse/expand animations, mobile overlay slide-ins, nested group lists, branch switcher popovers, and profile summary anchors.
+- **Example:**
+  ```svelte
+  <DashboardSidebar
+    bind:isCollapsed={collapsed}
+    user={{ name: 'Jane Doe', role: 'HR Admin', initials: 'JD' }}
+    branches={[{ id: 'hq', name: 'Headquarters', short: 'HQ', color: 'bg-primary' }]}
+  />
+  ```
+
+
+
 

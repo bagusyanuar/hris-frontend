@@ -98,3 +98,16 @@ When implementing tooltips or flyout panels in a collapsed/mini-sidebar layout, 
    - Tooltips and floating panels must stand out against parent containers. Do not use the same background token (e.g., `bg-neutral-card`) as the sidebar.
    - **Solution**: In Light Mode, use a clean white card with a subtle border and shadow. In Dark Mode, use a contrasting background (e.g., `dark:bg-slate-950`) accompanied by a subtle brand-colored border (e.g., `dark:border-emerald-500/30`) to make it pop.
 
+---
+
+## 8. Tailwind & Styling Best Practices
+
+1. **Mandatory `class-variance-authority` (CVA)**:
+   - When building a component with multiple states, sizes, colors, or visual styles, you **MUST** define them using `class-variance-authority` (CVA) in a companion file named `<ComponentName>.variants.ts`.
+   - Merging classes should be performed using the `cn` utility (`$lib/presentation/shared/utils/cn`).
+
+2. **Strict Avoidance of Tailwind Arbitrary Values**:
+   - Do **NOT** use arbitrary values such as `bg-[#6366f1]`, `w-[360px]`, `h-[48px]`, or `top-[8px]`.
+   - Prefer Tailwind's native layout, spacing, and sizing scales (e.g., `w-80`, `h-12`, `top-2`).
+   - If a specific custom spacing, color, or dimension is needed, configure it as a design token variable inside the `@theme` block in `src/app.css` (Tailwind v4) rather than using an inline arbitrary value.
+

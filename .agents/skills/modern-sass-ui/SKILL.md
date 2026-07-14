@@ -34,8 +34,8 @@ Define theme tokens using CSS variables inside the main entrypoint CSS (e.g., `s
 
 ---
 
-## 2. Component Variant Management (CVA & cn Utility)
-For clean, modular, and type-safe components, always split styling variants from Svelte components using `class-variance-authority` and the `cn` helper (`clsx` + `tailwind-merge`):
+## 2. Component Variant Management (Mandatory CVA & cn Utility)
+For clean, modular, and type-safe components, you **MUST** split styling variants from Svelte components using `class-variance-authority` (CVA) and the `cn` helper (`clsx` + `tailwind-merge`):
 
 ### A. Suffix Suffix Convention (`.variants.ts`)
 Store all variants definitions in a separate TypeScript file adjacent to the Svelte component, named `<component-name>.variants.ts` (e.g. `button.variants.ts`).
@@ -211,6 +211,8 @@ All components must be fully accessible by design:
 ---
 
 ## 6. Best Practices Checklist
+- [ ] **Mandatory CVA**: Ensure all multi-variant or styled state components split their style configurations into a companion `.variants.ts` file using `class-variance-authority`.
+- [ ] **No Arbitrary Tailwind Values**: Make sure there are no arbitrary values like `h-[200px]` or `bg-[#abc]` in Tailwind classes. Instead, use standard scales or add a theme token in `src/app.css` if custom dimensions are needed.
 - [ ] **Avoid Hardcoded Colors**: Always prefer abstract token classes (`bg-brand-primary`, `bg-brand-light`, `text-brand-text`, `border-brand-border`) over hardcoded color utilities like `bg-emerald-600` inside component templates.
 - [ ] **Spacious Padding**: Minimum `p-6` for normal cards. Don't crowd info.
 - [ ] **Hover Transitions**: Apply `transition-all duration-200 active:scale-[0.98]` to all hoverable elements.
