@@ -1,12 +1,5 @@
 <script lang="ts">
-	import Sidebar from '$lib/presentation/shared/components/sidebar/Sidebar.svelte';
-	import SidebarBrand from '$lib/presentation/shared/components/sidebar/SidebarBrand.svelte';
-	import SidebarBranchSwitcher from '$lib/presentation/shared/components/sidebar/SidebarBranchSwitcher.svelte';
-	import SidebarNav from '$lib/presentation/shared/components/sidebar/SidebarNav.svelte';
-	import SidebarGroup from '$lib/presentation/shared/components/sidebar/SidebarGroup.svelte';
-	import SidebarItem from '$lib/presentation/shared/components/sidebar/SidebarItem.svelte';
-	import SidebarExpandable from '$lib/presentation/shared/components/sidebar/SidebarExpandable.svelte';
-	import SidebarProfile from '$lib/presentation/shared/components/sidebar/SidebarProfile.svelte';
+	import { DashboardSidebar } from '$lib/presentation/shared/components/sidebar';
 	import Navbar from '$lib/presentation/shared/components/navbar/Navbar.svelte';
 	import NavbarMobileToggle from '$lib/presentation/shared/components/navbar/NavbarMobileToggle.svelte';
 	import NavbarSidebarToggle from '$lib/presentation/shared/components/navbar/NavbarSidebarToggle.svelte';
@@ -60,39 +53,14 @@
 	class="h-screen flex bg-slate-100 dark:bg-slate-950 p-3 gap-3 overflow-hidden text-slate-900 transition-colors duration-200"
 >
 	<!-- REUSABLE SIDEBAR -->
-	<Sidebar bind:isCollapsed>
-		<SidebarBrand />
-		<SidebarBranchSwitcher {branches} bind:activeBranch />
-
-		<SidebarNav>
-			<SidebarGroup title="Employees">
-				<SidebarItem label="Dashboard" icon="lucide:grid" href="/" />
-				<SidebarItem label="Staff Directory" icon="lucide:users" href="/employees" />
-				<SidebarItem label="Time & Attendance" icon="lucide:clock" href="#time" />
-			</SidebarGroup>
-
-			<SidebarGroup title="Finance">
-				<SidebarExpandable
-					label="Payroll"
-					icon="lucide:banknote"
-					isActive={page.url.pathname.includes('/payroll') ||
-						page.url.hash.includes('payroll') ||
-						page.url.hash.includes('payslips')}
-				>
-					<SidebarItem label="Run Payroll" isSubItem href="#run-payroll" />
-					<SidebarItem label="Payslips" isSubItem href="#payslips" />
-				</SidebarExpandable>
-
-				<SidebarItem label="Expenses" icon="lucide:wallet" href="#expenses" />
-			</SidebarGroup>
-		</SidebarNav>
-
-		<SidebarProfile
-			user={currentUser}
-			onProfileClick={() => alert('Profile Clicked')}
-			onLogoutClick={() => alert('Logout Clicked')}
-		/>
-	</Sidebar>
+	<DashboardSidebar
+		bind:isCollapsed
+		{branches}
+		bind:activeBranch
+		user={currentUser}
+		onProfileClick={() => alert('Profile Clicked')}
+		onLogoutClick={() => alert('Logout Clicked')}
+	/>
 
 	<!-- CONTENT AREA (Navbar + Main Page Body) -->
 	<div class="flex-1 flex flex-col gap-3 min-w-0">

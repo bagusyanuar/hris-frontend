@@ -6,3 +6,5 @@ export { default as SidebarGroup } from './SidebarGroup.svelte';
 export { default as SidebarItem } from './SidebarItem.svelte';
 export { default as SidebarExpandable } from './SidebarExpandable.svelte';
 export { default as SidebarProfile } from './SidebarProfile.svelte';
+export { default as DashboardSidebar } from './DashboardSidebar.svelte';
+
