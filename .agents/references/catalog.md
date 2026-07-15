@@ -370,6 +370,8 @@ This is the central reference catalog of all reusable presentation components in
 ### 21. Dropzone
 - **Path:** [Dropzone.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropzone/Dropzone.svelte)
 - **Props:**
+  - `files`: `File[]` (bindable; array of selected/dropped files)
+  - `showPreviewList`: `boolean` (defaults to `true`; renders a grid of uploaded files below the dropzone with custom icons and preview modal dialog)
   - `accept`: `string` (comma-separated list of MIME types or extensions, e.g. `'image/*, .pdf'`)
   - `multiple`: `boolean` (defaults to `true`; allows multiple files)
   - `maxSize`: `number` (maximum file size in bytes)
@@ -379,16 +381,18 @@ This is the central reference catalog of all reusable presentation components in
   - `ondrop`: `(acceptedFiles: File[], rejectedFiles: FileRejection[]) => void` (triggered when files are dropped or selected)
   - `children`: `Snippet<[DropzoneState]>` (optional slot for custom template)
 - **Description:**
-  - Fully accessible drag-and-drop file upload zone styled according to system brand guidelines (emerald accents and support for dark mode). Supports automated validations for file type, file size, and file count.
+  - Fully accessible drag-and-drop file upload zone styled according to system brand guidelines (emerald accents and support for dark mode). Supports automated validations for file type, file size, and file count, and built-in detail/image preview modal on click.
 - **Example:**
   ```svelte
+  <script lang="ts">
+    import { Dropzone } from '$lib/presentation/shared/components/dropzone';
+    let uploadedFiles = $state<File[]>([]);
+  </script>
+
   <Dropzone
-    accept="image/*"
+    bind:files={uploadedFiles}
+    accept="image/*, .pdf, .xlsx"
     maxSize={5 * 1024 * 1024}
-    ondrop={(accepted, rejected) => {
-      console.log('Accepted:', accepted);
-      console.log('Rejected:', rejected);
-    }}
   />
   ```
 
