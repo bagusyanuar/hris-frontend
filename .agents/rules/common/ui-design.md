@@ -38,23 +38,26 @@ Every content card must have:
 - **Borders & Shadows**: Soft borders (`border border-neutral-border`). **IMPORTANT**: Avoid using drop shadows (`shadow-sm`, etc.) on parent/layout containers (such as the Sidebar, Page Header, and Main Content wrap in Bento Grid) to keep the app minimal; rely entirely on border lines for structural definition.
 - **Rounding**: Consistent rounded corners, preferably `rounded-xl`.
 - **Padding**: Generous spacing inside the card, minimum `p-6` (24px) for desktop, `p-4` (16px) for mobile.
+- **Card Variants**:
+  - `default`: Clean border-only layout for standard content boxes.
+  - `accent-primary` / `accent-success` / `accent-warning` / `accent-danger`: Cards with a colored left-border strip (4px width). Use specifically for alert states, status updates, or notifications (e.g. `accent-warning` for pending requests, `accent-success` for active items).
+  - `glass`: Frosted glass semi-transparent cards. Use only for floating popovers, dropdown lists, or items placed over rich background gradients.
+  - `glow`: Interactive hoverable card that projects a subtle brand-colored shadow glow. Ideal for main action cards or highlighted KPI widgets on the dashboard.
+  - `gradient`: Uses a light, subtle brand-color gradient background. Use sparingly for hero cards or welcome panels.
 - **Structure**:
   - **Header**: Optional, but if present, contains a descriptive title (`text-base font-semibold text-slate-900`) and optional actions (e.g. menu, filter button).
   - **Body**: Core visual details or data representation.
   - **Footer**: Optional action area separated by a soft border or simple spacing.
 
 ```html
-<!-- Example of a Standard Card in Svelte using Abstract Tokens (No Shadow) -->
-<div class="rounded-xl border border-neutral-border bg-neutral-card p-6 transition-all duration-200">
-  <div class="mb-4 flex items-center justify-between">
-    <h3 class="text-base font-semibold text-slate-900">Card Title</h3>
-    <span class="rounded-full bg-brand-light px-2.5 py-0.5 text-xs font-medium text-brand-text">Status</span>
-  </div>
-  <div class="text-sm text-slate-600">
+<!-- Example of a Standard Card in Svelte using Abstract Tokens -->
+<Card title="Card Title" description="Card description text">
+  <div class="text-sm">
     <!-- Card content here -->
   </div>
-</div>
+</Card>
 ```
+
 
 ## 4. Bento Grid & Floating Panels Layout
 For premium SaaS dashboards, use the **Bento Grid / Floating Panels** layout:
