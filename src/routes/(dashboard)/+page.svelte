@@ -5,6 +5,49 @@
 	import Icon from '@iconify/svelte';
 	import { resolve } from '$app/paths';
 	import type { Pathname } from '$app/types';
+
+	const stats = [
+		{
+			title: 'Total Employees',
+			value: '185',
+			icon: 'lucide:users',
+			color: 'text-blue-600 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400',
+			trend: '+12%',
+			trendColor: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 dark:text-emerald-400',
+			trendIcon: 'lucide:arrow-up-right',
+			subtext: '14 new hires this month'
+		},
+		{
+			title: 'Present Today',
+			value: '172 (93%)',
+			icon: 'lucide:check-square',
+			color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400',
+			trend: '+2.4%',
+			trendColor: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 dark:text-emerald-400',
+			trendIcon: 'lucide:arrow-up-right',
+			subtext: 'vs 91.5% average last week'
+		},
+		{
+			title: 'On Leave',
+			value: '8',
+			icon: 'lucide:plane',
+			color: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400',
+			trend: '-15%',
+			trendColor: 'text-rose-600 bg-rose-50 dark:bg-rose-950/20 dark:text-rose-400',
+			trendIcon: 'lucide:arrow-down-left',
+			subtext: '3 returning tomorrow'
+		},
+		{
+			title: 'Upcoming Reviews',
+			value: '4',
+			icon: 'lucide:star',
+			color: 'text-purple-600 bg-purple-50 dark:bg-purple-950/30 dark:text-purple-400',
+			trend: 'Soon',
+			trendColor: 'text-slate-600 bg-slate-100 dark:bg-slate-800 dark:text-slate-400',
+			trendIcon: 'lucide:clock',
+			subtext: 'Next evaluations on Friday'
+		}
+	];
 </script>
 
 <svelte:head>
@@ -23,23 +66,27 @@
 
 <!-- Metrics Dashboard Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-	{#each [
-		{ title: 'Total Employees', value: '185', icon: 'lucide:users', color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' },
-		{ title: 'Present Today', value: '172 (93%)', icon: 'lucide:check-square', color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20' },
-		{ title: 'On Leave', value: '8', icon: 'lucide:plane', color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/20' },
-		{ title: 'Upcoming Reviews', value: '4', icon: 'lucide:star', color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/20' }
-	] as stat (stat.title)}
-		<Card hoverable={true} class="relative overflow-hidden border border-neutral-border bg-neutral-card p-4">
+	{#each stats as stat (stat.title)}
+		<Card variant="glow" hoverable={true} padding="sm" class="relative overflow-hidden">
 			<div class="flex items-center justify-between">
-				<div class="flex flex-col gap-1">
-					<Typography variant="caption" color="secondary">{stat.title}</Typography>
-					<Typography variant="h5" weight="bold" class="text-slate-900 dark:text-slate-50">
-						{stat.value}
-					</Typography>
+				<Typography variant="caption" color="secondary" weight="medium">{stat.title}</Typography>
+				<div class="w-9 h-9 rounded-xl flex items-center justify-center {stat.color}">
+					<Icon icon={stat.icon} class="w-4 h-4" />
 				</div>
-				<div class="w-10 h-10 rounded-xl flex items-center justify-center {stat.color}">
-					<Icon icon={stat.icon} class="w-5 h-5" />
-				</div>
+			</div>
+			
+			<div class="mt-4 flex items-baseline gap-2 flex-wrap">
+				<Typography variant="h5" weight="bold" class="text-slate-900 dark:text-slate-50">
+					{stat.value}
+				</Typography>
+				<span class="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-semibold {stat.trendColor}">
+					<Icon icon={stat.trendIcon} class="w-3 h-3" />
+					{stat.trend}
+				</span>
+			</div>
+			
+			<div class="mt-2">
+				<Typography variant="caption" color="muted" class="text-[11px]">{stat.subtext}</Typography>
 			</div>
 		</Card>
 	{/each}
@@ -49,7 +96,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 	<!-- Left Area (Leave request summary) -->
 	<div class="lg:col-span-2 space-y-6">
-		<Card title="Leave Requests" description="Review employee leave requests that require pending actions." class="bg-neutral-card border border-neutral-border p-5">
+		<Card variant="accent-warning" title="Leave Requests" description="Review employee leave requests that require pending actions.">
 			<div class="mt-4 divide-y divide-neutral-border overflow-x-auto">
 				<table class="w-full text-left text-xs">
 					<thead>
@@ -93,13 +140,13 @@
 
 	<!-- Right Area (Quick Actions & Recent Activity) -->
 	<div class="space-y-6">
-		<Card title="Quick Actions" class="bg-neutral-card border border-neutral-border p-5">
-			<div class="grid grid-cols-2 gap-2.5 mt-4">
-				<a href={resolve('/employees' as Pathname)} class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-all cursor-pointer">
+		<Card title="Quick Actions">
+			<div class="grid grid-cols-2 gap-2.5 mt-2">
+				<a href={resolve('/employees' as Pathname)} class="flex flex-col items-center justify-center p-4 rounded-xl border border-neutral-border bg-neutral-card hover:bg-slate-50 dark:hover:bg-slate-900/40 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer">
 					<Icon icon="lucide:users" class="w-5 h-5 mb-1.5 text-slate-400 group-hover:text-emerald-500" />
 					<span class="text-[10px] font-semibold text-center">Staff Directory</span>
 				</a>
-				<button class="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-border hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-all cursor-pointer">
+				<button class="flex flex-col items-center justify-center p-4 rounded-xl border border-neutral-border bg-neutral-card hover:bg-slate-50 dark:hover:bg-slate-900/40 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer">
 					<Icon icon="lucide:calendar" class="w-5 h-5 mb-1.5 text-slate-400 group-hover:text-emerald-500" />
 					<span class="text-[10px] font-semibold text-center">Log Time</span>
 				</button>
@@ -107,3 +154,4 @@
 		</Card>
 	</div>
 </div>
+

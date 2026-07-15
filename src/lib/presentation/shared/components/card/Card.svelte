@@ -14,6 +14,7 @@
 	}
 
 	let {
+		variant,
 		padding,
 		rounded,
 		shadow,
@@ -29,7 +30,7 @@
 </script>
 
 <div
-	class={cn(cardVariants({ padding, rounded, shadow, hoverable }), className)}
+	class={cn(cardVariants({ variant, padding, rounded, shadow, hoverable }), className)}
 	{...restProps}
 >
 	<!-- Card Header (with proportional mb-5 spacing) -->

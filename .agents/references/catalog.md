@@ -235,6 +235,7 @@ This is the central reference catalog of all reusable presentation components in
 ### 15. Card
 - **Path:** [Card.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/card/Card.svelte)
 - **Props:**
+  - `variant`: `'default' | 'accent-primary' | 'accent-success' | 'accent-danger' | 'accent-warning' | 'glass' | 'glow' | 'gradient'` (design style variant)
   - `title`: `string` (optional title text)
   - `description`: `string` (optional secondary/muted description text)
   - `padding`: `'default' | 'none' | 'sm' | 'lg'` (defines internal padding padding)
