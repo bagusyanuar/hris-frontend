@@ -367,6 +367,32 @@ This is the central reference catalog of all reusable presentation components in
   />
   ```
 
+### 21. Dropzone
+- **Path:** [Dropzone.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropzone/Dropzone.svelte)
+- **Props:**
+  - `accept`: `string` (comma-separated list of MIME types or extensions, e.g. `'image/*, .pdf'`)
+  - `multiple`: `boolean` (defaults to `true`; allows multiple files)
+  - `maxSize`: `number` (maximum file size in bytes)
+  - `maxFiles`: `number` (maximum number of files allowed)
+  - `disabled`: `boolean` (disables interactions)
+  - `class`: `string` (custom CSS wrapper classes)
+  - `ondrop`: `(acceptedFiles: File[], rejectedFiles: FileRejection[]) => void` (triggered when files are dropped or selected)
+  - `children`: `Snippet<[DropzoneState]>` (optional slot for custom template)
+- **Description:**
+  - Fully accessible drag-and-drop file upload zone styled according to system brand guidelines (emerald accents and support for dark mode). Supports automated validations for file type, file size, and file count.
+- **Example:**
+  ```svelte
+  <Dropzone
+    accept="image/*"
+    maxSize={5 * 1024 * 1024}
+    ondrop={(accepted, rejected) => {
+      console.log('Accepted:', accepted);
+      console.log('Rejected:', rejected);
+    }}
+  />
+  ```
+
+
 
 
 
