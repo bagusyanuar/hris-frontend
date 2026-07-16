@@ -19,3 +19,12 @@ Please read the following rules:
 - Guidelines for working with Svelte 5 and using Svelte MCP tools: [mcp.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/mcp.md)
 - Svelte 5 coding conventions, runes patterns, and lint-safe idioms: [conventions.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/conventions.md)
 
+## 4. AI Tooling Setup (Multi-Agent Sync)
+
+This project shares rules, skills, and workflows across multiple AI tools (Gemini/Antigravity, Claude Code, and any AGENTS.md-compatible tool). `.agents/` is the **single source of truth**:
+
+- `/AGENTS.md` (repo root) and `/CLAUDE.md` are entrypoints that point back into this folder — root `AGENTS.md` is a symlink to this file.
+- `.claude/rules/`, `.claude/skills/`, and `.claude/commands/` are **symlinks** into `.agents/rules/`, `.agents/skills/`, and `.agents/workflows/` respectively — they are not copies.
+
+**CRITICAL:** Always create, edit, or delete rules, skills, and workflows under `.agents/` (e.g. `.agents/rules/...`, `.agents/skills/...`, `.agents/workflows/...`). Never write directly into `.claude/rules/`, `.claude/skills/`, or `.claude/commands/` — those paths only exist so Claude Code auto-loads the same content every session.
+
