@@ -2,17 +2,11 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLThAttributes } from 'svelte/elements';
 	import { getContext } from 'svelte';
-	import { flexRender, type Header } from '@tanstack/svelte-table';
+	import { flexRender, type Header, type Table } from '@tanstack/svelte-table';
 	import { cn } from '$lib/presentation/shared/utils/cn';
 	import { headVariants } from './table.variants';
+	import { getPinnedOffset } from './helpers.svelte';
 	import Icon from '@iconify/svelte';
-
-	interface CustomColumnMeta {
-		align?: 'left' | 'center' | 'right';
-		pinned?: 'left' | 'right' | 'none';
-		className?: string;
-		headerClassName?: string;
-	}
 
 	interface Props extends HTMLThAttributes {
 		header?: Header<TData, TValue>;
@@ -30,11 +24,11 @@
 		...restProps
 	}: Props = $props();
 
-	const context = getContext<{ density: 'default' | 'compact' }>('TABLE_CONTEXT');
+	const context = getContext<{ density: 'default' | 'compact'; table?: Table<TData> }>('TABLE_CONTEXT');
 	const density = $derived(context?.density ?? 'default');
 
 	// Resolve styling and layout settings from TanStack Column Meta if header is present
-	const columnMeta = $derived(header?.column.columnDef.meta as CustomColumnMeta | undefined);
+	const columnMeta = $derived(header?.column.columnDef.meta);
 	
 	const resolvedAlign = $derived(
 		align ?? 
@@ -47,6 +41,16 @@
 	);
 
 	const resolvedPinned = $derived(pinned ?? columnMeta?.pinned ?? 'none');
+
+	// Cumulative sticky offset + fixed width so multiple pinned columns stack instead of overlapping.
+	const pinnedStyle = $derived.by(() => {
+		const table = context?.table;
+		if (resolvedPinned === 'none' || !header || !table) return undefined;
+		const { column } = header;
+		const offset = getPinnedOffset(table, column.id, resolvedPinned);
+		const size = column.getSize();
+		return `${resolvedPinned}:${offset}px;width:${size}px;min-width:${size}px;`;
+	});
 
 	const isSortable = $derived(header?.column.getCanSort() ?? false);
 	const isSorted = $derived(header?.column.getIsSorted());
@@ -65,7 +69,32 @@
 	}
 </script>
 
+{#snippet headContent()}
+	{#if children}
+		{@render children()}
+	{:else if header}
+		{#if HeaderComponent}
+			<HeaderComponent />
+		{:else}
+			{header.column.columnDef.header}
+		{/if}
+	{/if}
+
+	{#if isSortable}
+		<span class="inline-flex text-slate-400">
+			{#if isSorted === 'asc'}
+				<Icon icon="lucide:chevron-up" class="h-3.5 w-3.5 text-brand-primary" />
+			{:else if isSorted === 'desc'}
+				<Icon icon="lucide:chevron-down" class="h-3.5 w-3.5 text-brand-primary" />
+			{:else}
+				<Icon icon="lucide:chevrons-up-down" class="h-3.5 w-3.5 opacity-40 hover:opacity-100" />
+			{/if}
+		</span>
+	{/if}
+{/snippet}
+
 <th
+	scope="col"
 	class={cn(
 		headVariants({
 			density,
@@ -76,36 +105,37 @@
 		columnMeta?.headerClassName,
 		className
 	)}
-	onclick={handleSort}
+	aria-sort={isSortable
+		? isSorted === 'asc'
+			? 'ascending'
+			: isSorted === 'desc'
+				? 'descending'
+				: 'none'
+		: undefined}
+	style={pinnedStyle}
 	{...restProps}
 >
-	<div
-		class={cn(
-			'flex items-center gap-1.5',
-			resolvedAlign === 'center' && 'justify-center',
-			resolvedAlign === 'right' && 'justify-end'
-		)}
-	>
-		{#if children}
-			{@render children()}
-		{:else if header}
-			{#if HeaderComponent}
-				<HeaderComponent />
-			{:else}
-				{header.column.columnDef.header}
-			{/if}
-		{/if}
-
-		{#if isSortable}
-			<span class="inline-flex text-slate-400">
-				{#if isSorted === 'asc'}
-					<Icon icon="lucide:arrow-up" class="h-3.5 w-3.5 text-brand-primary" />
-				{:else if isSorted === 'desc'}
-					<Icon icon="lucide:arrow-down" class="h-3.5 w-3.5 text-brand-primary" />
-				{:else}
-					<Icon icon="lucide:arrow-up-down" class="h-3.5 w-3.5 opacity-40 hover:opacity-100" />
-				{/if}
-			</span>
-		{/if}
-	</div>
+	{#if isSortable}
+		<button
+			type="button"
+			onclick={handleSort}
+			class={cn(
+				'flex w-full items-center gap-1.5',
+				resolvedAlign === 'center' && 'justify-center',
+				resolvedAlign === 'right' && 'justify-end'
+			)}
+		>
+			{@render headContent()}
+		</button>
+	{:else}
+		<div
+			class={cn(
+				'flex items-center gap-1.5',
+				resolvedAlign === 'center' && 'justify-center',
+				resolvedAlign === 'right' && 'justify-end'
+			)}
+		>
+			{@render headContent()}
+		</div>
+	{/if}
 </th>

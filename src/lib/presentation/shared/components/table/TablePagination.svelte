@@ -33,7 +33,7 @@
 	const endIdx = $derived(Math.min(totalRows, (pageIndex + 1) * pageSize));
 
 	// Calculate sliding range of page numbers
-	const pageRange = $derived(() => {
+	const pageRange = $derived.by(() => {
 		if (pageCount <= 7) {
 			return Array.from({ length: pageCount }, (_, i) => i + 1);
 		}
@@ -96,15 +96,21 @@
 				<Typography variant="body-sm" color="secondary">
 					Baris per halaman:
 				</Typography>
-				<select
-					value={pageSize}
-					onchange={(e) => table.setPageSize(Number((e.target as HTMLSelectElement).value))}
-					class="rounded-lg border border-neutral-border bg-neutral-card py-1 px-2 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-brand-primary transition-colors cursor-pointer"
-				>
-					{#each pageSizeOptions as option (option)}
-						<option value={option}>{option}</option>
-					{/each}
-				</select>
+				<div class="relative">
+					<select
+						value={pageSize}
+						onchange={(e) => table.setPageSize(Number((e.target as HTMLSelectElement).value))}
+						class="appearance-none rounded-lg border border-neutral-border bg-neutral-card bg-none py-1 pl-3 pr-8 text-sm text-slate-700 dark:text-slate-300 outline-none focus:outline-none focus:ring-0 focus:border-brand-primary transition-colors cursor-pointer"
+					>
+						{#each pageSizeOptions as option (option)}
+							<option value={option}>{option}</option>
+						{/each}
+					</select>
+					<Icon
+						icon="lucide:chevron-down"
+						class="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+					/>
+				</div>
 			</div>
 
 			<!-- Pagination Controls -->
@@ -133,7 +139,7 @@
 
 				<!-- Page Numbers -->
 				<div class="flex items-center gap-1">
-					{#each pageRange() as page, index (index)}
+					{#each pageRange as page, index (index)}
 						{#if page === '...'}
 							<span class="px-2 text-slate-400 select-none">...</span>
 						{:else}

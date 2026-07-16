@@ -16,7 +16,7 @@ export const tableVariants = cva(
 );
 
 export const cellVariants = cva(
-	'border-b border-neutral-border transition-colors duration-200',
+	'transition-colors duration-200',
 	{
 		variants: {
 			density: {
@@ -29,8 +29,8 @@ export const cellVariants = cva(
 				right: 'text-right'
 			},
 			pinned: {
-				left: 'sticky left-0 bg-neutral-card z-10 border-r border-neutral-border',
-				right: 'sticky right-0 bg-neutral-card z-10 border-l border-neutral-border',
+				left: 'sticky bg-inherit z-10 border-r border-neutral-border',
+				right: 'sticky bg-inherit z-10 border-l border-neutral-border',
 				none: ''
 			}
 		},
@@ -56,8 +56,8 @@ export const headVariants = cva(
 				right: 'text-right'
 			},
 			pinned: {
-				left: 'sticky left-0 bg-neutral-bg z-20 border-r border-neutral-border',
-				right: 'sticky right-0 bg-neutral-bg z-20 border-l border-neutral-border',
+				left: 'sticky bg-neutral-bg z-20 border-r border-neutral-border',
+				right: 'sticky bg-neutral-bg z-20 border-l border-neutral-border',
 				none: ''
 			}
 		},
@@ -70,7 +70,7 @@ export const headVariants = cva(
 );
 
 export const rowVariants = cva(
-	'transition-colors duration-200 border-b border-neutral-border last:border-b-0',
+	'transition-colors duration-200 bg-neutral-card',
 	{
 		variants: {
 			hoverable: {

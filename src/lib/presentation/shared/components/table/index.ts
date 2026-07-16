@@ -7,4 +7,5 @@ export { default as Cell } from './TableCell.svelte';
 export { default as Pagination } from './TablePagination.svelte';
 
 export * from './table.variants';
+export * from './table.types';
 export * from './helpers.svelte';

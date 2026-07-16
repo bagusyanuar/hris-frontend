@@ -45,7 +45,7 @@
 	const hasNoData = $derived(!table || table.getRowModel()?.rows?.length === 0);
 </script>
 
-<div class="w-full overflow-x-auto rounded-xl border border-neutral-border bg-neutral-card">
+<div class="relative w-full overflow-x-auto rounded-xl border border-neutral-border bg-neutral-card">
 	<table class={cn(tableVariants({ density }), className)} {...restProps}>
 		{#if children}
 			{@render children()}
@@ -53,17 +53,18 @@
 	</table>
 
 	{#if isLoading}
-		{#if loading}
-			{@render loading()}
-		{:else}
-			<!-- Default Loading Spinner -->
-			<div class="flex items-center justify-center p-12 border-t border-neutral-border">
+		<!-- Loading overlay: covers the data rows so stale data and the loader never show together -->
+		<div class="absolute inset-0 z-30 flex items-center justify-center bg-neutral-card/70 backdrop-blur-sm">
+			{#if loading}
+				{@render loading()}
+			{:else}
+				<!-- Default Loading Spinner -->
 				<div class="flex flex-col items-center gap-3">
 					<Icon icon="lucide:loader-2" class="h-8 w-8 animate-spin text-brand-primary" />
 					<Typography variant="body-sm" color="secondary">Memuat data...</Typography>
 				</div>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	{:else if hasNoData}
 		{#if empty}
 			{@render empty()}

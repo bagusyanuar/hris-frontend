@@ -1,4 +1,68 @@
-import { createSvelteTable, type TableOptions } from '@tanstack/svelte-table';
+import {
+	createSvelteTable,
+	type TableOptions,
+	type Table,
+	type Row,
+	type ColumnDef,
+	type ExpandedState
+} from '@tanstack/svelte-table';
+
+/** Stable id used to detect the auto-generated row-number column. */
+export const ROW_NUMBER_COLUMN_ID = '__row_number__';
+
+/**
+ * Visual, 1-based sequential number for a row, aligned with the active
+ * pagination: `pageIndex * pageSize + positionInPage + 1`.
+ * Uses the row's position in the current page model, so it stays correct
+ * after sorting and works for both client- and server-side pagination.
+ */
+export function getRowNumber<TData>(table: Table<TData>, row: Row<TData>): number {
+	const rows = table.getRowModel().rows;
+	const { pageIndex, pageSize } = table.getState().pagination;
+	return pageIndex * pageSize + rows.indexOf(row) + 1;
+}
+
+/**
+ * Column definition for an auto row-index column. Prepend it to your columns
+ * to render a sequential number per row without hand-declaring the column each
+ * time: `columns: [createRowNumberColumn(), ...cols]`.
+ * `<Table.Cell>` renders the number automatically for this column.
+ */
+export function createRowNumberColumn<TData>(header = 'No'): ColumnDef<TData> {
+	return {
+		id: ROW_NUMBER_COLUMN_ID,
+		header,
+		enableSorting: false,
+		size: 64,
+		meta: { align: 'center' }
+	};
+}
+
+/**
+ * Cumulative sticky offset (in px) for a pinned column, so multiple columns
+ * pinned to the same side stack next to each other instead of overlapping at 0.
+ *
+ * For `left`: sums the widths of every left-pinned column BEFORE this one.
+ * For `right`: sums the widths of every right-pinned column AFTER this one.
+ * Widths come from TanStack's `column.getSize()`, so pinned columns should
+ * declare a `size` in their column definition for pixel-accurate alignment.
+ */
+export function getPinnedOffset<TData>(
+	table: Table<TData>,
+	columnId: string,
+	side: 'left' | 'right'
+): number {
+	const columns = table.getVisibleLeafColumns();
+	const ordered = side === 'left' ? columns : [...columns].reverse();
+
+	let offset = 0;
+	for (const column of ordered) {
+		if (column.columnDef.meta?.pinned !== side) continue;
+		if (column.id === columnId) break;
+		offset += column.getSize();
+	}
+	return offset;
+}
 
 export interface TableStateHelperOptions {
 	pageIndex?: number;
@@ -16,7 +80,7 @@ export function createTableState(initial?: TableStateHelperOptions) {
 	let sorting = $state<{ id: string; desc: boolean }[]>(initial?.sorting ?? []);
 	let rowSelection = $state<Record<string, boolean>>({});
 	let columnVisibility = $state<Record<string, boolean>>({});
-	let expanded = $state<Record<string, boolean>>({});
+	let expanded = $state<ExpandedState>({});
 
 	return {
 		get pageIndex() {
