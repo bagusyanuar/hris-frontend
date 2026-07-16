@@ -88,9 +88,12 @@ const columns = [
 ];
 ```
 
-### C. Clickable Row & Expandable Row (Sub-row)
+### C. Clickable Row & Expandable Row (Sub-row) — ✅ SELESAI
 * **Clickable Row:** Komponen `<Table.Row>` dapat menerima event handler `onclick` untuk aksi navigasi atau pemilihan.
 * **Expandable Row:** Kita dapat menyisipkan baris detail tambahan di bawah row utama jika status row tersebut dalam keadaan *expanded*.
+* **Status implementasi:** `createTableState` mengelola state `expanded` (tipe `ExpandedState`); table mendukung `getExpandedRowModel` + `onExpandedChange` + `getRowCanExpand`. `<Table.Cell>` menerima `colspan` untuk baris detail. Demo: Storybook story **"Expandable Row"** (klik row untuk `row.toggleExpanded()`).
+* **⚠️ Catatan adapter (PENTING):** Versi adapter `@tanstack/svelte-table@0.1.2` berbasis Svelte store lama (bukan runes). Di `createSvelteTable`, state di-*snapshot* saat `setOptions` dan store hanya re-emit ketika `onStateChange` internal-nya terpicu (mode **uncontrolled**). Kalau kita override `onExpandedChange` (mode **controlled** via external `$state`), `onStateChange` tidak terpanggil → store tidak re-emit → `getIsExpanded()` membaca snapshot lama → detail tidak pernah muncul. **Solusi:** untuk expand, pakai uncontrolled (tanpa `state.expanded`/`onExpandedChange`), biarkan table-core mengelola internal. Lihat story **"Expandable Row"**.
+* **⚠️ Implikasi lebih luas:** Pola controlled yang sama dipakai untuk `sorting`/`pagination` (external `$state` + `onSortingChange`/`onPaginationChange`), sehingga interaksi klik sort/ganti halaman kemungkinan juga tidak reactive dengan adapter ini. Perlu diperbaiki di level helper (bridge reactive options / upgrade adapter) atau alihkan ke uncontrolled + baca state dari `table.getState()`.
 ```svelte
 {#each table.getRowModel().rows as row}
   <Table.Row onclick={() => row.toggleExpanded()} class="cursor-pointer">
@@ -150,10 +153,13 @@ Untuk memberikan feedback yang interaktif, `<Table.Root>` atau `<Table.Body>` ak
 </Table.Root>
 ```
 
-### F. Freeze Column (Sticky Column)
+### F. Freeze Column (Sticky Column) — ✅ SELESAI
 Mendukung pembekuan kolom di bagian kiri (`pinned: 'left'`) or kanan (`pinned: 'right'`) untuk meningkatkan kegunaan saat melakukan scroll horizontal pada layar desktop atau mobile.
 *   Penerapan menggunakan CSS `position: sticky` dengan background yang solid agar konten di bawahnya tidak bocor secara visual.
 *   Z-index terpisah untuk header sticky (`z-20`) dan cell sticky (`z-10`).
+*   **Multi-pinned cumulative offset:** helper `getPinnedOffset()` menjumlah lebar (`column.getSize()`) kolom pinned sebelum/sesudahnya, di-apply via inline `style` (`left`/`right` + `width`) di `TableHead`/`TableCell`, sehingga 2+ kolom pin di sisi sama tersusun rapi (tidak overlap). Kolom pinned wajib set `size` di column def agar offset pixel-akurat.
+*   Bg pinned pakai `bg-inherit` (mengikuti warna row: hover/selected/striped).
+*   Demo: Storybook story **"Freeze Column"**.
 ```typescript
 const columns = [
   {
@@ -167,11 +173,12 @@ const columns = [
 ];
 ```
 
-### G. Auto Row Index (`showRowIndex`)
-Menyediakan properti boolean `showRowIndex` pada `<Table.Root>` atau `<Table.Body>` untuk merender kolom nomor urut secara otomatis di awal baris.
-*   Kalkulasi nomor baris diselaraskan secara dinamis dengan status pagination aktif:
-    `rowNumber = (pageIndex * pageSize) + rowIndex + 1`
-*   Mencegah boilerplate deklarasi kolom nomor urut di setiap config data table.
+### G. Auto Row Index (`showRowIndex`) — ✅ SELESAI
+Merender kolom nomor urut otomatis di awal baris.
+*   Implementasi berbasis kolom (bukan prop): helper `createRowNumberColumn(header?)` mengembalikan `ColumnDef` siap prepend — `columns: [createRowNumberColumn(), ...cols]` — jadi tidak perlu deklarasi manual tiap config.
+*   `<Table.Cell>` otomatis merender nomornya (deteksi via `ROW_NUMBER_COLUMN_ID`), tanpa boilerplate di loop consumer.
+*   Kalkulasi selaras pagination aktif: `rowNumber = pageIndex * pageSize + posisiDiPage + 1` (helper `getRowNumber()`), memakai posisi row di page model sehingga **tetap benar setelah sorting** dan berlaku untuk pagination client maupun server.
+*   Demo: Storybook story **"Row Index"**.
 
 ### H. Dynamic Ellipsis Pagination (Sliding Range)
 Mendukung pagination dengan range halaman yang dinamis menggunakan tanda ellipsis (`...`) untuk menyembunyikan halaman tengah yang jauh dari halaman aktif.
