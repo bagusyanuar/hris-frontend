@@ -43,6 +43,8 @@
 	$effect(() => {
 		if (page.url.pathname === '/employees') {
 			activeMenu = 'Staff Directory';
+		} else if (page.url.pathname === '/master-data/departments') {
+			activeMenu = 'Departments';
 		} else {
 			activeMenu = 'Dashboard';
 		}

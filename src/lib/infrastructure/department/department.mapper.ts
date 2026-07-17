@@ -1,0 +1,29 @@
+import type { CreateDepartmentInput, DepartmentModel } from '$lib/core/department';
+import type { DepartmentRequest, DepartmentResponse } from './department.schema';
+
+export class DepartmentMapper {
+	static toDomain(response: DepartmentResponse): DepartmentModel {
+		return {
+			id: response.id,
+			code: response.code,
+			name: response.name,
+			parentId: response.parent_id,
+			description: response.description,
+			status: response.status
+		};
+	}
+
+	static toDomainList(responses: DepartmentResponse[]): DepartmentModel[] {
+		return responses.map((response) => DepartmentMapper.toDomain(response));
+	}
+
+	static toRequest(input: CreateDepartmentInput): DepartmentRequest {
+		return {
+			code: input.code,
+			name: input.name,
+			parent_id: input.parentId,
+			description: input.description,
+			status: input.status
+		};
+	}
+}
