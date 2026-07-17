@@ -102,21 +102,18 @@
 
 	// One instance per story so Storybook's Docs view (all stories mounted at
 	// once) never shares pagination/sorting state between cards.
-	const defaultStore = buildTable(sampleData);
-	const compactStore = buildTable(sampleData);
-	const loadingStore = buildTable(sampleData);
-	const customLoadingStore = buildTable(sampleData);
-	const emptyStore = buildTable([]);
-	const customEmptyStore = buildTable([]);
-	const customPageSizeStore = buildTable(sampleData, 5);
-	const freezeStore = buildTable(sampleData, 10, freezeColumns);
-	const rowIndexStore = buildTable(sampleData, 5, [createRowNumberColumn<Employee>(), ...columns]);
+	const defaultTable = buildTable(sampleData);
+	const compactTable = buildTable(sampleData);
+	const loadingTable = buildTable(sampleData);
+	const customLoadingTable = buildTable(sampleData);
+	const emptyTable = buildTable([]);
+	const customEmptyTable = buildTable([]);
+	const customPageSizeTable = buildTable(sampleData, 5);
+	const freezeTable = buildTable(sampleData, 10, freezeColumns);
+	const rowIndexTable = buildTable(sampleData, 5, [createRowNumberColumn<Employee>(), ...columns]);
 
 	// Expandable table uses UNCONTROLLED state (no state getter / onExpandedChange).
-	// The store adapter (@tanstack/svelte-table 0.1.2) only re-emits when its internal
-	// onStateChange fires — which happens in uncontrolled mode. A controlled `expanded`
-	// getter would be snapshotted at setOptions time and never re-render on toggle.
-	const expandableStore = createTable({
+	const expandableTable = createTable({
 		data: sampleData,
 		columns,
 		initialState: { pagination: { pageIndex: 0, pageSize: 10 } },
@@ -128,16 +125,17 @@
 		rowCount: sampleData.length
 	});
 
-	let defaultTable = $derived($defaultStore);
-	let compactTable = $derived($compactStore);
-	let loadingTable = $derived($loadingStore);
-	let customLoadingTable = $derived($customLoadingStore);
-	let emptyTable = $derived($emptyStore);
-	let customEmptyTable = $derived($customEmptyStore);
-	let customPageSizeTable = $derived($customPageSizeStore);
-	let freezeTable = $derived($freezeStore);
-	let rowIndexTable = $derived($rowIndexStore);
-	let expandableTable = $derived($expandableStore);
+	let expandableRows = $derived(expandableTable.current.getRowModel().rows);
+
+	// Row objects from TanStack keep a stable identity across re-renders (only
+	// external table state mutates), so a keyed {#each (row.id)} block does not
+	// re-run its body when `row.getIsExpanded()` flips — Svelte sees the same
+	// `row` reference and skips it. Reading `expanded` state straight off the
+	// table here (a genuine reactive read) keeps this condition live.
+	function isRowExpanded(rowId: string): boolean {
+		const expanded = expandableTable.current.getState().expanded;
+		return expanded === true || !!expanded?.[rowId];
+	}
 </script>
 
 <!-- Shared status badge cell -->
@@ -191,31 +189,31 @@
 <Story name="Default">
 	<div class="flex flex-col gap-4 p-4">
 		<Typography variant="h5" weight="bold">Data Karyawan</Typography>
-		<TableUI.Root table={defaultTable}>
-			{@render tableHead(defaultTable)}
-			{@render tableBody(defaultTable)}
+		<TableUI.Root table={defaultTable.current}>
+			{@render tableHead(defaultTable.current)}
+			{@render tableBody(defaultTable.current)}
 		</TableUI.Root>
-		<TableUI.Pagination table={defaultTable} pageSizeOptions={[2, 5, 10]} />
+		<TableUI.Pagination table={defaultTable.current} pageSizeOptions={[2, 5, 10]} />
 	</div>
 </Story>
 
 <Story name="Compact Density">
 	<div class="flex flex-col gap-4 p-4">
 		<Typography variant="h5" weight="bold">Data Karyawan (Compact)</Typography>
-		<TableUI.Root table={compactTable} density="compact">
-			{@render tableHead(compactTable)}
-			{@render tableBody(compactTable)}
+		<TableUI.Root table={compactTable.current} density="compact">
+			{@render tableHead(compactTable.current)}
+			{@render tableBody(compactTable.current)}
 		</TableUI.Root>
-		<TableUI.Pagination table={compactTable} pageSizeOptions={[2, 5, 10]} />
+		<TableUI.Pagination table={compactTable.current} pageSizeOptions={[2, 5, 10]} />
 	</div>
 </Story>
 
 <Story name="Loading">
 	<div class="flex flex-col gap-4 p-4">
 		<Typography variant="h5" weight="bold">Data Karyawan (Loading)</Typography>
-		<TableUI.Root table={loadingTable} isLoading={true}>
-			{@render tableHead(loadingTable)}
-			{@render tableBody(loadingTable)}
+		<TableUI.Root table={loadingTable.current} isLoading={true}>
+			{@render tableHead(loadingTable.current)}
+			{@render tableBody(loadingTable.current)}
 		</TableUI.Root>
 	</div>
 </Story>
@@ -223,9 +221,9 @@
 <Story name="Custom Loading Element">
 	<div class="flex flex-col gap-4 p-4">
 		<Typography variant="h5" weight="bold">Data Karyawan (Custom Loading)</Typography>
-		<TableUI.Root table={customLoadingTable} isLoading={true}>
-			{@render tableHead(customLoadingTable)}
-			{@render tableBody(customLoadingTable)}
+		<TableUI.Root table={customLoadingTable.current} isLoading={true}>
+			{@render tableHead(customLoadingTable.current)}
+			{@render tableBody(customLoadingTable.current)}
 			{#snippet loading()}
 				<div class="flex flex-col items-center justify-center gap-3 rounded-xl border border-neutral-border bg-neutral-card p-8 shadow-sm">
 					<div class="flex gap-1.5">
@@ -243,8 +241,8 @@
 <Story name="No Data">
 	<div class="flex flex-col gap-4 p-4">
 		<Typography variant="h5" weight="bold">Data Karyawan (Kosong)</Typography>
-		<TableUI.Root table={emptyTable}>
-			{@render tableHead(emptyTable)}
+		<TableUI.Root table={emptyTable.current}>
+			{@render tableHead(emptyTable.current)}
 			<TableUI.Body />
 		</TableUI.Root>
 	</div>
@@ -253,8 +251,8 @@
 <Story name="Custom No Data Element">
 	<div class="flex flex-col gap-4 p-4">
 		<Typography variant="h5" weight="bold">Data Karyawan (Custom Kosong)</Typography>
-		<TableUI.Root table={customEmptyTable}>
-			{@render tableHead(customEmptyTable)}
+		<TableUI.Root table={customEmptyTable.current}>
+			{@render tableHead(customEmptyTable.current)}
 			<TableUI.Body />
 			{#snippet empty()}
 				<div class="flex flex-col items-center justify-center border-t border-neutral-border p-12 text-center">
@@ -277,11 +275,11 @@
 		<Typography variant="body-sm" color="secondary">
 			Pilihan baris per halaman diatur lewat prop pageSizeOptions: [5, 15, 25].
 		</Typography>
-		<TableUI.Root table={customPageSizeTable}>
-			{@render tableHead(customPageSizeTable)}
-			{@render tableBody(customPageSizeTable)}
+		<TableUI.Root table={customPageSizeTable.current}>
+			{@render tableHead(customPageSizeTable.current)}
+			{@render tableBody(customPageSizeTable.current)}
 		</TableUI.Root>
-		<TableUI.Pagination table={customPageSizeTable} pageSizeOptions={[5, 15, 25]} />
+		<TableUI.Pagination table={customPageSizeTable.current} pageSizeOptions={[5, 15, 25]} />
 	</div>
 </Story>
 
@@ -292,11 +290,11 @@
 			Kolom nomor urut otomatis via createRowNumberColumn(). Nomor ikut pagination &
 			tetap benar setelah sorting.
 		</Typography>
-		<TableUI.Root table={rowIndexTable}>
-			{@render tableHead(rowIndexTable)}
-			{@render tableBody(rowIndexTable)}
+		<TableUI.Root table={rowIndexTable.current}>
+			{@render tableHead(rowIndexTable.current)}
+			{@render tableBody(rowIndexTable.current)}
 		</TableUI.Root>
-		<TableUI.Pagination table={rowIndexTable} pageSizeOptions={[5, 10]} />
+		<TableUI.Pagination table={rowIndexTable.current} pageSizeOptions={[5, 10]} />
 	</div>
 </Story>
 
@@ -306,10 +304,10 @@
 		<Typography variant="body-sm" color="secondary">
 			Klik baris untuk buka/tutup detail karyawan.
 		</Typography>
-		<TableUI.Root table={expandableTable}>
-			{@render tableHead(expandableTable)}
+		<TableUI.Root table={expandableTable.current}>
+			{@render tableHead(expandableTable.current)}
 			<TableUI.Body>
-				{#each expandableTable.getRowModel().rows as row (row.id)}
+				{#each expandableRows as row (row.id)}
 					<TableUI.Row hoverable={true} onclick={() => row.toggleExpanded()}>
 						{#each row.getVisibleCells() as cell (cell.id)}
 							<TableUI.Cell {cell}>
@@ -321,7 +319,7 @@
 							</TableUI.Cell>
 						{/each}
 					</TableUI.Row>
-					{#if row.getIsExpanded()}
+					{#if isRowExpanded(row.id)}
 						<TableUI.Row>
 							<TableUI.Cell colspan={row.getVisibleCells().length}>
 								<div class="flex flex-col gap-1 rounded-lg bg-neutral-bg/40 p-4">
@@ -347,9 +345,9 @@
 			Scroll horizontal untuk melihat efeknya.
 		</Typography>
 		<div class="max-w-3xl">
-			<TableUI.Root table={freezeTable}>
-				{@render tableHead(freezeTable)}
-				{@render tableBody(freezeTable)}
+			<TableUI.Root table={freezeTable.current}>
+				{@render tableHead(freezeTable.current)}
+				{@render tableBody(freezeTable.current)}
 			</TableUI.Root>
 		</div>
 	</div>

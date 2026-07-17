@@ -6,6 +6,7 @@ import {
 	type ColumnDef,
 	type ExpandedState
 } from '@tanstack/svelte-table';
+import { get } from 'svelte/store';
 
 /** Stable id used to detect the auto-generated row-number column. */
 export const ROW_NUMBER_COLUMN_ID = '__row_number__';
@@ -131,8 +132,30 @@ export function createTableState(initial?: TableStateHelperOptions) {
 }
 
 /**
- * Wraps `@tanstack/svelte-table`'s `createSvelteTable` to ensure Svelte 5 reactive options are handled properly.
+ * Wraps `@tanstack/svelte-table`'s `createSvelteTable` for Svelte 5.
+ *
+ * `createSvelteTable` returns a plain Svelte store that re-emits the SAME
+ * `Table` object reference on every state change (sorting, pagination,
+ * expansion, ...) since TanStack mutates it in place. `let x = $derived($store)`
+ * does not reliably re-run in that case (Svelte's dirty-check on a `$derived`
+ * chained from a store doesn't propagate when the emitted reference is
+ * unchanged), so interactions like row click-to-expand or header-click sort
+ * silently stop updating the UI. Manually subscribing into a `$state` avoids
+ * relying on that `$derived`-from-store chain and reacts on every emission.
  */
 export function createTable<TData>(options: TableOptions<TData>) {
-	return createSvelteTable(options);
+	const store = createSvelteTable(options);
+	let table = $state(get(store)) as Table<TData>;
+
+	$effect(() => {
+		return store.subscribe((value) => {
+			table = value;
+		});
+	});
+
+	return {
+		get current() {
+			return table;
+		}
+	};
 }
