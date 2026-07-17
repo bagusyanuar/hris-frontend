@@ -9,14 +9,14 @@ This is the central reference catalog of all reusable presentation components in
 ### 1. Button
 - **Path:** [Button.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/button/Button.svelte)
 - **Props:**
-  - `variant`: `'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'`
-  - `size`: `'default' | 'sm' | 'lg' | 'icon'`
+  - `variant`: `'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'` (defaults to `'primary'`)
+  - `size`: `'sm' | 'md' | 'lg' | 'icon'` (defaults to `'md'`)
   - `isLoading`: `boolean` (displays an animated spinner, disables button)
   - `loadingText`: `string` (text displayed when loading)
   - `children`: `Snippet` (button content)
 - **Example:**
   ```svelte
-  <Button variant="default" size="md" isLoading={submitting} onclick={saveData}>
+  <Button variant="primary" size="md" isLoading={submitting} onclick={saveData}>
     Save Changes
   </Button>
   ```
