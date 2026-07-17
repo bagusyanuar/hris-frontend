@@ -9,7 +9,7 @@ All domains and business logic must be placed inside `src/lib`, strictly separat
   - `/shared`: Dumb components (e.g., `<Button>`, `<Input>`).
   - `/modules/[domain]/pages`: The actual page components (e.g., `EmployeePage.svelte`).
   - `/modules/[domain]/components`: Smart components tied to a domain.
-  - `/modules/[domain]/runes`: Svelte 5 Custom Runes / State Classes for UI state management.
+  - `/modules/[domain]/runes`: Svelte 5 Custom Runes for UI/server state. **Default** for any domain with server-fetched data: function-based TanStack Query runes (`[domain].keys.ts` + `[domain]-query.svelte.ts`, see the `tanstack-query` skill). Reserve class-based `[Domain]Store.svelte.ts` for pure client-side UI state that never fetches/persists domain data (e.g. auth session, wizard step).
 
 ### 2. Core Layer (`src/lib/core`)
 - Contains business logic, use cases, domain models, and interfaces.
@@ -21,9 +21,56 @@ All domains and business logic must be placed inside `src/lib`, strictly separat
 - **Components**:
   - **Schemas (`*.schema.ts`)**: Defines request, response, and query payload structures as received from/sent to the backend API (e.g., in `snake_case`).
   - **Mappers (`*.mapper.ts`)**: Pure utility functions to convert data from API Schemas (Infrastructure) to Domain Models (Core) and vice versa. Decouples Core from backend structure.
-  - **Dependency Providers (`*.provider.ts`)**: Functions/classes (e.g., `provide[Domain]UseCase()`) that manage instantiations, lifetimes (singleton/transient), and dependency injections. Swaps concrete repositories easily.
+  - **Dependency Providers (`*.provider.ts`)**: Functions (e.g., `provide[Domain]UseCase()`) that instantiate the concrete Repository + UseCase and expose a singleton. This file MUST only import from Core and its own layer (`repository.impl.ts`) — it must NEVER import a Presentation-layer Store/Rune. Swaps concrete repositories easily without touching UI code.
   - **Repository Implementations (`*.repository.impl.ts`)**: Implements the Core Repository contracts (`I[Domain]Repository`). Calls APIs, receives Schemas, and uses Mappers to return Domain Models.
 - **Rule**: Connects the Core Layer to external services. The Presentation Layer should consume Use Cases via Dependency Providers, and not instantiate Infrastructure repositories directly.
+
+## Dependency Direction (CRITICAL)
+
+Strict one-way dependency flow: **Core ← Infrastructure ← Presentation**. An arrow means "is depended on by" — Core knows about nothing, Infrastructure only knows about Core, Presentation may know about both.
+
+- **Core**: zero imports from Infrastructure or Presentation. Enforced already by the "pure TypeScript" rule above.
+- **Infrastructure**: may only import from Core (and its own files). **MUST NOT** import anything from `src/lib/presentation` — no Svelte components, no `.svelte.ts` rune/store classes. This means `provide[Domain]Store()` does **NOT** belong in `infrastructure/[domain]/[domain].provider.ts` — only `provide[Domain]UseCase()` does.
+- **Presentation**: may import from both Core and Infrastructure. The `provide[Domain]Store()` singleton factory belongs in the presentation layer itself — export it from `presentation/modules/[domain]/runes/[Domain]Store.svelte.ts`, where it calls `provide[Domain]UseCase()` imported from Infrastructure.
+
+### ✅ Correct — `infrastructure/department/department.provider.ts`
+```ts
+import { DepartmentUseCase } from '$lib/core/department';
+import { DepartmentRepositoryImpl } from './department.repository.impl';
+
+let departmentUseCaseInstance: DepartmentUseCase | null = null;
+
+export function provideDepartmentUseCase(): DepartmentUseCase {
+	if (!departmentUseCaseInstance) {
+		departmentUseCaseInstance = new DepartmentUseCase(new DepartmentRepositoryImpl());
+	}
+	return departmentUseCaseInstance;
+}
+```
+
+### ✅ Correct — `presentation/modules/department/runes/DepartmentStore.svelte.ts`
+```ts
+import { provideDepartmentUseCase } from '$lib/infrastructure/department';
+
+export class DepartmentStore { /* ... */ }
+
+let departmentStoreInstance: DepartmentStore | null = null;
+
+export function provideDepartmentStore(): DepartmentStore {
+	if (!departmentStoreInstance) {
+		departmentStoreInstance = new DepartmentStore(provideDepartmentUseCase());
+	}
+	return departmentStoreInstance;
+}
+```
+
+### ❌ Incorrect — infra reaching into presentation
+```ts
+// infrastructure/department/department.provider.ts
+import { DepartmentStore } from '$lib/presentation/modules/department/runes/DepartmentStore.svelte'; // WRONG LAYER
+
+export function provideDepartmentStore(): DepartmentStore { /* ... */ }
+```
 
 ## HTTP & API Client Rules
 - **Axios HTTP Client**: Use `httpClient` from `$lib/infrastructure/http/client` for all external REST API communications.

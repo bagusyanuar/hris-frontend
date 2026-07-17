@@ -115,4 +115,47 @@ $effect(() => {
   - Import `page` from `$app/state` to retrieve query parameters or the current pathname reatively.
   - Import `goto` from `$app/navigation` only when programmatic redirection is required (e.g. redirecting after a successful form submission).
 
+---
+
+## 9. `$derived` Class Fields That Depend on Constructor Parameters (CRITICAL)
+
+If a `$derived` field's expression reads `this.someConstructorParam` (e.g. an injected UseCase/Repository), assign it **inside the constructor body**, not as a top-level class field initializer — even if the field is declared textually below the constructor.
+
+### Why?
+
+All class field initializers run before the constructor body executes — this includes TS parameter-property assignments (`constructor(private useCase: X)`), which compile to `this.useCase = useCase` as a statement inside the constructor body. A `$derived(...)` field initializer that reads `this.useCase` therefore always runs first and sees it as unassigned, no matter where the field is declared relative to the constructor. TypeScript correctly flags this as `Property 'useCase' is used before its initialization` (TS2729).
+
+### ✅ Correct
+
+```ts
+export class DepartmentStore {
+	departments = $state<DepartmentModel[]>([]);
+	tree: DepartmentModel[];
+
+	constructor(private useCase: DepartmentUseCase) {
+		this.tree = $derived(this.useCase.buildTree(this.departments));
+	}
+}
+```
+
+### ❌ Incorrect — TS2729 "used before its initialization"
+
+```ts
+export class DepartmentStore {
+	tree = $derived(this.useCase.buildTree(this.departments)); // runs before constructor body
+
+	constructor(private useCase: DepartmentUseCase) {}
+}
+```
+
+### ❌ Also incorrect — plain getter breaks memoization and can cause infinite loops
+
+```ts
+get tree(): DepartmentModel[] {
+	return this.useCase.buildTree(this.departments); // builds a NEW array/object graph on every read
+}
+```
+
+A plain (non-`$derived`) getter has no caching — every read produces a new reference. Any consumer that treats reference identity as a change signal (e.g. TanStack Table's `data` option read via a getter) sees a "new" value on every access, which can trigger endless re-computation / render loops and freeze the page. Always use `$derived` — assigned in the constructor when it depends on constructor params — so the value is memoized and only recomputes when its actual reactive dependencies change.
+
 
