@@ -397,7 +397,57 @@ This is the central reference catalog of all reusable presentation components in
   />
   ```
 
+### 22. DataTable
+- **Path:** [table/](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/table/) — `Root` / `Header` / `Head` / `Body` / `Row` / `Cell` / `Pagination` (import via `import * as TableUI from '$lib/presentation/shared/components/table'`)
+- **Helpers (`helpers.svelte.ts`):**
+  - `createTable(options: TableOptions<TData>)`: wraps `@tanstack/svelte-table`'s `createSvelteTable` for Svelte 5. Returns `{ get current(): Table<TData> }` — **always read the table via `.current`**, never wrap the return value in `let x = $derived(...)` around a raw store; TanStack re-emits the same `Table` object reference on every state change, which a `$derived`-from-store chain fails to react to (silently stops updating sort/pagination/expand).
+  - `createTableState(initial?: { pageIndex?, pageSize?, sorting? })`: Svelte 5 rune helper for controlled sorting/pagination/selection/visibility/expanded state.
+  - `createRowNumberColumn<TData>(header?: string)`: prepend to `columns` for an auto sequential row-number column; `<Table.Cell>` renders it automatically.
+  - `getRowNumber(table, row)` / `getPinnedOffset(table, columnId, side)`: pagination-aware row index / cumulative sticky offset for pinned columns.
+- **Props (`Root`):** `table: Table<TData>` (pass `tableWrapper.current`), `isLoading?: boolean`, `density?: 'default' | 'compact'`, `loading?: Snippet`, `empty?: Snippet`.
+- **Props (`Pagination`):** `table: Table<TData>`, `pageSizeOptions?: number[]`.
+- **Column meta (`table.types.ts`):** `ColumnDef.meta` supports `align`, `pinned: 'left' | 'right' | 'none'`, `className`, `headerClassName` for freeze-column / alignment styling.
+- **Description:**
+  - Headless TanStack Table v8 wrapper styled per the design system: sorting, pagination, row selection/expansion, frozen (pinned) columns, compact density, custom loading/empty states, and auto row-numbering. See [Table.stories.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/table/Table.stories.svelte) for full usage patterns across every feature.
+  - **Expandable rows gotcha:** TanStack `Row` objects keep a stable identity across re-renders (only external table state mutates), so a keyed `{#each rows as row (row.id)}` does not re-run its body when `row.getIsExpanded()` flips — Svelte sees the same `row` reference and skips it. Read the expanded state straight off `table.current.getState().expanded` in the `{#if}` condition instead of calling `row.getIsExpanded()` there.
+- **Example:**
+  ```svelte
+  <script lang="ts">
+    import { getCoreRowModel, getSortedRowModel, getPaginationRowModel, type ColumnDef } from '@tanstack/svelte-table';
+    import * as TableUI from '$lib/presentation/shared/components/table';
+    import { createTable } from '$lib/presentation/shared/components/table/helpers.svelte';
 
+    const columns: ColumnDef<Employee>[] = [{ accessorKey: 'name', header: 'Nama' }];
+    const table = createTable({
+      data: employees,
+      columns,
+      getCoreRowModel: getCoreRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      rowCount: employees.length
+    });
+  </script>
 
-
+  <TableUI.Root table={table.current}>
+    <TableUI.Header>
+      {#each table.current.getHeaderGroups() as headerGroup (headerGroup.id)}
+        <TableUI.Row>
+          {#each headerGroup.headers as header (header.id)}
+            <TableUI.Head {header} />
+          {/each}
+        </TableUI.Row>
+      {/each}
+    </TableUI.Header>
+    <TableUI.Body>
+      {#each table.current.getRowModel().rows as row (row.id)}
+        <TableUI.Row hoverable={true}>
+          {#each row.getVisibleCells() as cell (cell.id)}
+            <TableUI.Cell {cell}>{cell.getValue()}</TableUI.Cell>
+          {/each}
+        </TableUI.Row>
+      {/each}
+    </TableUI.Body>
+  </TableUI.Root>
+  <TableUI.Pagination table={table.current} />
+  ```
 
