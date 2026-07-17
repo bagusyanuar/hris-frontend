@@ -33,6 +33,33 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - **Display / Domain Model**: Must end with `Model` suffix (e.g., `UserModel`, `AuthUserModel`).
   - **Input / Payload Data**: Must end with `Input` suffix (e.g., `LoginInput`, `RegisterInput`).
   - **Parameters (e.g., query/route params)**: Must end with `Params` suffix (e.g., `UserParams`, `FilterParams`).
+- **Rule (CRITICAL)**: All `[Domain]Input`/`[Domain]Params`/etc. types belong in `core/[domain]/[domain].model.ts` — **never** declare them inline in a Presentation-layer runes/query file (`[domain]-query.svelte.ts`). Those files may only `import type` them from `$lib/core/[domain]`.
+- **Rule**: Never hand-duplicate a sibling input type's fields. Derive it from the existing type with TypeScript utility types (`Omit`, `Pick`, `Partial`, `Extend`/`&`) so the two stay structurally locked together and a field added to one cannot silently drift out of sync with the other:
+  - **Update = Create + id (flat, not nested)**: an update payload is the create payload plus the record's `id`, as one flat object — never `{ id, input: CreateXInput }`. This keeps the UseCase/Repository/mutation signature a single argument instead of two, and mirrors how the mock/HTTP layer builds the updated record (`{ id, ...request }`).
+    ```typescript
+    export interface CreateDepartmentInput {
+    	code: string;
+    	name: string;
+    	parentId: string | null;
+    	description?: string;
+    	status: DepartmentStatus;
+    }
+
+    // ✅ flat — one argument end-to-end: repository.update(input), mutationFn: (input) => ...
+    export interface UpdateDepartmentInput extends CreateDepartmentInput {
+    	id: string;
+    }
+    ```
+    ```typescript
+    // ❌ nested — forces call sites to destructure { id, input } and repository.update(id, input) to take two args
+    export interface UpdateDepartmentVariables {
+    	id: string;
+    	input: CreateDepartmentInput;
+    }
+    ```
+  - **Partial update (PATCH-style)**: use `Partial<CreateXInput>` (optionally combined with `Pick`/`Omit`) instead of redeclaring every field as optional by hand.
+  - **Read-only projections**: use `Pick<XModel, 'id' | 'name'>` for a narrow view instead of a new hand-written interface.
+  - Only fall back to a fully hand-written interface when the shape is genuinely unrelated to an existing type (e.g. `DepartmentParams` — filters, not a data payload).
 
 ## 5. Barrel Exports (index.ts)
 - **Rule**: Each domain's subfolders in the `core` and `infrastructure` layers must expose a barrel export `index.ts` file.
