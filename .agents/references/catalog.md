@@ -451,3 +451,18 @@ This is the central reference catalog of all reusable presentation components in
   <TableUI.Pagination table={table.current} />
   ```
 
+### 23. Badge
+- **Path:** [Badge.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/badge/Badge.svelte)
+- **Props:**
+  - `variant`: `'default' | 'primary' | 'success' | 'danger' | 'warning'` (defaults to `'default'`)
+  - `size`: `'sm' | 'md' | 'lg'` (defaults to `'md'`)
+  - `children`: `Snippet` (text and/or icon content)
+- **Description:**
+  - Small status indicators or tags. Built with inline-flex and native gap support for perfect icon alignment.
+- **Example:**
+  ```svelte
+  <Badge variant="success">
+    <Icon icon="lucide:check-circle-2" class="w-3.5 h-3.5" />
+    Aktif
+  </Badge>
+  ```

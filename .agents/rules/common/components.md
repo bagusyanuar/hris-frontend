@@ -56,9 +56,19 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
 
 ---
 
-## ⚠️ Form & Input Gotchas (Tailwind CSS)
+## ⚠️ Component Composition & Layout Gotchas
 
 1. **`text-inherit` does NOT inherit font-size**:
    - In Tailwind CSS, the `text-inherit` utility only compiles to `color: inherit;`. It does **not** inherit font-size.
    - When building compound/wrapper-based form components (like a `Combobox`, `Select`, or nested `input`), do **not** rely on `text-inherit` on the inner `<input>` tag to inherit the font-size (e.g., `text-sm`) from its parent wrapper.
    - **Solution:** Always map the component's `size` prop directly to concrete Tailwind typography classes (`text-xs`, `text-sm`, `text-base`) and apply them explicitly onto the inner `<input>` element to ensure consistent sizing across browsers.
+
+2. **No Explicit Margins on Icons inside Flex Components**:
+   - Reusable components like `<Button>`, `<DropdownItem>`, and other wrappers are typically built using `inline-flex` or `flex` with `gap` properties (e.g., `gap-1.5`, `gap-2`).
+   - Do **NOT** add explicit margin classes (e.g., `mr-1.5`, `ml-2`) to `<Icon>` components when placing them inside these wrappers. This causes double-spacing and breaks the proportional layout.
+   - Let the parent component's `gap` utility handle the spacing between the icon and text natively.
+
+3. **Beware of Flex Layouts on Custom Components with Inner Wrappers**:
+   - Applying layout utility classes like `class="flex flex-col sm:flex-row ..."` directly to custom container components (e.g., `<Card class="...">`) often breaks layout expectations.
+   - This occurs because many custom components wrap their `children` snippet inside an internal structural element (e.g., `<div class="text-sm">`). The `flex` class applies to the outermost container, but the inner wrapper remains a standard block element, preventing the actual children from becoming flex items.
+   - **Solution:** Instead of passing layout classes to the component's `class` prop, wrap your content inside a standard `<div class="flex ... w-full">` *inside* the component's slot.
