@@ -66,3 +66,14 @@ export class HttpErrorMapper {
 		return new UnexpectedError('An unknown error occurred');
 	}
 }
+
+/**
+ * Utility helper to wrap infrastructure calls and automatically map errors to AppError
+ */
+export async function handleAppError<T>(task: () => Promise<T>): Promise<T> {
+	try {
+		return await task();
+	} catch (err) {
+		throw HttpErrorMapper.toDomain(err);
+	}
+}

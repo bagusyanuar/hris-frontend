@@ -1,10 +1,16 @@
-import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
+import axios, {
+	type AxiosError,
+	type AxiosInstance,
+	type InternalAxiosRequestConfig,
+	type AxiosRequestConfig,
+	type AxiosResponse
+} from 'axios';
 import { TokenStorage } from '../storage/token.storage';
 import { RuntimeConfig } from '../config/runtime.config';
 import type { ApiResponse, ApiErrorResponse } from './types';
 
 // Buat instance Axios tanpa baseURL keras (diberikan dinamis di interceptor)
-export const httpClient: AxiosInstance = axios.create({
+const axiosInstance: AxiosInstance = axios.create({
 	timeout: 15000,
 	headers: {
 		'Content-Type': 'application/json'
@@ -30,7 +36,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
 };
 
 // Request Interceptor: Otomatis sisipkan Bearer Token & Base URL dinamis
-httpClient.interceptors.request.use(
+axiosInstance.interceptors.request.use(
 	(config: InternalAxiosRequestConfig) => {
 		// Set dynamic baseURL dari runtime config
 		config.baseURL = RuntimeConfig.apiBaseUrl;
@@ -47,11 +53,8 @@ httpClient.interceptors.request.use(
 );
 
 // Response Interceptor: Tangani standard response & refresh token flow
-httpClient.interceptors.response.use(
-	(response) => {
-		// Mengembalikan response.data (yang bertipe ApiResponse<T>) secara langsung ke pemanggil
-		return response;
-	},
+axiosInstance.interceptors.response.use(
+	(response) => response,
 	async (error: AxiosError) => {
 		const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
@@ -82,7 +85,7 @@ httpClient.interceptors.response.use(
 							if (originalRequest.headers) {
 								originalRequest.headers.Authorization = `Bearer ${token}`;
 							}
-							resolve(httpClient(originalRequest));
+							resolve(axiosInstance(originalRequest));
 						},
 						reject: (err: unknown) => {
 							reject(err);
@@ -96,7 +99,7 @@ httpClient.interceptors.response.use(
 
 			try {
 				// Request refresh token ke BE dengan withCredentials: true agar cookie terkirim
-				const refreshResponse = await httpClient.post<ApiResponse<{ access_token: string }>>(
+				const refreshResponse = await axiosInstance.post<ApiResponse<{ access_token: string }>>(
 					'/auth/refresh',
 					{},
 					{ withCredentials: true }
@@ -112,7 +115,7 @@ httpClient.interceptors.response.use(
 				if (originalRequest.headers) {
 					originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 				}
-				return httpClient(originalRequest);
+				return axiosInstance(originalRequest);
 			} catch (refreshError) {
 				// Jika refresh gagal, batalkan antrean, bersihkan token, dan trigger logout event
 				processQueue(refreshError, null);
@@ -130,3 +133,44 @@ httpClient.interceptors.response.use(
 		return Promise.reject(errorData || error);
 	}
 );
+
+class HttpClientWrapper {
+	constructor(private instance: AxiosInstance) {}
+
+	public async request<T>(config: AxiosRequestConfig): Promise<T> {
+		const res = await this.instance.request<T>(config);
+		return res.data;
+	}
+
+	/** Returns full AxiosResponse — use when you need headers, status code, etc. */
+	public async requestRaw<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+		return this.instance.request<T>(config);
+	}
+
+	public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+		const res = await this.instance.get<T>(url, config);
+		return res.data;
+	}
+
+	public async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+		const res = await this.instance.post<T>(url, data, config);
+		return res.data;
+	}
+
+	public async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+		const res = await this.instance.put<T>(url, data, config);
+		return res.data;
+	}
+
+	public async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+		const res = await this.instance.patch<T>(url, data, config);
+		return res.data;
+	}
+
+	public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+		const res = await this.instance.delete<T>(url, config);
+		return res.data;
+	}
+}
+
+export const httpClient = new HttpClientWrapper(axiosInstance);
