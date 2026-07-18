@@ -84,9 +84,7 @@
 		</Navbar>
 
 		<!-- MAIN PAGE BODY -->
-		<main
-			class="flex-1 overflow-y-auto border border-neutral-border rounded-xl p-6 md:p-8 space-y-6 scrollable-content bg-white dark:bg-slate-900 transition-colors"
-		>
+		<main class="flex-1 overflow-y-auto scrollable-content transition-colors">
 			{@render children()}
 		</main>
 	</div>

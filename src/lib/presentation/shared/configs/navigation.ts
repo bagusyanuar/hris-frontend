@@ -28,7 +28,7 @@ export const navigationConfig: NavigationGroup[] = [
 	},
 	{
 		title: 'Master Data',
-		items: [{ label: 'Departments', icon: 'lucide:network', href: '/master-data/departments' }]
+		items: [{ label: 'Departments', icon: 'lucide:building-2', href: '/master-data/departments' }]
 	},
 	{
 		title: 'Finance',
