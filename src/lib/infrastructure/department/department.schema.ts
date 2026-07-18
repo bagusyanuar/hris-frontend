@@ -1,3 +1,5 @@
+import type { PaginationSortQuery } from '../http/types';
+
 export interface DepartmentResponse {
 	id: string;
 	code: string;
@@ -18,7 +20,7 @@ export interface DepartmentRequest {
 	status: 'active' | 'inactive';
 }
 
-export interface DepartmentQuery {
+export interface DepartmentQuery extends PaginationSortQuery {
 	search?: string;
 	status?: 'active' | 'inactive' | 'all';
 }

@@ -1,4 +1,5 @@
 import type { CreateDepartmentInput, DepartmentModel, DepartmentParams } from '$lib/core/department';
+import { PaginationMapper } from '../http/pagination.mapper';
 import type { DepartmentRequest, DepartmentResponse, DepartmentQuery } from './department.schema';
 
 export class DepartmentMapper {
@@ -34,6 +35,7 @@ export class DepartmentMapper {
 		if (!params) return {};
 
 		return {
+			...PaginationMapper.toQuery(params),
 			...(params.search?.trim() && { search: params.search.trim() }),
 			...(params.status && params.status !== 'all' && { status: params.status })
 		};

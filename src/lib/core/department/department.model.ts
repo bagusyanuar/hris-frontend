@@ -1,3 +1,5 @@
+import type { PaginationSortParam } from '$lib/core/shared';
+
 export type DepartmentStatus = 'active' | 'inactive';
 
 export interface DepartmentModel {
@@ -25,7 +27,7 @@ export type UpdateDepartmentInput = CreateDepartmentInput & {
 	id: string;
 };
 
-export interface DepartmentParams {
+export interface DepartmentParams extends PaginationSortParam {
 	search?: string;
 	status?: DepartmentStatus | 'all';
 }
