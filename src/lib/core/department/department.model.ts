@@ -13,17 +13,17 @@ export interface DepartmentModel {
 	children?: DepartmentModel[];
 }
 
-export interface CreateDepartmentInput {
+export type CreateDepartmentInput = {
 	code: string;
 	name: string;
 	parentId: string | null;
 	description?: string;
 	status: DepartmentStatus;
-}
+};
 
-export interface UpdateDepartmentInput extends CreateDepartmentInput {
+export type UpdateDepartmentInput = CreateDepartmentInput & {
 	id: string;
-}
+};
 
 export interface DepartmentParams {
 	search?: string;
