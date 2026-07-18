@@ -9,7 +9,10 @@ export class DepartmentMapper {
 			name: response.name,
 			parentId: response.parent_id,
 			description: response.description,
-			status: response.status
+			status: response.status,
+			managerName: response.manager_name,
+			managerAvatar: response.manager_avatar,
+			employeeCount: response.employee_count
 		};
 	}
 

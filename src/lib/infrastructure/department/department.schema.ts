@@ -5,6 +5,9 @@ export interface DepartmentResponse {
 	parent_id: string | null;
 	description?: string;
 	status: 'active' | 'inactive';
+	manager_name?: string;
+	manager_avatar?: string;
+	employee_count?: number;
 }
 
 export interface DepartmentRequest {

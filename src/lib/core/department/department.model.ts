@@ -7,6 +7,9 @@ export interface DepartmentModel {
 	parentId: string | null;
 	description?: string;
 	status: DepartmentStatus;
+	managerName?: string;
+	managerAvatar?: string;
+	employeeCount?: number;
 	children?: DepartmentModel[];
 }
 
