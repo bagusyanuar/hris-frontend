@@ -1,4 +1,15 @@
-import type { CreateDepartmentInput, DepartmentModel } from './department.model';
+import type { CreateDepartmentInput, DepartmentModel, DepartmentStatus } from './department.model';
+
+export interface DepartmentFilterCriteria {
+	search?: string;
+	status?: DepartmentStatus | 'all';
+}
+
+export interface DepartmentStats {
+	total: number;
+	active: number;
+	activePercentage: number;
+}
 
 /**
  * Domain Service: operasi domain Departemen yang **murni & stateless** (tanpa I/O,
@@ -15,6 +26,32 @@ export class DepartmentService {
 			parentId: department.parentId,
 			status: department.status
 		};
+	}
+
+	/** Filters departments by search term (name/code) and status. */
+	static filter(
+		departments: DepartmentModel[],
+		criteria: DepartmentFilterCriteria
+	): DepartmentModel[] {
+		const search = criteria.search?.trim().toLowerCase() ?? '';
+		const status = criteria.status ?? 'all';
+
+		return departments.filter((department) => {
+			const matchStatus = status === 'all' || department.status === status;
+			const matchSearch =
+				search === '' ||
+				department.name.toLowerCase().includes(search) ||
+				department.code.toLowerCase().includes(search);
+			return matchStatus && matchSearch;
+		});
+	}
+
+	/** Aggregate counts used by the directory header (total / active / active %). */
+	static getStats(departments: DepartmentModel[]): DepartmentStats {
+		const total = departments.length;
+		const active = departments.filter((department) => department.status === 'active').length;
+		const activePercentage = total === 0 ? 0 : Math.round((active / total) * 100);
+		return { total, active, activePercentage };
 	}
 
 	/** Nests a flat department list into a Parent-Child tree based on `parentId`. */

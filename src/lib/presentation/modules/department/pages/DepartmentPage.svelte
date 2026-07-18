@@ -1,12 +1,4 @@
 <script lang="ts">
-	import {
-		getCoreRowModel,
-		getExpandedRowModel,
-		getPaginationRowModel,
-		type ColumnDef,
-		type Row
-	} from '@tanstack/svelte-table';
-	import { DepartmentService, type CreateDepartmentInput, type DepartmentModel } from '$lib/core/department';
 	import Icon from '@iconify/svelte';
 	import { cn } from '$lib/presentation/shared/utils/cn';
 	import { Typography } from '$lib/presentation/shared/components/typography';
@@ -15,150 +7,14 @@
 	import { AlertDialog } from '$lib/presentation/shared/components/dialog';
 	import { Dropdown, DropdownItem } from '$lib/presentation/shared/components/dropdown';
 	import * as TableUI from '$lib/presentation/shared/components/table';
-	import { createTable } from '$lib/presentation/shared/components/table/helpers.svelte';
 	import TextField from '$lib/presentation/shared/components/textfield/TextField.svelte';
 	import { Avatar } from '$lib/presentation/shared/components/avatar';
 	import DepartmentFormDialog from '../components/DepartmentFormDialog.svelte';
 	import DepartmentDetailDrawer from '../components/DepartmentDetailDrawer.svelte';
 	import DepartmentOrgChart from '../components/DepartmentOrgChart.svelte';
-	import {
-		useCreateDepartmentMutation,
-		useDeleteDepartmentMutation,
-		useDepartmentsQuery,
-		useUpdateDepartmentMutation
-	} from '../runes/department-query.svelte';
+	import { useDepartmentDirectory } from '../runes/department-directory.svelte';
 
-	const departmentsQuery = useDepartmentsQuery();
-	const createDepartmentMutation = useCreateDepartmentMutation();
-	const updateDepartmentMutation = useUpdateDepartmentMutation();
-	const deleteDepartmentMutation = useDeleteDepartmentMutation();
-
-	let isFormOpen = $state(false);
-	let editingDepartment = $state<DepartmentModel | null>(null);
-
-	let deleteTarget = $state<DepartmentModel | null>(null);
-	let isDeleteOpen = $state(false);
-
-	let searchQuery = $state('');
-	let statusFilter = $state<'all' | 'active' | 'inactive'>('all');
-
-	let viewMode = $state<'table' | 'orgChart'>('table');
-	let isDrawerOpen = $state(false);
-	let selectedDepartment = $state<DepartmentModel | null>(null);
-
-	const totalDepartments = $derived(departmentsQuery.data?.length ?? 0);
-	const activeDepartments = $derived(
-		departmentsQuery.data?.filter((d) => d.status === 'active').length ?? 0
-	);
-	const activePercentage = $derived(
-		totalDepartments === 0 ? 0 : Math.round((activeDepartments / totalDepartments) * 100)
-	);
-
-	const isSubmitting = $derived(
-		createDepartmentMutation.isPending || updateDepartmentMutation.isPending
-	);
-
-	const filteredDepartments = $derived(
-		(departmentsQuery.data ?? []).filter((d) => {
-			const matchStatus = statusFilter === 'all' ? true : d.status === statusFilter;
-			const matchSearch =
-				searchQuery.trim() === ''
-					? true
-					: d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						d.code.toLowerCase().includes(searchQuery.toLowerCase());
-			return matchStatus && matchSearch;
-		})
-	);
-
-	const tree = $derived<DepartmentModel[]>(DepartmentService.buildTree(filteredDepartments));
-
-	const parentOptions = $derived(
-		DepartmentService.getAssignableParents(departmentsQuery.data ?? [], editingDepartment?.id).map(
-			(department) => ({ value: department.id, label: department.name })
-		)
-	);
-
-	const columns: ColumnDef<DepartmentModel>[] = [
-		{
-			accessorKey: 'name',
-			header: 'Departemen',
-			meta: { className: 'font-medium' }
-		},
-		{ accessorKey: 'code', header: 'Kode' },
-		{ accessorKey: 'managerName', header: 'Kepala Departemen' },
-		{ accessorKey: 'description', header: 'Deskripsi' },
-		{ accessorKey: 'status', header: 'Status', meta: { align: 'center' } },
-		{ id: 'actions', header: '', enableSorting: false, meta: { align: 'right' } }
-	];
-
-	const table = createTable({
-		get data() {
-			return tree;
-		},
-		columns,
-		getSubRows: (row: DepartmentModel) =>
-			row.children && row.children.length > 0 ? row.children : undefined,
-		getRowCanExpand: (row: Row<DepartmentModel>) => (row.original.children?.length ?? 0) > 0,
-		initialState: { pagination: { pageIndex: 0, pageSize: 10 } },
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		getExpandedRowModel: getExpandedRowModel()
-	});
-
-	function isRowExpanded(rowId: string): boolean {
-		const expanded = table.current.getState().expanded;
-		return expanded === true || !!expanded?.[rowId];
-	}
-
-	function openDetailDrawer(department: DepartmentModel) {
-		selectedDepartment = department;
-		isDrawerOpen = true;
-	}
-
-	function openCreateDialog() {
-		editingDepartment = null;
-		isFormOpen = true;
-	}
-
-	function openEditDialog(department: DepartmentModel) {
-		editingDepartment = department;
-		isFormOpen = true;
-	}
-
-	function closeFormDialog() {
-		isFormOpen = false;
-		editingDepartment = null;
-	}
-
-	async function handleSubmit(input: CreateDepartmentInput) {
-		try {
-			if (editingDepartment) {
-				await updateDepartmentMutation.mutateAsync({ ...input, id: editingDepartment.id });
-			} else {
-				await createDepartmentMutation.mutateAsync(input);
-			}
-			closeFormDialog();
-		} catch {
-			// Toast sudah ditangani di onError mutation; cegah dialog tertutup saat gagal.
-		}
-	}
-
-	function requestDelete(department: DepartmentModel) {
-		deleteTarget = department;
-		isDeleteOpen = true;
-	}
-
-	async function confirmDelete() {
-		if (!deleteTarget) return;
-
-		try {
-			await deleteDepartmentMutation.mutateAsync({ id: deleteTarget.id, name: deleteTarget.name });
-			isDeleteOpen = false;
-			deleteTarget = null;
-		} catch {
-			// Toast sudah ditangani di onError mutation; biarkan dialog terbuka saat gagal.
-		}
-	}
+	const dir = useDepartmentDirectory();
 </script>
 
 {#snippet statusBadge(status: string)}
@@ -200,14 +56,14 @@
 			<div class="flex items-center gap-2 px-3">
 				<Icon icon="lucide:layers" class="w-4 h-4 text-slate-400" />
 				<span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-					{totalDepartments} <span class="text-slate-500 font-normal">Dept</span>
+					{dir.stats.total} <span class="text-slate-500 font-normal">Dept</span>
 				</span>
 			</div>
 			<div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
 			<div class="flex items-center gap-2 px-3">
 				<Icon icon="lucide:activity" class="w-4 h-4 text-emerald-500" />
 				<span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-					{activePercentage}% <span class="text-slate-500 font-normal">Aktif</span>
+					{dir.stats.activePercentage}% <span class="text-slate-500 font-normal">Aktif</span>
 				</span>
 			</div>
 		</div>
@@ -219,15 +75,15 @@
 			<div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
 				<div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 h-9">
 					<button
-						class={cn("h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors", viewMode === 'table' ? 'bg-brand-primary text-white shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300')}
-						onclick={() => viewMode = 'table'}
+						class={cn("h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors", dir.viewMode === 'table' ? 'bg-brand-primary text-white shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300')}
+						onclick={() => dir.viewMode = 'table'}
 					>
 						<Icon icon="lucide:table-2" class="w-4 h-4" />
 						<span class="hidden sm:inline">Tabel</span>
 					</button>
 					<button
-						class={cn("h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors", viewMode === 'orgChart' ? 'bg-brand-primary text-white shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300')}
-						onclick={() => viewMode = 'orgChart'}
+						class={cn("h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors", dir.viewMode === 'orgChart' ? 'bg-brand-primary text-white shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300')}
+						onclick={() => dir.viewMode = 'orgChart'}
 					>
 						<Icon icon="lucide:network" class="w-4 h-4" />
 						<span class="hidden sm:inline">Bagan</span>
@@ -237,7 +93,7 @@
 					placeholder="Cari departemen..."
 					size="sm"
 					class="w-full sm:w-64"
-					bind:value={searchQuery}
+					bind:value={() => dir.searchQuery, (v) => (dir.searchQuery = v)}
 				>
 					{#snippet prefix()}
 						<Icon icon="lucide:search" class="w-4 h-4 text-slate-400" />
@@ -247,41 +103,41 @@
 					{#snippet trigger(toggle)}
 						<Button variant="outline" size="sm" class="whitespace-nowrap text-xs font-normal" onclick={toggle}>
 							<Icon icon="lucide:filter" class="w-4 h-4 mr-1.5" />
-							{statusFilter === 'all'
+							{dir.statusFilter === 'all'
 								? 'Semua Status'
-								: statusFilter === 'active'
+								: dir.statusFilter === 'active'
 									? 'Aktif'
 									: 'Nonaktif'}
 						</Button>
 					{/snippet}
 					{#snippet content()}
-						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (statusFilter = 'all')}>
+						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (dir.statusFilter = 'all')}>
 							<Icon icon="lucide:layers" class="w-4 h-4" />
 							Semua Status
 						</DropdownItem>
-						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (statusFilter = 'active')}>
+						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (dir.statusFilter = 'active')}>
 							<Icon
 								icon="lucide:check-circle-2"
 								class="w-4 h-4 text-emerald-600 dark:text-emerald-500"
 							/>
 							<span class="text-emerald-600 dark:text-emerald-500">Aktif</span>
 						</DropdownItem>
-						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (statusFilter = 'inactive')}>
+						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (dir.statusFilter = 'inactive')}>
 							<Icon icon="lucide:minus-circle" class="w-4 h-4 text-slate-500 dark:text-slate-400" />
 							<span class="text-slate-500 dark:text-slate-400">Nonaktif</span>
 						</DropdownItem>
 					{/snippet}
 				</Dropdown>
-				<Button variant="primary" size="sm" onclick={openCreateDialog} class="whitespace-nowrap">
+				<Button variant="primary" size="sm" onclick={dir.openCreate} class="whitespace-nowrap">
 					<Icon icon="lucide:plus" class="w-4 h-4 mr-1.5 shrink-0" />
 					Tambah Departemen
 				</Button>
 			</div>
 		</div>
-		{#if viewMode === 'table'}
-			<TableUI.Root table={table.current} isLoading={departmentsQuery.isPending}>
+		{#if dir.viewMode === 'table'}
+			<TableUI.Root table={dir.table} isLoading={dir.isLoading}>
 			<TableUI.Header>
-				{#each table.current.getHeaderGroups() as headerGroup (headerGroup.id)}
+				{#each dir.table.getHeaderGroups() as headerGroup (headerGroup.id)}
 					<TableUI.Row>
 						{#each headerGroup.headers as header (header.id)}
 							<TableUI.Head {header} />
@@ -290,8 +146,8 @@
 				{/each}
 			</TableUI.Header>
 			<TableUI.Body>
-				{#each table.current.getRowModel().rows as row (row.id)}
-					<TableUI.Row hoverable={true} onclick={() => openDetailDrawer(row.original)} class="cursor-pointer">
+				{#each dir.table.getRowModel().rows as row (row.id)}
+					<TableUI.Row hoverable={true} onclick={() => dir.openDetail(row.original)} class="cursor-pointer">
 						{#each row.getVisibleCells() as cell (cell.id)}
 							<TableUI.Cell {cell}>
 								{#if cell.column.id === 'name'}
@@ -308,7 +164,7 @@
 													icon="lucide:chevron-right"
 													class={cn(
 														'w-4 h-4 transition-transform',
-														isRowExpanded(row.id) && 'rotate-90'
+														dir.isRowExpanded(row.id) && 'rotate-90'
 													)}
 												/>
 											</button>
@@ -361,16 +217,16 @@
 											<div class="px-2.5 py-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
 												Aksi
 											</div>
-											<DropdownItem class="text-xs font-normal gap-2" onclick={() => openDetailDrawer(row.original)}>
+											<DropdownItem class="text-xs font-normal gap-2" onclick={() => dir.openDetail(row.original)}>
 												<Icon icon="lucide:eye" class="w-4 h-4 text-slate-400" />
 												Lihat Detail
 											</DropdownItem>
-											<DropdownItem class="text-xs font-normal gap-2" onclick={() => openEditDialog(row.original)}>
+											<DropdownItem class="text-xs font-normal gap-2" onclick={() => dir.openEdit(row.original)}>
 												<Icon icon="lucide:pencil" class="w-4 h-4 text-slate-400" />
 												Edit Departemen
 											</DropdownItem>
 											<div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
-											<DropdownItem class="text-xs font-normal gap-2" variant="danger" onclick={() => requestDelete(row.original)}>
+											<DropdownItem class="text-xs font-normal gap-2" variant="danger" onclick={() => dir.requestDelete(row.original)}>
 												<Icon icon="lucide:trash-2" class="w-4 h-4" />
 												Hapus Departemen
 											</DropdownItem>
@@ -385,35 +241,35 @@
 				{/each}
 			</TableUI.Body>
 		</TableUI.Root>
-		<TableUI.Pagination table={table.current} />
+		<TableUI.Pagination table={dir.table} />
 		{:else}
-			<DepartmentOrgChart departments={tree} onSelectDepartment={openDetailDrawer} />
+			<DepartmentOrgChart departments={dir.tree} onSelectDepartment={dir.openDetail} />
 		{/if}
 	</Card>
 </div>
 
 <DepartmentFormDialog
-	bind:open={isFormOpen}
-	department={editingDepartment}
-	{parentOptions}
-	{isSubmitting}
-	onsubmit={handleSubmit}
-	onclose={closeFormDialog}
+	bind:open={() => dir.isFormOpen, (v) => (dir.isFormOpen = v)}
+	department={dir.editingDepartment}
+	parentOptions={dir.parentOptions}
+	isSubmitting={dir.isSubmitting}
+	onsubmit={dir.submit}
+	onclose={dir.closeForm}
 />
 
 <AlertDialog
-	bind:open={isDeleteOpen}
+	bind:open={() => dir.isDeleteOpen, (v) => (dir.isDeleteOpen = v)}
 	title="Hapus Departemen?"
-	description={`Ini akan menghapus "${deleteTarget?.name}" secara permanen dari struktur organisasi.`}
+	description={`Ini akan menghapus "${dir.deleteTarget?.name}" secara permanen dari struktur organisasi.`}
 	variant="danger"
 	confirmText="Hapus"
-	isLoading={deleteDepartmentMutation.isPending}
-	onconfirm={confirmDelete}
-	oncancel={() => (isDeleteOpen = false)}
+	isLoading={dir.isDeleting}
+	onconfirm={dir.confirmDelete}
+	oncancel={() => (dir.isDeleteOpen = false)}
 />
 
 <DepartmentDetailDrawer
-	isOpen={isDrawerOpen}
-	onClose={() => (isDrawerOpen = false)}
-	department={selectedDepartment}
+	isOpen={dir.isDrawerOpen}
+	onClose={() => (dir.isDrawerOpen = false)}
+	department={dir.selectedDepartment}
 />
