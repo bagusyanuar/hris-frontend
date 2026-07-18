@@ -7,12 +7,15 @@ export interface DepartmentModel {
 	code: string;
 	name: string;
 	parentId: string | null;
+	parentName?: string;
 	description?: string;
 	status: DepartmentStatus;
 	managerName?: string;
 	managerAvatar?: string;
 	employeeCount?: number;
 	children?: DepartmentModel[];
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export type CreateDepartmentInput = {
