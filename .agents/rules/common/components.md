@@ -72,3 +72,15 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
    - Applying layout utility classes like `class="flex flex-col sm:flex-row ..."` directly to custom container components (e.g., `<Card class="...">`) often breaks layout expectations.
    - This occurs because many custom components wrap their `children` snippet inside an internal structural element (e.g., `<div class="text-sm">`). The `flex` class applies to the outermost container, but the inner wrapper remains a standard block element, preventing the actual children from becoming flex items.
    - **Solution:** Instead of passing layout classes to the component's `class` prop, wrap your content inside a standard `<div class="flex ... w-full">` *inside* the component's slot.
+
+4. **Typography Color Variants and Dark Mode Overrides**:
+   - The `<Typography>` component applies a default `color="primary"` prop, which compiles to `text-slate-900 dark:text-slate-100`. 
+   - If you attempt to override the text color using a class (e.g., `class="text-brand-primary"`), it will successfully apply in light mode, but the component's internal `dark:text-slate-100` will override your color in dark mode, causing the text to unexpectedly turn white.
+   - **Solution:** Always use the component's native `color` prop (e.g., `color="brand"`, `color="muted"`) to change text colors.
+
+5. **Destructive Action Buttons in Dark Mode**:
+   - For destructive actions (e.g., "Hapus"/Delete buttons) using `variant="outline"`, the default component styles may fall back to brand/primary colors in dark mode.
+   - **Solution:** explicitly append dark mode text and hover border overrides to ensure the destructive intent is visible (e.g., `class="text-red-600 dark:text-red-500 hover:border-red-200 dark:hover:border-red-900/50"`).
+
+6. **Strict Badge Variants**:
+   - The `<Badge>` component strictly accepts specific variants (`primary`, `success`, `warning`, `default`, `danger`). Do NOT arbitrarily use other terms (e.g., `secondary`) as they will throw type errors. Always default to `"default"` if a specific semantic variant is not applicable.
