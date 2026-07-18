@@ -1,5 +1,5 @@
-import type { CreateDepartmentInput, DepartmentModel } from '$lib/core/department';
-import type { DepartmentRequest, DepartmentResponse } from './department.schema';
+import type { CreateDepartmentInput, DepartmentModel, DepartmentParams } from '$lib/core/department';
+import type { DepartmentRequest, DepartmentResponse, DepartmentQuery } from './department.schema';
 
 export class DepartmentMapper {
 	static toDomain(response: DepartmentResponse): DepartmentModel {
@@ -27,6 +27,15 @@ export class DepartmentMapper {
 			parent_id: input.parentId,
 			description: input.description,
 			status: input.status
+		};
+	}
+
+	static toQuery(params?: DepartmentParams): DepartmentQuery {
+		if (!params) return {};
+
+		return {
+			...(params.search?.trim() && { search: params.search.trim() }),
+			...(params.status && params.status !== 'all' && { status: params.status })
 		};
 	}
 }
