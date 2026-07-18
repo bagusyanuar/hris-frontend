@@ -17,7 +17,7 @@
 <QueryClientProvider client={queryClient}>
 	{@render children()}
 
-	<Toaster />
+	<Toaster position="top-right" />
 </QueryClientProvider>
 
 <div style="display:none">
