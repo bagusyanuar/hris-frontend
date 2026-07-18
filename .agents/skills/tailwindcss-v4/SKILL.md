@@ -50,6 +50,7 @@ Always write class utilities in their updated v4 shorthands:
 To maintain a consistent design system, prevent visual drift, and preserve a clean codebase:
 
 - **Do NOT use arbitrary values** (e.g., `w-[150px]`, `h-[32px]`, `bg-[#4f46e5]`, `mt-[7px]`) inside component classes.
+- **Do NOT use arbitrary `rem` values**. In Tailwind v4, many standard scales cover fractions of `rem`. Translate them to the official scale (e.g., `w-[1.5rem]` must be written as `w-6`, `w-[0.5rem]` as `w-2`, `p-[1rem]` as `p-4`).
 - Always use standard Tailwind spacing, sizing, and position scales (e.g., `w-36`, `h-8`, `bg-indigo-600`, `mt-1.5`).
 - If you require a custom width, height, color, or other layout dimension that does not match standard Tailwind scales, **define it as a token** (CSS variable) in the `@theme` block of your CSS entrypoint (e.g. `src/app.css`):
   ```css

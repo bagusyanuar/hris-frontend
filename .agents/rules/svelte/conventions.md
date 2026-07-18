@@ -158,4 +158,37 @@ get tree(): DepartmentModel[] {
 
 A plain (non-`$derived`) getter has no caching — every read produces a new reference. Any consumer that treats reference identity as a change signal (e.g. TanStack Table's `data` option read via a getter) sees a "new" value on every access, which can trigger endless re-computation / render loops and freeze the page. Always use `$derived` — assigned in the constructor when it depends on constructor params — so the value is memoized and only recomputes when its actual reactive dependencies change.
 
+---
 
+## 7. Event Propagation and Modifiers in Svelte 5
+
+Svelte 5 removes built-in event modifiers like `|stopPropagation` and `|preventDefault` in favor of standard web APIs.
+
+When building nested interactive components (e.g., an actionable Dropdown or an expander button placed inside a clickable Datatable row), **you must manually stop propagation** to prevent the parent's `onclick` handler from firing (Event Bubbling / "Bocor").
+
+### ✅ Correct (Svelte 5)
+
+```svelte
+<!-- Action button inside a clickable table row -->
+<button
+	onclick={(e) => {
+		e.stopPropagation(); // Prevents the parent row's onclick from triggering
+		toggleDropdown();
+	}}
+>
+	...
+</button>
+```
+
+### ❌ Incorrect (Will trigger parent events)
+
+```svelte
+<button onclick={toggleDropdown}>
+	...
+</button>
+
+<!-- Svelte 4 modifiers are no longer valid / recommended in Svelte 5 -->
+<button onclick|stopPropagation={toggleDropdown}>
+	...
+</button>
+```

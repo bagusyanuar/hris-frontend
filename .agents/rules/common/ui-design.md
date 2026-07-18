@@ -46,6 +46,7 @@ Every content card must have:
   - `gradient`: Uses a light, subtle brand-color gradient background. Use sparingly for hero cards or welcome panels.
 - **Structure**:
   - **Header**: Optional, but if present, contains a descriptive title (`text-base font-semibold text-slate-900`) and optional actions (e.g. menu, filter button).
+    - **Action Button Placement**: For Data Tables, place the primary action button (e.g., "Add Department") inside the Table Card's header alongside the table title, rather than placing it isolated in the main Page Header. This keeps the action contextually close to the data it manipulates.
   - **Body**: Core visual details or data representation.
   - **Footer**: Optional action area separated by a soft border or simple spacing.
 
@@ -58,11 +59,18 @@ Every content card must have:
 </Card>
 ```
 
+## 4. Iconography & Domain Consistency
+- **Synchronized Icons**: When choosing an icon to represent a domain entity (e.g., `lucide:building-2` for Departments or `lucide:users` for Employees), use it consistently across the **Sidebar Navigation**, **Page Headers**, and any related metric cards to build strong visual recognition.
 
-## 4. Bento Grid & Floating Panels Layout
+
+## 5. Bento Grid & Floating Panels Layout
 For premium SaaS dashboards, use the **Bento Grid / Floating Panels** layout:
 - **Outer Viewport**: `h-screen flex p-3 gap-3 overflow-hidden bg-neutral-bg`.
-- **Panels**: The Sidebar, Page Header, and Workspace content scroll area are styled as individual floating cards (`bg-neutral-card border border-neutral-border rounded-xl`).
+- **Layout Container (`<main>`)**: The main content wrapper in `+layout.svelte` MUST be transparent and without card styling (`bg-transparent border-0 rounded-none overflow-y-auto`). Do NOT style the `<main>` tag as a large white card, otherwise, it breaks the floating panels illusion.
+- **Page Panels (The "Bento" Boxes)**: 
+  - Every individual section of a page (e.g., Page Header, Metric Cards, Data Table) must be enclosed in its own independent floating card (`bg-neutral-card border border-neutral-border rounded-2xl p-6`).
+  - **CRITICAL**: Do NOT wrap an entire page's content inside a single overarching `<Card>` component.
+- **Uniform Spacing**: All gaps between panels—both vertical and horizontal—must use a strict `gap-3` (12px) to match the outer viewport gap. Use `<div class="flex flex-col gap-3">` for vertical stacking and `<div class="grid gap-3">` for horizontal grids. Avoid `space-y-*` if it differs from the grid gap.
 - **Internal Scrolling**: Set `overflow-y-auto` and `flex-1` on individual panels (like Sidebar menu and Main workspace body) instead of scrolling the whole window.
 
 ## 5. Custom Scrollbars
@@ -114,3 +122,18 @@ When implementing tooltips or flyout panels in a collapsed/mini-sidebar layout, 
    - Prefer Tailwind's native layout, spacing, and sizing scales (e.g., `w-80`, `h-12`, `top-2`).
    - If a specific custom spacing, color, or dimension is needed, configure it as a design token variable inside the `@theme` block in `src/app.css` (Tailwind v4) rather than using an inline arbitrary value.
 
+---
+
+## 9. Datatable and UI Component UX
+
+1. **Status Badges**:
+   - Status badges should **not** just be plain colors. Always include a relevant micro-icon (e.g., `lucide:check-circle-2` for active, `lucide:minus-circle` for inactive) to improve accessibility and visual weight.
+   - Use subtle borders (e.g., `border border-emerald-200 dark:border-emerald-500/20`) alongside soft background colors instead of harsh solid blocks.
+   - Use `font-medium` instead of `font-semibold` or bold for badge text to maintain a clean, refined aesthetic.
+
+2. **Action Dropdowns**:
+   - An action dropdown (e.g., the three-dots menu on a datatable row) should never look "empty".
+   - Include a small header section (e.g., `ACTIONS` with `text-[10px] font-semibold uppercase tracking-wider`).
+   - Include a "View Details" fallback action.
+   - Separate dangerous actions (like Delete) with a subtle divider line (`<div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>`).
+   - Keep font sizes proportional (e.g., `text-xs font-normal`) so dropdown items don't look excessively large compared to the table data.

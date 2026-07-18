@@ -97,6 +97,18 @@ Import variants and merge class names inside the `.svelte` file using the `$lib/
 </button>
 ```
 
+### C. Complex Multi-Part Components
+Unlike `tailwind-variants`, `class-variance-authority` (CVA) **does not support slots**. If you are building a complex component with multiple DOM elements (e.g., a `Drawer` with an overlay, content panel, header, and body), you must export multiple `cva` instances or constants from your `.variants.ts` file, rather than trying to use a `slots` object.
+
+Example for a multi-part component:
+```typescript
+import { cva, type VariantProps } from 'class-variance-authority';
+
+export const drawerOverlayVariants = cva('fixed inset-0 bg-black/50', { ... });
+export const drawerContentVariants = cva('fixed bg-white', { ... });
+export const drawerHeaderClass = 'p-4 border-b';
+```
+
 ---
 
 ## 3. Component Design Specifications
@@ -155,7 +167,9 @@ For dropdowns, dialogs, and popovers:
 ### D. Bento Grid & Floating Panels Layout
 For modern dashboards, style panels as independent floating cards:
 - **Outer Wrapper**: Use `h-screen flex p-3 gap-3 overflow-hidden bg-neutral-bg` to enclose the layouts.
-- **Card Styling**: Aside (sidebar), header, and main content panels should have `bg-neutral-card border border-neutral-border rounded-xl` without drop shadows (`shadow-*`) to keep the design minimal and clean.
+- **Main Layout Container**: The `<main>` container where pages render should be transparent (`bg-transparent border-none p-0`). Do NOT apply card styles (`bg-white` or `border`) here.
+- **Card Styling**: Aside (sidebar), header, and individual main content panels (Page Header, Metrics, Tables) should have `bg-neutral-card border border-neutral-border rounded-xl` (or `rounded-2xl`) without drop shadows (`shadow-*`) to keep the design minimal and clean.
+- **Do NOT Wrap Entire Pages**: Never put all page contents inside a single `<Card>`. Split them into logical blocks.
 - **Scrolling**: Enable `overflow-y-auto` only on the active panels (sidebar menu, workspace content area) so the layout stays locked within the viewport height.
 
 ### E. Custom Global Scrollbars
@@ -192,8 +206,9 @@ Always design inline interactive elements to have matching line-height, font-siz
 - **Medium size (md)**: Target height `40px` (2.5rem). Class pattern: `py-2.5 px-5 text-sm`.
 - **Large size (lg)**: Target height `48px` (3rem). Class pattern: `py-3.5 px-6 text-base`.
 
-### B. Proportional Spacing (White Space)
-- **Form Layouts**: Use `space-y-5` or `gap-5` for grouping inputs vertically.
+### B. Proportional Spacing (Uniform Bento Gaps)
+- **Bento Grid Uniformity**: To achieve a flawless floating bento layout, vertical and horizontal gaps must be strictly uniform. If the layout wrapper uses `gap-3` (12px), then the page container must use `flex flex-col gap-3` and grids must use `gap-3`. Do NOT mix `space-y-6` with `gap-4`.
+- **Form Layouts**: Use `space-y-5` or `gap-5` for grouping inputs vertically inside a card.
 - **Inside Card**: Use a minimum of `p-6` (24px) for desktop layout containers, and `p-4` (16px) for mobile.
 - **Element Relationships**: Keep related labels closer to inputs (`mb-1.5` / `mb-2`) than the gap between fields (`mb-5` / `mb-6`).
 
