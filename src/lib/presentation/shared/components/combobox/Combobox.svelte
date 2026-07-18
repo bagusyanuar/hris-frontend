@@ -222,7 +222,10 @@
 						}
 					}}
 					onkeydown={handleKeyDown}
-					class="flex-1 min-w-[60px] border-none bg-transparent p-0 text-inherit placeholder:text-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed dark:placeholder:text-slate-500"
+					class={cn(
+						"flex-1 min-w-[60px] border-none bg-transparent p-0 text-inherit placeholder:text-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed dark:placeholder:text-slate-500",
+						size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-sm'
+					)}
 				/>
 			</div>
 

@@ -6,9 +6,9 @@ export const dropdownItemVariants = cva(
 		variants: {
 			variant: {
 				default:
-					'text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-850 dark:hover:text-slate-100',
+					'text-slate-700 hover:bg-brand-light/50 hover:text-brand-primary dark:text-slate-300 dark:hover:bg-brand-light dark:hover:text-brand-primary',
 				danger:
-					'text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-350'
+					'text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300'
 			},
 			disabled: {
 				true: 'opacity-50 pointer-events-none cursor-not-allowed',
