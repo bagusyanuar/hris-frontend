@@ -23,7 +23,7 @@ If you're scaffolding a brand-new project or find this wiring missing, that's th
 - **Core Layer:** One `[Domain]UseCase` class per domain (per `architecture/ddd.md`), exposing multiple methods (`getAll`, `getById`, `create`, `update`, `delete`, ...) — **not** one UseCase class per CRUD operation. Every method that can fail on bad input or business-rule violations MUST throw an `AppError` subclass (`ValidationError`, `NotFoundError`, ...), never a plain `Error`. This is what makes `TError = AppError` in the generics below true at runtime, not just in the type signature.
 - **Infrastructure `[domain].provider.ts`:** Exposes exactly one `provide[Domain]UseCase()` singleton factory (Core + `repository.impl.ts` only — see the Dependency Direction rule in `architecture/ddd.md`, infra must never import Presentation).
 - **Presentation Layer (Custom Query Runes):** This is where TanStack Query is used. Encapsulate `createQuery`/`createMutation` in **function-based Custom Runes** located in `src/lib/presentation/modules/[domain]/runes/[domain]-query.svelte.ts`. Each rune function calls `provide[Domain]UseCase()` directly — there is no intermediate class Store for domain/list data anymore.
-- **Presentation Layer (UI/Pages):** Svelte page components consume the custom query runes. They MUST NOT import `@tanstack/svelte-query` directly, and MUST NOT import `$lib/infrastructure/[domain]` for anything other than `provide[Domain]UseCase()` (needed for pure derived helpers like `buildTree`/`getAssignableParents` that live on the UseCase).
+- **Presentation Layer (UI/Pages):** Svelte page components consume the custom query runes. They MUST NOT import `@tanstack/svelte-query` directly. Pure derived helpers like `buildTree`/`getAssignableParents`/`toInput` are a **Domain Service** in Core (`$lib/core/[domain]`) — call them directly (`DepartmentService.buildTree(...)`), **no** provider needed. Only reach for `provide[Domain]UseCase()` when you need an actual repository-backed operation from the page (rare — usually the query rune already wraps it).
 
 ```
 [UI Component] ---> [Custom Query Rune] ---> [Use Case] ---> [Repository Impl] ---> [Axios Client]
@@ -143,13 +143,30 @@ createMutation<TData, TError, TVariables, TContext>
 3. `TVariables`: The input payload type passed to `.mutate()` / `.mutateAsync()` (e.g., `CreateDepartmentInput`, `UpdateDepartmentInput`). For an update, that variable type is **one flat object** (`id` + the create fields, via `interface UpdateXInput extends CreateXInput { id: string }` in the Core model — see the "Never hand-duplicate a sibling input type" rule in `common/naming.md`), never a two-argument shape or a `{ id, input }` wrapper. This keeps `mutationFn` a single-parameter passthrough and the UseCase/Repository `update()` method a single-argument method, matching `create()`/`delete()`.
 4. `TContext`: Used for optimistic updates context (usually `unknown` or a specific rollback type).
 
+### Side-effects belong in the mutation, not the page (CRITICAL)
+
+Toasts and cache invalidation are **mutation** concerns, not page concerns. Put them in `onSuccess`/`onError` **inside the rune**, so every call site behaves identically and the page's `handleSubmit` shrinks to just `mutateAsync` + close-on-success. Do **not** duplicate `toast.success`/`toast.error` in each page `try/catch`.
+
+- **`onError`** — one shared `toastError` helper per rune file. Because every UseCase method throws an `AppError` subclass (see §1), the message is already user-friendly.
+- **`onSuccess`** — invalidate `[domain]Keys.all` (see §2) **and** fire the success toast here.
+- **Delete needs the record name** for its toast, so its `TVariables` is a small `{ id; name }` object (not a bare `string`). `mutationFn` still passes only `.id` to the UseCase; `onSuccess(_data, { name })` reads the name for the message.
+
 ### Code Template
 ```typescript
 import { createMutation, useQueryClient } from '@tanstack/svelte-query';
 import type { AppError } from '$lib/core/errors/app-error';
 import type { CreateDepartmentInput, DepartmentModel, UpdateDepartmentInput } from '$lib/core/department';
 import { provideDepartmentUseCase } from '$lib/infrastructure/department';
+import { toast } from '$lib/presentation/shared/components/toast';
 import { departmentKeys } from './department.keys';
+
+/** Delete carries the name so onSuccess can name it in the toast. */
+type DeleteDepartmentVariables = { id: string; name: string };
+
+// AppError is already user-friendly (mapped in the repository), so message is safe to show.
+function toastError(err: AppError) {
+	toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan');
+}
 
 export function useCreateDepartmentMutation() {
 	const useCase = provideDepartmentUseCase();
@@ -159,7 +176,9 @@ export function useCreateDepartmentMutation() {
 		mutationFn: (input) => useCase.create(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: departmentKeys.all });
-		}
+			toast.success('Departemen ditambahkan');
+		},
+		onError: toastError
 	}));
 }
 
@@ -171,7 +190,9 @@ export function useUpdateDepartmentMutation() {
 		mutationFn: (input) => useCase.update(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: departmentKeys.all });
-		}
+			toast.success('Departemen diperbarui');
+		},
+		onError: toastError
 	}));
 }
 
@@ -179,28 +200,46 @@ export function useDeleteDepartmentMutation() {
 	const useCase = provideDepartmentUseCase();
 	const queryClient = useQueryClient();
 
-	return createMutation<void, AppError, string>(() => ({
-		mutationFn: (id) => useCase.delete(id),
-		onSuccess: () => {
+	return createMutation<void, AppError, DeleteDepartmentVariables>(() => ({
+		mutationFn: ({ id }) => useCase.delete(id),
+		onSuccess: (_data, { name }) => {
 			queryClient.invalidateQueries({ queryKey: departmentKeys.all });
-		}
+			toast.success(`"${name}" dihapus`);
+		},
+		onError: toastError
 	}));
 }
 ```
 
-Call mutations from the page with `mutateAsync` inside a `try/catch` when you need to `await` the result (e.g. to close a dialog only on success, or to show a toast) — `.mutate()` is fire-and-forget and doesn't let you `await`/`catch` inline:
+With side-effects in the rune, the page only awaits to control flow (close dialog / clear state **on success only**). The `catch` stays empty — the toast already fired in `onError` — and its sole job is to stop the success-path code (e.g. `closeFormDialog()`) from running when the mutation rejected:
 
 ```typescript
 async function handleSubmit(input: CreateDepartmentInput) {
 	try {
-		await createDepartmentMutation.mutateAsync(input);
-		toast.success('Department added');
+		if (editingDepartment) {
+			await updateDepartmentMutation.mutateAsync({ ...input, id: editingDepartment.id });
+		} else {
+			await createDepartmentMutation.mutateAsync(input);
+		}
 		closeFormDialog();
-	} catch (err) {
-		toast.error(err instanceof Error ? err.message : 'Something went wrong');
+	} catch {
+		// Toast handled in mutation onError; keep dialog open so the user can retry.
+	}
+}
+
+async function confirmDelete() {
+	if (!deleteTarget) return;
+	try {
+		await deleteDepartmentMutation.mutateAsync({ id: deleteTarget.id, name: deleteTarget.name });
+		isDeleteOpen = false;
+		deleteTarget = null;
+	} catch {
+		// Toast handled in mutation onError; keep dialog open.
 	}
 }
 ```
+
+Use `.mutate()` (fire-and-forget) only when nothing on the page depends on success — the callbacks still run. Reach for `mutateAsync` + `try/catch` **only** to gate success-path UI (closing a dialog, clearing state), never to re-toast.
 
 ---
 
@@ -239,11 +278,13 @@ In Svelte 5, TanStack Query states are natively reactive:
 Never re-derive query data through a plain (non-`$derived`) getter or function called from a template loop or an imperative consumer like TanStack Table's `data` option — it rebuilds a **new** array/object graph on every access, and any consumer that compares by reference will treat every read as "changed," causing endless re-render loops. Always wrap it in a component-level `$derived`:
 
 ```typescript
-const departmentUseCase = provideDepartmentUseCase();
+import { DepartmentService } from '$lib/core/department';
+
 const departmentsQuery = useDepartmentsQuery();
 
-// ✅ memoized — only recomputes when departmentsQuery.data actually changes
-const tree = $derived(departmentUseCase.buildTree(departmentsQuery.data ?? []));
+// ✅ memoized — only recomputes when departmentsQuery.data actually changes.
+// Pure transforms are a Domain Service (no repository) — call it directly, no provider.
+const tree = $derived(DepartmentService.buildTree(departmentsQuery.data ?? []));
 ```
 
 ---

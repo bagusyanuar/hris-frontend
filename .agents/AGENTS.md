@@ -10,10 +10,12 @@ Please read the following rules:
 - Naming conventions for directories, files, components, and variables: [naming.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/naming.md)
 - UI Design, styling, card-based layout, and brand color guidelines: [ui-design.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/ui-design.md)
 - Reusable UI component catalog and fallback slicing rules: [components.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/components.md)
+- Accessibility (a11y) & Keyboard Navigation: [a11y.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/common/a11y.md)
 
 ## 2. Architecture Rules
 - Frontend Domain-Driven Design (DDD) Clean Architecture: [ddd.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/architecture/ddd.md)
 - SvelteKit UI Layout Architecture: [layout.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/architecture/layout.md)
+- Error Handling, AppError, and Validation: [error-handling.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/architecture/error-handling.md)
 
 ## 3. Svelte Rules
 - Guidelines for working with Svelte 5 and using Svelte MCP tools: [mcp.md](file:///Users/dystopia/svelte/hris-frontend/.agents/rules/svelte/mcp.md)

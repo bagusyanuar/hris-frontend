@@ -119,21 +119,25 @@ $effect(() => {
 
 ## 9. `$derived` Class Fields That Depend on Constructor Parameters (CRITICAL)
 
-If a `$derived` field's expression reads `this.someConstructorParam` (e.g. an injected UseCase/Repository), assign it **inside the constructor body**, not as a top-level class field initializer — even if the field is declared textually below the constructor.
+If a `$derived` field's expression reads `this.someConstructorParam` (any constructor parameter — an injected dependency, or a plain value like an id), assign it **inside the constructor body**, not as a top-level class field initializer — even if the field is declared textually below the constructor.
 
 ### Why?
 
-All class field initializers run before the constructor body executes — this includes TS parameter-property assignments (`constructor(private useCase: X)`), which compile to `this.useCase = useCase` as a statement inside the constructor body. A `$derived(...)` field initializer that reads `this.useCase` therefore always runs first and sees it as unassigned, no matter where the field is declared relative to the constructor. TypeScript correctly flags this as `Property 'useCase' is used before its initialization` (TS2729).
+All class field initializers run before the constructor body executes — this includes TS parameter-property assignments (`constructor(private excludeId: string)`), which compile to `this.excludeId = excludeId` as a statement inside the constructor body. A `$derived(...)` field initializer that reads `this.excludeId` therefore always runs first and sees it as unassigned, no matter where the field is declared relative to the constructor. TypeScript correctly flags this as `Property 'excludeId' is used before its initialization` (TS2729).
+
+> Note: pure transforms like `DepartmentService.getAssignableParents(...)` live on a **Domain Service** (static, see `architecture/ddd.md` §2), so the class below is a client-side UI-state Store (the fallback case) that holds the reactive `departments`/`excludeId` and derives a filtered view from them.
 
 ### ✅ Correct
 
 ```ts
-export class DepartmentStore {
+export class DepartmentFilterStore {
 	departments = $state<DepartmentModel[]>([]);
-	tree: DepartmentModel[];
+	assignableParents: DepartmentModel[];
 
-	constructor(private useCase: DepartmentUseCase) {
-		this.tree = $derived(this.useCase.buildTree(this.departments));
+	constructor(private excludeId: string) {
+		this.assignableParents = $derived(
+			DepartmentService.getAssignableParents(this.departments, this.excludeId)
+		);
 	}
 }
 ```
@@ -141,18 +145,20 @@ export class DepartmentStore {
 ### ❌ Incorrect — TS2729 "used before its initialization"
 
 ```ts
-export class DepartmentStore {
-	tree = $derived(this.useCase.buildTree(this.departments)); // runs before constructor body
+export class DepartmentFilterStore {
+	// runs before constructor body → this.excludeId not assigned yet
+	assignableParents = $derived(DepartmentService.getAssignableParents(this.departments, this.excludeId));
 
-	constructor(private useCase: DepartmentUseCase) {}
+	constructor(private excludeId: string) {}
 }
 ```
 
 ### ❌ Also incorrect — plain getter breaks memoization and can cause infinite loops
 
 ```ts
-get tree(): DepartmentModel[] {
-	return this.useCase.buildTree(this.departments); // builds a NEW array/object graph on every read
+get assignableParents(): DepartmentModel[] {
+	// builds a NEW array on every read
+	return DepartmentService.getAssignableParents(this.departments, this.excludeId);
 }
 ```
 
@@ -192,3 +198,40 @@ When building nested interactive components (e.g., an actionable Dropdown or an 
 	...
 </button>
 ```
+
+---
+
+## 8. URL State vs Local State (Datatables & Filters)
+
+For SaaS and Enterprise applications, **Filter, Search, Pagination, and Tab states must be stored in the URL (Search Params)**, not purely in local Svelte `$state()`.
+
+### Why?
+- **Shareable Links:** Users can share a URL with their exact filters applied.
+- **Refresh-Safe:** Refreshing the page keeps the table exactly where it was.
+- **Browser History:** Back/Forward buttons work correctly.
+
+### ✅ Correct (URL State Pattern)
+```svelte
+<script lang="ts">
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+
+	// 1. Read initial state from URL
+	let searchQuery = $derived(page.url.searchParams.get('search') || '');
+	
+	// 2. Update URL on change (using SvelteKit's goto with keepFocus/replaceState)
+	function updateSearch(query: string) {
+		const url = new URL(page.url);
+		if (query) url.searchParams.set('search', query);
+		else url.searchParams.delete('search');
+		
+		goto(url, { keepFocus: true, replaceState: true, noScroll: true });
+	}
+</script>
+```
+
+### Kapan menggunakan `$state()` lokal?
+Hanya untuk *state* UI yang bersifat sementara (*ephemeral*) dan tidak relevan untuk dibagikan:
+- Modal/Dialog/Drawer (buka/tutup)
+- *Hover states*
+- *Form inputs* (yang belum di-*submit*)

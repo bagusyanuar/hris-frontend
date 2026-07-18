@@ -52,4 +52,13 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
 2. **Avoid Tailwind Arbitrary Values**:
    - Do **NOT** use arbitrary values (e.g., `bg-[#f3f3f3]`, `w-[325px]`, `p-[17px]`, `h-[400px]`) in Tailwind classes.
    - Always rely on standard Tailwind classes/spacing scales or the configured `@theme` tokens in the CSS entrypoint.
-   - If a specific custom dimension or color is absolutely necessary, define it as a variable or token inside `@theme` in `app.css` rather than writing inline arbitrary values in component classes.
+	- If a specific custom dimension or color is absolutely necessary, define it as a variable or token inside `@theme` in `app.css` rather than writing inline arbitrary values in component classes.
+
+---
+
+## ⚠️ Form & Input Gotchas (Tailwind CSS)
+
+1. **`text-inherit` does NOT inherit font-size**:
+   - In Tailwind CSS, the `text-inherit` utility only compiles to `color: inherit;`. It does **not** inherit font-size.
+   - When building compound/wrapper-based form components (like a `Combobox`, `Select`, or nested `input`), do **not** rely on `text-inherit` on the inner `<input>` tag to inherit the font-size (e.g., `text-sm`) from its parent wrapper.
+   - **Solution:** Always map the component's `size` prop directly to concrete Tailwind typography classes (`text-xs`, `text-sm`, `text-base`) and apply them explicitly onto the inner `<input>` element to ensure consistent sizing across browsers.

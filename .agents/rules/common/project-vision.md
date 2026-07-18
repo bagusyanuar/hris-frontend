@@ -23,3 +23,8 @@ When developing features for this project, always keep these HRIS-specific UI/UX
 - Building the foundational UI Component Library (Card-based layout, premium corporate SaaS feel).
 - Establishing the Clean Architecture layers (Entities, Use Cases, Repositories).
 - Setting up the initial Master Data and Employee management modules.
+
+## 5. Localization & UI Wording (CRITICAL)
+- **Language Default:** By default, ALL user-facing text, content, UI wording, toast messages, and labels must be written in **Bahasa Indonesia**.
+- **Code Language:** ALL codebase elements—such as variables, functions, components, file names, database schemas, API payloads, type definitions, and comments—MUST remain strictly in **English**.
+- **Rule of Thumb:** If the user sees it on the screen, use Indonesian. If the developer sees it in the IDE, use English.

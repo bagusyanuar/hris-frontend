@@ -15,6 +15,7 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - **Repositories (Infrastructure Implementation)**: `[domain].repository.impl.ts` (e.g., `auth.repository.impl.ts`)
   - **API Schemas (Infrastructure DTO/Payload)**: `[domain].schema.ts` (e.g., `auth.schema.ts`)
     - **Rule**: Types/Interfaces inside schema files must use `Response`, `Request`, or `Query` suffix (e.g. `LoginResponse`, `LoginRequest`, `UserQuery`). Do not use `Schema` suffix.
+  - **Validators (Zod Schemas)**: `[domain].validator.ts` (e.g., `department.validator.ts`) — exports `Create[Domain]Schema` etc.; consumed by superForm's `zod4` adapter.
   - **Mappers (Data Converters)**: `[domain].mapper.ts` (e.g., `auth.mapper.ts`)
   - **Dependency Providers**: `[domain].provider.ts` (e.g., `auth.provider.ts`)
   - **Services**: `[domain].service.ts`
