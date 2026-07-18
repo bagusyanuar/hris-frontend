@@ -23,7 +23,7 @@
 <p
 	class={cn(
 		typographyVariants({ variant: 'caption', color, weight }),
-		'mt-1 select-none',
+		'select-none',
 		className
 	)}
 	{...restProps}

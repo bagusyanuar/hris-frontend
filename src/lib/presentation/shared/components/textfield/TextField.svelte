@@ -31,6 +31,7 @@
 		ref = $bindable(),
 		id,
 		type = 'text',
+		required,
 		...restProps
 	}: Props = $props();
 
@@ -42,7 +43,7 @@
 	let currentVariant = $derived(error ? 'error' : variant);
 
 	// Check if input is required to show the asterisk on the label
-	let isRequired = $derived(!!restProps.required);
+	let isRequired = $derived(!!required);
 </script>
 
 <div class={cn('flex w-full flex-col gap-1.5', wrapperClass)}>
@@ -64,6 +65,7 @@
 			id={inputId}
 			{type}
 			bind:value
+			aria-required={required ? "true" : undefined}
 			class={cn(
 				textfieldInputVariants({ 
 					variant: currentVariant, 
