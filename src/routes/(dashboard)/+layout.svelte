@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { DashboardSidebar } from '$lib/presentation/shared/components/sidebar';
 	import Navbar from '$lib/presentation/shared/components/navbar/Navbar.svelte';
 	import NavbarMobileToggle from '$lib/presentation/shared/components/navbar/NavbarMobileToggle.svelte';
@@ -15,6 +16,10 @@
 	let isMobileOpen = $state(false);
 	let searchQuery = $state('');
 	let isDark = $state(false);
+
+	onMount(() => {
+		isDark = document.documentElement.classList.contains('dark');
+	});
 
 	const branches = [
 		{
@@ -38,15 +43,13 @@
 		initials: 'A'
 	};
 
-	let activeMenu = $state('Dashboard');
-
-	$effect(() => {
+	let activeMenu = $derived.by(() => {
 		if (page.url.pathname === '/employees') {
-			activeMenu = 'Staff Directory';
+			return 'Staff Directory';
 		} else if (page.url.pathname === '/master-data/departments') {
-			activeMenu = 'Departments';
+			return 'Departments';
 		} else {
-			activeMenu = 'Dashboard';
+			return 'Dashboard';
 		}
 	});
 </script>
@@ -73,7 +76,7 @@
 				<NavbarMobileToggle bind:isOpen={isMobileOpen} />
 				<NavbarSidebarToggle bind:isCollapsed />
 				<NavbarBreadcrumbs {activeMenu} />
-				<NavbarSearch bind:searchQuery bind:activeMenu />
+				<NavbarSearch bind:searchQuery />
 			</div>
 
 			<!-- Right actions -->

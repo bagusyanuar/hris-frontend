@@ -127,7 +127,7 @@
 					<NavbarBreadcrumbs {activeMenu} />
 				</div>
 
-				<NavbarSearch bind:searchQuery bind:activeMenu />
+				<NavbarSearch bind:searchQuery />
 
 				<div class="flex items-center gap-3">
 					<NavbarThemeToggle bind:isDark />

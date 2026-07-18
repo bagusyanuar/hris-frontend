@@ -6,12 +6,10 @@
 
 	interface Props {
 		searchQuery?: string;
-		activeMenu: string;
 	}
 
 	let {
-		searchQuery = $bindable(''),
-		activeMenu = $bindable() // eslint-disable-line no-useless-assignment
+		searchQuery = $bindable('')
 	}: Props = $props();
 
 	let isOpen = $state(false);
@@ -60,7 +58,6 @@
 				icon: 'lucide:grid',
 				shortcut: 'G D',
 				action: () => {
-					activeMenu = 'Dashboard';
 					goto('/');
 					closePalette();
 				}
@@ -72,7 +69,6 @@
 				icon: 'lucide:users',
 				shortcut: 'G S',
 				action: () => {
-					activeMenu = 'Staff Directory';
 					goto('/employees');
 					closePalette();
 				}
@@ -84,7 +80,6 @@
 				icon: 'lucide:clock',
 				shortcut: 'G T',
 				action: () => {
-					activeMenu = 'Time & Attendance';
 					goto('#time');
 					closePalette();
 				}
@@ -95,7 +90,6 @@
 				category: 'Go to Page',
 				icon: 'lucide:banknote',
 				action: () => {
-					activeMenu = 'Payroll';
 					goto('#run-payroll');
 					closePalette();
 				}
@@ -106,7 +100,6 @@
 				category: 'Go to Page',
 				icon: 'lucide:file-text',
 				action: () => {
-					activeMenu = 'Payroll';
 					goto('#payslips');
 					closePalette();
 				}
@@ -117,7 +110,6 @@
 				category: 'Go to Page',
 				icon: 'lucide:wallet',
 				action: () => {
-					activeMenu = 'Expenses';
 					goto('#expenses');
 					closePalette();
 				}
@@ -142,7 +134,6 @@
 				category: 'Quick Actions',
 				icon: 'lucide:user-plus',
 				action: () => {
-					activeMenu = 'Staff Directory';
 					goto('/employees');
 					closePalette();
 				}
@@ -154,7 +145,6 @@
 				category: 'Employees',
 				icon: 'lucide:user',
 				action: () => {
-					activeMenu = 'Staff Directory';
 					goto('/employees');
 					closePalette();
 				}
@@ -165,7 +155,6 @@
 				category: 'Recent Activity',
 				icon: 'lucide:banknote',
 				action: () => {
-					activeMenu = 'Payroll';
 					goto('#run-payroll');
 					closePalette();
 				}
@@ -176,7 +165,6 @@
 				category: 'Recent Activity',
 				icon: 'lucide:clock',
 				action: () => {
-					activeMenu = 'Time & Attendance';
 					goto('#time');
 					closePalette();
 				}

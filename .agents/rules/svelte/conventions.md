@@ -166,7 +166,7 @@ A plain (non-`$derived`) getter has no caching — every read produces a new ref
 
 ---
 
-## 7. Event Propagation and Modifiers in Svelte 5
+## 10. Event Propagation and Modifiers in Svelte 5
 
 Svelte 5 removes built-in event modifiers like `|stopPropagation` and `|preventDefault` in favor of standard web APIs.
 
@@ -201,7 +201,7 @@ When building nested interactive components (e.g., an actionable Dropdown or an 
 
 ---
 
-## 8. URL State vs Local State (Datatables & Filters)
+## 11. URL State vs Local State (Datatables & Filters)
 
 For SaaS and Enterprise applications, **Filter, Search, Pagination, and Tab states must be stored in the URL (Search Params)**, not purely in local Svelte `$state()`.
 
@@ -235,3 +235,41 @@ Hanya untuk *state* UI yang bersifat sementara (*ephemeral*) dan tidak relevan u
 - Modal/Dialog/Drawer (buka/tutup)
 - *Hover states*
 - *Form inputs* (yang belum di-*submit*)
+
+---
+
+## 12. Prefer Writable `$derived` over `$state` and `$effect`
+
+Do not use `$effect` to synchronize one piece of state with another. Instead of creating a `$state` and updating it inside an `$effect`, use `$derived`. If you need to both read and write to the derived value, use a getter/setter object pattern (often referred to as a "writable `$derived`").
+
+### ✅ Correct (Writable Derived / Getter-Setter)
+
+```svelte
+<script lang="ts">
+	let count = $state(0);
+	
+	// Writable derived pattern
+	const double = {
+		get value() { return count * 2; },
+		set value(v: number) { count = v / 2; }
+	};
+</script>
+
+<button onclick={() => count++}>Count: {count}</button>
+<button onclick={() => double.value = 10}>Set Double to 10</button>
+<p>Double: {double.value}</p>
+```
+
+### ❌ Incorrect (State Syncing with `$effect`)
+
+```svelte
+<script lang="ts">
+	let count = $state(0);
+	let double = $state(0);
+	
+	// Anti-pattern: Syncing state in an effect
+	$effect(() => {
+		double = count * 2;
+	});
+</script>
+```

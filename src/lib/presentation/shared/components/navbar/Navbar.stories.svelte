@@ -34,7 +34,7 @@
 			</div>
 
 			<!-- Center/Search -->
-			<NavbarSearch bind:searchQuery bind:activeMenu />
+			<NavbarSearch bind:searchQuery />
 
 			<!-- Right side -->
 			<div class="flex items-center gap-3">
