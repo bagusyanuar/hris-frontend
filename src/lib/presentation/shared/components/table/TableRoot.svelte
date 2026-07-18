@@ -45,7 +45,7 @@
 	const hasNoData = $derived(!table || table.getRowModel()?.rows?.length === 0);
 </script>
 
-<div class="relative w-full overflow-x-auto rounded-xl border border-neutral-border bg-neutral-card">
+<div class={cn("relative w-full overflow-x-auto rounded-xl border border-neutral-border bg-neutral-card", isLoading && hasNoData && "min-h-[200px]")}>
 	<table class={cn(tableVariants({ density }), className)} {...restProps}>
 		{#if children}
 			{@render children()}
