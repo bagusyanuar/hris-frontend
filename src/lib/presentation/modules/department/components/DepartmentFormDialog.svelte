@@ -5,6 +5,7 @@
 	import { TextField } from '$lib/presentation/shared/components/textfield';
 	import { Combobox, type Option } from '$lib/presentation/shared/components/combobox';
 	import { Switch } from '$lib/presentation/shared/components/switch';
+	import { useDepartmentForm } from '../runes/department-form.svelte';
 
 	interface Props {
 		open: boolean;
@@ -24,63 +25,76 @@
 		onclose
 	}: Props = $props();
 
-	let code = $state('');
-	let name = $state('');
-	let description = $state('');
-	let isActive = $state(true);
-	let selectedParent = $state<Option | undefined>(undefined);
-	let codeError = $state('');
-	let nameError = $state('');
-
 	const isEditMode = $derived(department !== null);
 
-	$effect(() => {
-		if (!open) return;
+	// superForm SPA di-init di rune; panggil onsubmit parent dengan data tervalidasi Zod.
+	const { form, errors, enhance, load, submitting } = useDepartmentForm((input) => onsubmit(input));
 
-		code = department?.code ?? '';
-		name = department?.name ?? '';
-		description = department?.description ?? '';
-		isActive = department ? department.status === 'active' : true;
-		selectedParent = department?.parentId
-			? parentOptions.find((option) => option.value === department?.parentId)
-			: undefined;
-		codeError = '';
-		nameError = '';
+	// Populate saat edit, reset ke default saat create. Tidak enumerasi field di sini —
+	// semua mapping ada di rune (toInput). Widget non-teks pakai function binding ke $form,
+	// jadi tidak perlu shadow state + effect sinkronisasi.
+	$effect(() => {
+		if (open) load(department);
 	});
 
-	function handleSubmit() {
-		codeError = code.trim() ? '' : 'Department code is required';
-		nameError = name.trim() ? '' : 'Department name is required';
-		if (codeError || nameError) return;
-
-		onsubmit({
-			code: code.trim(),
-			name: name.trim(),
-			parentId: (selectedParent?.value as string) ?? null,
-			description: description.trim() || undefined,
-			status: isActive ? 'active' : 'inactive'
-		});
+	function handleDialogClose() {
+		load(null);
+		onclose();
 	}
 </script>
 
-<Dialog bind:open title={isEditMode ? 'Edit Department' : 'Add Department'} size="md" {onclose}>
-	<div class="flex flex-col gap-4">
-		<TextField bind:value={code} label="Department Code" placeholder="e.g. ENG-FE" error={codeError} required />
-		<TextField bind:value={name} label="Department Name" placeholder="e.g. Frontend" error={nameError} required />
+<Dialog bind:open title={isEditMode ? 'Edit Departemen' : 'Tambah Departemen'} size="md" onclose={handleDialogClose}>
+	<!-- Gunakan form dengan method POST dan use:enhance dari superforms -->
+	<form id="dept-form" method="POST" use:enhance class="flex flex-col gap-4">
+		<TextField
+			name="code"
+			bind:value={$form.code}
+			label="Kode Departemen"
+			placeholder="mis. ENG-FE"
+			error={$errors.code?.[0]}
+			required
+		/>
+		<TextField
+			name="name"
+			bind:value={$form.name}
+			label="Nama Departemen"
+			placeholder="mis. Frontend"
+			error={$errors.name?.[0]}
+			required
+		/>
 		<Combobox
 			options={parentOptions}
-			bind:value={selectedParent}
-			label="Parent Department"
-			placeholder="No parent (top-level department)"
+			bind:value={
+				() => parentOptions.find((opt) => String(opt.value) === $form.parentId),
+				(opt) => ($form.parentId = opt ? String(opt.value) : null)
+			}
+			label="Departemen Induk"
+			placeholder="Tanpa induk (departemen utama)"
+			error={$errors.parentId?.[0]}
 		/>
-		<TextField bind:value={description} label="Description" placeholder="Optional short description" />
-		<Switch bind:checked={isActive} label="Active" description="Inactive departments are hidden from assignment pickers" />
-	</div>
+		<TextField
+			name="description"
+			bind:value={$form.description}
+			label="Deskripsi"
+			placeholder="Deskripsi singkat opsional"
+			error={$errors.description?.[0]}
+		/>
+		<Switch
+			bind:checked={
+				() => $form.status === 'active',
+				(v) => ($form.status = v ? 'active' : 'inactive')
+			}
+			label="Aktif"
+			description="Departemen nonaktif disembunyikan dari pilihan"
+		/>
+	</form>
 
 	{#snippet footer()}
-		<Button variant="outline" onclick={onclose} disabled={isSubmitting}>Cancel</Button>
-		<Button variant="primary" onclick={handleSubmit} isLoading={isSubmitting} loadingText="Saving...">
-			{isEditMode ? 'Save Changes' : 'Add Department'}
+		<Button variant="outline" onclick={handleDialogClose} disabled={$submitting || isSubmitting} type="button">
+			Batal
+		</Button>
+		<Button variant="primary" type="submit" form="dept-form" isLoading={$submitting || isSubmitting} loadingText="Menyimpan...">
+			{isEditMode ? 'Simpan Perubahan' : 'Tambah Departemen'}
 		</Button>
 	{/snippet}
 </Dialog>

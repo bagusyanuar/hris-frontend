@@ -6,8 +6,7 @@
 		type ColumnDef,
 		type Row
 	} from '@tanstack/svelte-table';
-	import type { CreateDepartmentInput, DepartmentModel } from '$lib/core/department';
-	import { provideDepartmentUseCase } from '$lib/infrastructure/department';
+	import { DepartmentService, type CreateDepartmentInput, type DepartmentModel } from '$lib/core/department';
 	import Icon from '@iconify/svelte';
 	import { cn } from '$lib/presentation/shared/utils/cn';
 	import { Typography } from '$lib/presentation/shared/components/typography';
@@ -15,7 +14,6 @@
 	import { Button } from '$lib/presentation/shared/components/button';
 	import { AlertDialog } from '$lib/presentation/shared/components/dialog';
 	import { Dropdown, DropdownItem } from '$lib/presentation/shared/components/dropdown';
-	import { toast } from '$lib/presentation/shared/components/toast';
 	import * as TableUI from '$lib/presentation/shared/components/table';
 	import { createTable } from '$lib/presentation/shared/components/table/helpers.svelte';
 	import TextField from '$lib/presentation/shared/components/textfield/TextField.svelte';
@@ -30,7 +28,6 @@
 		useUpdateDepartmentMutation
 	} from '../runes/department-query.svelte';
 
-	const departmentUseCase = provideDepartmentUseCase();
 	const departmentsQuery = useDepartmentsQuery();
 	const createDepartmentMutation = useCreateDepartmentMutation();
 	const updateDepartmentMutation = useUpdateDepartmentMutation();
@@ -73,23 +70,23 @@
 		})
 	);
 
-	const tree = $derived<DepartmentModel[]>(departmentUseCase.buildTree(filteredDepartments));
+	const tree = $derived<DepartmentModel[]>(DepartmentService.buildTree(filteredDepartments));
 
 	const parentOptions = $derived(
-		departmentUseCase
-			.getAssignableParents(departmentsQuery.data ?? [], editingDepartment?.id)
-			.map((department) => ({ value: department.id, label: department.name }))
+		DepartmentService.getAssignableParents(departmentsQuery.data ?? [], editingDepartment?.id).map(
+			(department) => ({ value: department.id, label: department.name })
+		)
 	);
 
 	const columns: ColumnDef<DepartmentModel>[] = [
 		{
 			accessorKey: 'name',
-			header: 'Department',
+			header: 'Departemen',
 			meta: { className: 'font-medium' }
 		},
-		{ accessorKey: 'code', header: 'Code' },
-		{ accessorKey: 'managerName', header: 'Head of Dept' },
-		{ accessorKey: 'description', header: 'Description' },
+		{ accessorKey: 'code', header: 'Kode' },
+		{ accessorKey: 'managerName', header: 'Kepala Departemen' },
+		{ accessorKey: 'description', header: 'Deskripsi' },
 		{ accessorKey: 'status', header: 'Status', meta: { align: 'center' } },
 		{ id: 'actions', header: '', enableSorting: false, meta: { align: 'right' } }
 	];
@@ -137,14 +134,12 @@
 		try {
 			if (editingDepartment) {
 				await updateDepartmentMutation.mutateAsync({ ...input, id: editingDepartment.id });
-				toast.success('Department updated');
 			} else {
 				await createDepartmentMutation.mutateAsync(input);
-				toast.success('Department added');
 			}
 			closeFormDialog();
-		} catch (err) {
-			toast.error(err instanceof Error ? err.message : 'Something went wrong');
+		} catch {
+			// Toast sudah ditangani di onError mutation; cegah dialog tertutup saat gagal.
 		}
 	}
 
@@ -157,12 +152,11 @@
 		if (!deleteTarget) return;
 
 		try {
-			await deleteDepartmentMutation.mutateAsync(deleteTarget.id);
-			toast.success(`"${deleteTarget.name}" deleted`);
+			await deleteDepartmentMutation.mutateAsync({ id: deleteTarget.id, name: deleteTarget.name });
 			isDeleteOpen = false;
 			deleteTarget = null;
-		} catch (err) {
-			toast.error(err instanceof Error ? err.message : 'Failed to delete department');
+		} catch {
+			// Toast sudah ditangani di onError mutation; biarkan dialog terbuka saat gagal.
 		}
 	}
 </script>
@@ -180,7 +174,7 @@
 			icon={status === 'active' ? 'lucide:check-circle-2' : 'lucide:minus-circle'} 
 			class="w-3.5 h-3.5" 
 		/>
-		{status === 'active' ? 'Active' : 'Inactive'}
+		{status === 'active' ? 'Aktif' : 'Nonaktif'}
 	</span>
 {/snippet}
 
@@ -196,9 +190,9 @@
 				<Icon icon="lucide:building-2" class="w-6 h-6" />
 			</div>
 			<div class="flex flex-col gap-1">
-				<Typography variant="h4" weight="bold">Departments</Typography>
+				<Typography variant="h4" weight="bold">Departemen</Typography>
 				<Typography variant="body-sm" color="secondary">
-					Manage the company's organizational unit hierarchy.
+					Kelola hierarki unit organisasi perusahaan.
 				</Typography>
 			</div>
 		</div>
@@ -206,14 +200,14 @@
 			<div class="flex items-center gap-2 px-3">
 				<Icon icon="lucide:layers" class="w-4 h-4 text-slate-400" />
 				<span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-					{totalDepartments} <span class="text-slate-500 font-normal">Depts</span>
+					{totalDepartments} <span class="text-slate-500 font-normal">Dept</span>
 				</span>
 			</div>
 			<div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
 			<div class="flex items-center gap-2 px-3">
 				<Icon icon="lucide:activity" class="w-4 h-4 text-emerald-500" />
 				<span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-					{activePercentage}% <span class="text-slate-500 font-normal">Active</span>
+					{activePercentage}% <span class="text-slate-500 font-normal">Aktif</span>
 				</span>
 			</div>
 		</div>
@@ -221,7 +215,7 @@
 
 	<Card padding="lg">
 		<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-			<Typography variant="h5" weight="semibold">Department Directory</Typography>
+			<Typography variant="h5" weight="semibold">Direktori Departemen</Typography>
 			<div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
 				<div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 h-9">
 					<button
@@ -229,18 +223,18 @@
 						onclick={() => viewMode = 'table'}
 					>
 						<Icon icon="lucide:table-2" class="w-4 h-4" />
-						<span class="hidden sm:inline">Table</span>
+						<span class="hidden sm:inline">Tabel</span>
 					</button>
 					<button
 						class={cn("h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors", viewMode === 'orgChart' ? 'bg-brand-primary text-white shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300')}
 						onclick={() => viewMode = 'orgChart'}
 					>
 						<Icon icon="lucide:network" class="w-4 h-4" />
-						<span class="hidden sm:inline">Chart</span>
+						<span class="hidden sm:inline">Bagan</span>
 					</button>
 				</div>
 				<TextField
-					placeholder="Search departments..."
+					placeholder="Cari departemen..."
 					size="sm"
 					class="w-full sm:w-64"
 					bind:value={searchQuery}
@@ -254,33 +248,33 @@
 						<Button variant="outline" size="sm" class="whitespace-nowrap text-xs font-normal" onclick={toggle}>
 							<Icon icon="lucide:filter" class="w-4 h-4 mr-1.5" />
 							{statusFilter === 'all'
-								? 'All Status'
+								? 'Semua Status'
 								: statusFilter === 'active'
-									? 'Active'
-									: 'Inactive'}
+									? 'Aktif'
+									: 'Nonaktif'}
 						</Button>
 					{/snippet}
 					{#snippet content()}
 						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (statusFilter = 'all')}>
 							<Icon icon="lucide:layers" class="w-4 h-4" />
-							All Status
+							Semua Status
 						</DropdownItem>
 						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (statusFilter = 'active')}>
 							<Icon
 								icon="lucide:check-circle-2"
 								class="w-4 h-4 text-emerald-600 dark:text-emerald-500"
 							/>
-							<span class="text-emerald-600 dark:text-emerald-500">Active</span>
+							<span class="text-emerald-600 dark:text-emerald-500">Aktif</span>
 						</DropdownItem>
 						<DropdownItem class="text-xs font-normal gap-2" onclick={() => (statusFilter = 'inactive')}>
 							<Icon icon="lucide:minus-circle" class="w-4 h-4 text-slate-500 dark:text-slate-400" />
-							<span class="text-slate-500 dark:text-slate-400">Inactive</span>
+							<span class="text-slate-500 dark:text-slate-400">Nonaktif</span>
 						</DropdownItem>
 					{/snippet}
 				</Dropdown>
 				<Button variant="primary" size="sm" onclick={openCreateDialog} class="whitespace-nowrap">
 					<Icon icon="lucide:plus" class="w-4 h-4 mr-1.5 shrink-0" />
-					Add Department
+					Tambah Departemen
 				</Button>
 			</div>
 		</div>
@@ -340,7 +334,7 @@
 									<div class="flex items-center gap-2">
 										<Avatar name={cell.getValue() as string} size="sm" variant="primary" />
 										<span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-											{cell.getValue() || 'Unassigned'}
+											{cell.getValue() || 'Belum Ditentukan'}
 										</span>
 									</div>
 								{:else if cell.column.id === 'description'}
@@ -365,20 +359,20 @@
 										{/snippet}
 										{#snippet content()}
 											<div class="px-2.5 py-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-												Actions
+												Aksi
 											</div>
 											<DropdownItem class="text-xs font-normal gap-2" onclick={() => openDetailDrawer(row.original)}>
 												<Icon icon="lucide:eye" class="w-4 h-4 text-slate-400" />
-												View Details
+												Lihat Detail
 											</DropdownItem>
 											<DropdownItem class="text-xs font-normal gap-2" onclick={() => openEditDialog(row.original)}>
 												<Icon icon="lucide:pencil" class="w-4 h-4 text-slate-400" />
-												Edit Department
+												Edit Departemen
 											</DropdownItem>
 											<div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
 											<DropdownItem class="text-xs font-normal gap-2" variant="danger" onclick={() => requestDelete(row.original)}>
 												<Icon icon="lucide:trash-2" class="w-4 h-4" />
-												Delete Department
+												Hapus Departemen
 											</DropdownItem>
 										{/snippet}
 									</Dropdown>
@@ -409,10 +403,10 @@
 
 <AlertDialog
 	bind:open={isDeleteOpen}
-	title="Delete Department?"
-	description={`This will permanently remove "${deleteTarget?.name}" from the organization structure.`}
+	title="Hapus Departemen?"
+	description={`Ini akan menghapus "${deleteTarget?.name}" secara permanen dari struktur organisasi.`}
 	variant="danger"
-	confirmText="Delete"
+	confirmText="Hapus"
 	isLoading={deleteDepartmentMutation.isPending}
 	onconfirm={confirmDelete}
 	oncancel={() => (isDeleteOpen = false)}

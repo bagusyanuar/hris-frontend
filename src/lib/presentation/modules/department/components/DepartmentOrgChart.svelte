@@ -16,7 +16,7 @@
 	{#if departments.length === 0}
 		<div class="flex flex-col items-center justify-center h-full text-slate-500 py-12">
 			<Icon icon="lucide:network" class="w-12 h-12 mb-4 text-slate-300" />
-			<Typography variant="body-md">No departments to display in Org Chart.</Typography>
+			<Typography variant="body-md">Tidak ada departemen untuk ditampilkan di Bagan Organisasi.</Typography>
 		</div>
 	{:else}
 		<div class="flex flex-col gap-6 w-max min-w-full">
@@ -55,10 +55,10 @@
 				<div class="flex items-center gap-2">
 					<Avatar name={dept.managerName} size="xs" variant="primary" />
 					<span class="text-xs text-slate-600 dark:text-slate-400 font-medium truncate max-w-[80px]">
-						{dept.managerName || 'No Mgr'}
+						{dept.managerName || 'Tdk Ada Manajer'}
 					</span>
 				</div>
-				<div class="flex items-center gap-1 text-slate-500 text-xs" title="Employees">
+				<div class="flex items-center gap-1 text-slate-500 text-xs" title="Karyawan">
 					<Icon icon="lucide:users" class="w-3.5 h-3.5" />
 					{dept.employeeCount || 0}
 				</div>

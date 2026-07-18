@@ -14,7 +14,7 @@
 	let { isOpen, onClose, department }: Props = $props();
 </script>
 
-<Drawer {isOpen} {onClose} position="right" title="Department Details">
+<Drawer {isOpen} {onClose} position="right" title="Detail Departemen">
 	{#if department}
 		<div class="flex flex-col gap-6">
 			<!-- Header Card -->
@@ -34,39 +34,39 @@
 								: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
 						}`}
 					>
-						{department.status === 'active' ? 'Active' : 'Inactive'}
+						{department.status === 'active' ? 'Aktif' : 'Nonaktif'}
 					</div>
 				</div>
 				<p class="mt-4 text-sm text-slate-600 dark:text-slate-400">
-					{department.description || 'No description provided.'}
+					{department.description || 'Tidak ada deskripsi.'}
 				</p>
 			</div>
 
 			<!-- Manager Info -->
 			<div>
-				<Typography variant="h6" weight="medium" class="mb-3">Department Head</Typography>
+				<Typography variant="h6" weight="medium" class="mb-3">Kepala Departemen</Typography>
 				<div class="flex items-center gap-4">
 					<Avatar name={department.managerName} size="lg" variant="primary" />
 					<div>
-						<Typography variant="body-sm" weight="medium">{department.managerName || 'Not Assigned'}</Typography>
-						<Typography variant="caption" class="text-slate-500">Manager</Typography>
+						<Typography variant="body-sm" weight="medium">{department.managerName || 'Belum Ditentukan'}</Typography>
+						<Typography variant="caption" class="text-slate-500">Manajer</Typography>
 					</div>
 				</div>
 			</div>
 
 			<!-- Stats -->
 			<div>
-				<Typography variant="h6" weight="medium" class="mb-3">Overview</Typography>
+				<Typography variant="h6" weight="medium" class="mb-3">Ringkasan</Typography>
 				<div class="grid grid-cols-2 gap-3">
 					<div class="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
 						<Icon icon="lucide:users" class="w-5 h-5 text-brand-primary mb-2" />
 						<Typography variant="h4" weight="bold">{department.employeeCount || 0}</Typography>
-						<Typography variant="caption" class="text-slate-500">Total Employees</Typography>
+						<Typography variant="caption" class="text-slate-500">Total Karyawan</Typography>
 					</div>
 					<div class="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
 						<Icon icon="lucide:network" class="w-5 h-5 text-indigo-500 mb-2" />
 						<Typography variant="h4" weight="bold">{department.children?.length || 0}</Typography>
-						<Typography variant="caption" class="text-slate-500">Sub-departments</Typography>
+						<Typography variant="caption" class="text-slate-500">Sub-departemen</Typography>
 					</div>
 				</div>
 			</div>
