@@ -211,35 +211,34 @@ export function useDeleteDepartmentMutation() {
 }
 ```
 
-With side-effects in the rune, the page only awaits to control flow (close dialog / clear state **on success only**). The `catch` stays empty — the toast already fired in `onError` — and its sole job is to stop the success-path code (e.g. `closeFormDialog()`) from running when the mutation rejected:
+Side-effects already live in the rune (toast + invalidate), so the page only needs to gate **success-path UI** (close dialog / clear state). Do this with `.mutate()` + a **per-call `onSuccess`** — **not** `mutateAsync` + `try/catch`. `.mutate()` is fire-and-forget so there's no rejected promise to handle; the per-call `onSuccess` runs after the rune's `onSuccess`, and the rune's `onError` still fires the toast. This avoids the empty `catch {}` (an ESLint `no-empty` smell) entirely.
 
 ```typescript
-async function handleSubmit(input: CreateDepartmentInput) {
-	try {
-		if (editingDepartment) {
-			await updateDepartmentMutation.mutateAsync({ ...input, id: editingDepartment.id });
-		} else {
-			await createDepartmentMutation.mutateAsync(input);
-		}
-		closeFormDialog();
-	} catch {
-		// Toast handled in mutation onError; keep dialog open so the user can retry.
+function handleSubmit(input: CreateDepartmentInput) {
+	// Per-call onSuccess closes the dialog only on success; error toast is handled in the rune's onError.
+	const onSuccess = () => closeFormDialog();
+	if (editingDepartment) {
+		updateDepartmentMutation.mutate({ ...input, id: editingDepartment.id }, { onSuccess });
+	} else {
+		createDepartmentMutation.mutate(input, { onSuccess });
 	}
 }
 
-async function confirmDelete() {
+function confirmDelete() {
 	if (!deleteTarget) return;
-	try {
-		await deleteDepartmentMutation.mutateAsync({ id: deleteTarget.id, name: deleteTarget.name });
-		isDeleteOpen = false;
-		deleteTarget = null;
-	} catch {
-		// Toast handled in mutation onError; keep dialog open.
-	}
+	deleteDepartmentMutation.mutate(
+		{ id: deleteTarget.id, name: deleteTarget.name },
+		{
+			onSuccess: () => {
+				isDeleteOpen = false;
+				deleteTarget = null;
+			}
+		}
+	);
 }
 ```
 
-Use `.mutate()` (fire-and-forget) only when nothing on the page depends on success — the callbacks still run. Reach for `mutateAsync` + `try/catch` **only** to gate success-path UI (closing a dialog, clearing state), never to re-toast.
+Per-call `onError`/`onSettled` work the same way if a specific call needs extra handling. Reach for `mutateAsync` **only** when you genuinely need to `await` the result inline (e.g. sequencing several mutations, or awaiting inside a larger async flow) — and then handle the rejection properly, never with an empty `catch`.
 
 ---
 
