@@ -1,7 +1,13 @@
 import { createQuery, createMutation, useQueryClient } from '@tanstack/svelte-query';
 import { provideJobTitleUseCase } from '$lib/infrastructure/job-title';
-import type { JobTitleParams, CreateJobTitleInput, UpdateJobTitleInput } from '$lib/core/job-title';
+import type { JobTitleParams, CreateJobTitleInput, UpdateJobTitleInput, JobTitleModel } from '$lib/core/job-title';
+import type { AppError } from '$lib/core/errors/app-error';
+import { toast } from '$lib/presentation/shared/components/toast';
 import { jobTitleKeys } from './job-title.keys';
+
+function toastError(err: AppError) {
+	toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan');
+}
 
 export function useJobTitleQueries() {
 	const useCase = provideJobTitleUseCase();
@@ -33,22 +39,28 @@ export function useJobTitleQueries() {
 		mutationFn: (input: CreateJobTitleInput) => useCase.create(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: jobTitleKeys.lists() });
-		}
+			toast.success('Jabatan berhasil ditambahkan');
+		},
+		onError: toastError
 	}));
 
 	const updateMutationFn = createMutation(() => ({
 		mutationFn: (input: UpdateJobTitleInput) => useCase.update(input),
-		onSuccess: (data: any) => {
+		onSuccess: (data: JobTitleModel) => {
 			queryClient.invalidateQueries({ queryKey: jobTitleKeys.lists() });
 			queryClient.invalidateQueries({ queryKey: jobTitleKeys.detail(data.id) });
-		}
+			toast.success('Jabatan berhasil diperbarui');
+		},
+		onError: toastError
 	}));
 
 	const deleteMutationFn = createMutation(() => ({
 		mutationFn: (id: string) => useCase.delete(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: jobTitleKeys.lists() });
-		}
+			toast.success('Jabatan berhasil dihapus');
+		},
+		onError: toastError
 	}));
 
 	return {

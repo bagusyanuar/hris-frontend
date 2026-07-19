@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const CreateJobTitleSchema = z.object({
     code: z.string().min(1, 'Kode harus diisi'),
     name: z.string().min(1, 'Nama harus diisi'),
-    description: z.string().nullable().default(null),
+    description: z.string().optional(),
     status: z.enum(['active', 'inactive']).default('active'),
 });
 
