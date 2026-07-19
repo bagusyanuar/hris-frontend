@@ -45,7 +45,7 @@
         class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-105"
       />
       {#if !sidebar.isCollapsed}
-        <span class="text-xs">{label}</span>
+        <span class="text-sm">{label}</span>
       {/if}
     </div>
     {#if !sidebar.isCollapsed}
@@ -71,7 +71,7 @@
           ></div>
 
           <div
-            class="px-2 py-1 text-[9px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5 mb-1"
+            class="px-2 py-1 text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5 mb-1"
           >
             {label}
           </div>
