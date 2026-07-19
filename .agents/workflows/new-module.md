@@ -1,8 +1,9 @@
+---
+description: Scaffolds a complete Domain-Driven Design (DDD) module inside the HRIS frontend
+---
+
 # Workflow: `/new-module`
 
-**Description**: Scaffolds a complete Domain-Driven Design (DDD) module inside the HRIS frontend, strictly following the 3-pillars (Core, Infrastructure, Presentation) and creating mock implementations for instant UI testing.
-
----
 
 ## 🛑 Step 1: Information Gathering & Schema Design (INTERACTIVE)
 
