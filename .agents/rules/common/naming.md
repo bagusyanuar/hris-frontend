@@ -3,10 +3,12 @@
 This project enforces strict naming conventions to keep the codebase clean, readable, and predictable.
 
 ## 1. Domain Folders
+
 - **Rule**: All domain and module folder names must be in English and use `kebab-case`.
-- *Example*: `src/lib/core/employee-management/`, `src/lib/presentation/modules/auth/`.
+- _Example_: `src/lib/core/employee-management/`, `src/lib/presentation/modules/auth/`.
 
 ## 2. File Suffixes (Non-Svelte Component Files)
+
 - **Rule**: Non-component TypeScript files must use lowercase with dots to denote their architectural context/role.
 - **Rules by architectural type**:
   - **Models/Entities**: `[domain].model.ts` (e.g., `auth.model.ts`)
@@ -21,14 +23,17 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - **Services**: `[domain].service.ts`
 
 ## 3. Svelte Components & Svelte 5 Modules
+
 - **Rule**: Svelte components (`.svelte`) and Svelte 5 module files (`.svelte.ts` used for custom runes or reactive controllers) must use `PascalCase`.
-- *Example*: `LoginPage.svelte`, `FormLogin.svelte`, `AuthStore.svelte.ts` (or `AuthRune.svelte.ts`).
+- _Example_: `LoginPage.svelte`, `FormLogin.svelte`, `AuthStore.svelte.ts` (or `AuthRune.svelte.ts`).
 - **Folder Rule**: Custom state modules or UI state helpers must be placed in a `/runes` folder inside the presentation layer. Do NOT name these folders `hooks`, as the term `hooks` is reserved for SvelteKit server/client request-handling middleware (e.g., `hooks.server.ts`).
 
 ## 4. Routing & Links
+
 - **Rule**: For client-side routing, prefer standard anchor tags (`<a href="...">`) instead of using dynamic tags or button elements with click handlers calling programmatic navigation (like `goto`), unless programmatic control is strictly required. This allows SvelteKit to perform native prefetching, improves SEO, and provides native browser link behavior (e.g., hover preview, open in new tab).
 
 ## 4. Interfaces & Types (Core Layer)
+
 - **Rule**: All Interfaces in the Core layer must start with a capital `I` prefix (e.g. `IAuthRepository`).
 - **Rule**: Types/Interfaces inside the Core Layer must use specific suffixes based on their purpose:
   - **Display / Domain Model**: Must end with `Model` suffix (e.g., `UserModel`, `AuthUserModel`).
@@ -39,23 +44,23 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - **Update = Create + id (flat, not nested)**: an update payload is the create payload plus the record's `id`, as one flat object — never `{ id, input: CreateXInput }`. This keeps the UseCase/Repository/mutation signature a single argument instead of two, and mirrors how the mock/HTTP layer builds the updated record (`{ id, ...request }`).
     ```typescript
     export interface CreateDepartmentInput {
-    	code: string;
-    	name: string;
-    	parentId: string | null;
-    	description?: string;
-    	status: DepartmentStatus;
+      code: string;
+      name: string;
+      parentId: string | null;
+      description?: string;
+      status: DepartmentStatus;
     }
 
     // ✅ flat — one argument end-to-end: repository.update(input), mutationFn: (input) => ...
     export interface UpdateDepartmentInput extends CreateDepartmentInput {
-    	id: string;
+      id: string;
     }
     ```
     ```typescript
     // ❌ nested — forces call sites to destructure { id, input } and repository.update(id, input) to take two args
     export interface UpdateDepartmentVariables {
-    	id: string;
-    	input: CreateDepartmentInput;
+      id: string;
+      input: CreateDepartmentInput;
     }
     ```
   - **Partial update (PATCH-style)**: use `Partial<CreateXInput>` (optionally combined with `Pick`/`Omit`) instead of redeclaring every field as optional by hand.
@@ -63,10 +68,12 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - Only fall back to a fully hand-written interface when the shape is genuinely unrelated to an existing type (e.g. `DepartmentParams` — filters, not a data payload).
 
 ## 5. Barrel Exports (index.ts)
+
 - **Rule**: Each domain's subfolders in the `core` and `infrastructure` layers must expose a barrel export `index.ts` file.
 - **Rule**: The `index.ts` file should only export public APIs (types, classes, interfaces) meant for outside use. Do not leak internal implementation details if possible.
 
 ## 6. General Rules
+
 - **Variables & Functions**: `camelCase`
 - **Classes**: `PascalCase`
 - **CSS classes / Routing paths**: `kebab-case`

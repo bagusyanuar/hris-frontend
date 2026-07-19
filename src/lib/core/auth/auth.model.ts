@@ -1,12 +1,12 @@
 export interface AuthUserModel {
-	id: string;
-	name: string;
-	email: string;
-	role: string;
-	token: string;
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  token: string;
 }
 
 export interface LoginInput {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 }

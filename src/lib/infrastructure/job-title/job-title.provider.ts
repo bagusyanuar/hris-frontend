@@ -7,9 +7,9 @@ const USE_MOCK = true;
 let useCaseInstance: JobTitleUseCase | null = null;
 
 export function provideJobTitleUseCase(): JobTitleUseCase {
-	if (!useCaseInstance) {
-		const repository = USE_MOCK ? new JobTitleRepositoryMock() : new JobTitleRepositoryImpl();
-		useCaseInstance = new JobTitleUseCase(repository);
-	}
-	return useCaseInstance;
+  if (!useCaseInstance) {
+    const repository = USE_MOCK ? new JobTitleRepositoryMock() : new JobTitleRepositoryImpl();
+    useCaseInstance = new JobTitleUseCase(repository);
+  }
+  return useCaseInstance;
 }

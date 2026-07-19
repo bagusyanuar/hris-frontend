@@ -1,39 +1,39 @@
 import type { AuthUseCase, AuthUserModel, LoginInput } from '$lib/core/auth';
 
 export class AuthStore {
-	user = $state<AuthUserModel | null>(null);
-	isLoading = $state(false);
-	error = $state<string | null>(null);
-	
-	isAuthenticated = $derived(this.user !== null);
+  user = $state<AuthUserModel | null>(null);
+  isLoading = $state(false);
+  error = $state<string | null>(null);
 
-	constructor(private useCase: AuthUseCase) {}
+  isAuthenticated = $derived(this.user !== null);
 
-	async login(credentials: LoginInput) {
-		this.isLoading = true;
-		this.error = null;
+  constructor(private useCase: AuthUseCase) {}
 
-		try {
-			const user = await this.useCase.login(credentials);
-			this.user = user;
-			
-			// Normally you would save token to localStorage/cookie here
-			return true;
-		} catch (err) {
-			this.error = err instanceof Error ? err.message : 'An error occurred during login';
-			return false;
-		} finally {
-			this.isLoading = false;
-		}
-	}
+  async login(credentials: LoginInput) {
+    this.isLoading = true;
+    this.error = null;
 
-	async logout() {
-		this.isLoading = true;
-		try {
-			await this.useCase.logout();
-			this.user = null;
-		} finally {
-			this.isLoading = false;
-		}
-	}
+    try {
+      const user = await this.useCase.login(credentials);
+      this.user = user;
+
+      // Normally you would save token to localStorage/cookie here
+      return true;
+    } catch (err) {
+      this.error = err instanceof Error ? err.message : 'An error occurred during login';
+      return false;
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async logout() {
+    this.isLoading = true;
+    try {
+      await this.useCase.logout();
+      this.user = null;
+    } finally {
+      this.isLoading = false;
+    }
+  }
 }

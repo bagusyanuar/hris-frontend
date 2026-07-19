@@ -1,10 +1,10 @@
 import {
-	createSvelteTable,
-	type TableOptions,
-	type Table,
-	type Row,
-	type ColumnDef,
-	type ExpandedState
+  createSvelteTable,
+  type TableOptions,
+  type Table,
+  type Row,
+  type ColumnDef,
+  type ExpandedState
 } from '@tanstack/svelte-table';
 import { get } from 'svelte/store';
 
@@ -18,9 +18,9 @@ export const ROW_NUMBER_COLUMN_ID = '__row_number__';
  * after sorting and works for both client- and server-side pagination.
  */
 export function getRowNumber<TData>(table: Table<TData>, row: Row<TData>): number {
-	const rows = table.getRowModel().rows;
-	const { pageIndex, pageSize } = table.getState().pagination;
-	return pageIndex * pageSize + rows.indexOf(row) + 1;
+  const rows = table.getRowModel().rows;
+  const { pageIndex, pageSize } = table.getState().pagination;
+  return pageIndex * pageSize + rows.indexOf(row) + 1;
 }
 
 /**
@@ -30,13 +30,13 @@ export function getRowNumber<TData>(table: Table<TData>, row: Row<TData>): numbe
  * `<Table.Cell>` renders the number automatically for this column.
  */
 export function createRowNumberColumn<TData>(header = 'No'): ColumnDef<TData> {
-	return {
-		id: ROW_NUMBER_COLUMN_ID,
-		header,
-		enableSorting: false,
-		size: 64,
-		meta: { align: 'center' }
-	};
+  return {
+    id: ROW_NUMBER_COLUMN_ID,
+    header,
+    enableSorting: false,
+    size: 64,
+    meta: { align: 'center' }
+  };
 }
 
 /**
@@ -49,26 +49,26 @@ export function createRowNumberColumn<TData>(header = 'No'): ColumnDef<TData> {
  * declare a `size` in their column definition for pixel-accurate alignment.
  */
 export function getPinnedOffset<TData>(
-	table: Table<TData>,
-	columnId: string,
-	side: 'left' | 'right'
+  table: Table<TData>,
+  columnId: string,
+  side: 'left' | 'right'
 ): number {
-	const columns = table.getVisibleLeafColumns();
-	const ordered = side === 'left' ? columns : [...columns].reverse();
+  const columns = table.getVisibleLeafColumns();
+  const ordered = side === 'left' ? columns : [...columns].reverse();
 
-	let offset = 0;
-	for (const column of ordered) {
-		if (column.columnDef.meta?.pinned !== side) continue;
-		if (column.id === columnId) break;
-		offset += column.getSize();
-	}
-	return offset;
+  let offset = 0;
+  for (const column of ordered) {
+    if (column.columnDef.meta?.pinned !== side) continue;
+    if (column.id === columnId) break;
+    offset += column.getSize();
+  }
+  return offset;
 }
 
 export interface TableStateHelperOptions {
-	pageIndex?: number;
-	pageSize?: number;
-	sorting?: { id: string; desc: boolean }[];
+  pageIndex?: number;
+  pageSize?: number;
+  sorting?: { id: string; desc: boolean }[];
 }
 
 /**
@@ -76,59 +76,59 @@ export interface TableStateHelperOptions {
  * Simplifies managing sorting, pagination, selection, expansion, and visibility.
  */
 export function createTableState(initial?: TableStateHelperOptions) {
-	let pageIndex = $state(initial?.pageIndex ?? 0);
-	let pageSize = $state(initial?.pageSize ?? 10);
-	let sorting = $state<{ id: string; desc: boolean }[]>(initial?.sorting ?? []);
-	let rowSelection = $state<Record<string, boolean>>({});
-	let columnVisibility = $state<Record<string, boolean>>({});
-	let expanded = $state<ExpandedState>({});
+  let pageIndex = $state(initial?.pageIndex ?? 0);
+  let pageSize = $state(initial?.pageSize ?? 10);
+  let sorting = $state<{ id: string; desc: boolean }[]>(initial?.sorting ?? []);
+  let rowSelection = $state<Record<string, boolean>>({});
+  let columnVisibility = $state<Record<string, boolean>>({});
+  let expanded = $state<ExpandedState>({});
 
-	return {
-		get pageIndex() {
-			return pageIndex;
-		},
-		set pageIndex(value: number) {
-			pageIndex = value;
-		},
-		get pageSize() {
-			return pageSize;
-		},
-		set pageSize(value: number) {
-			pageSize = value;
-		},
-		get sorting() {
-			return sorting;
-		},
-		set sorting(value) {
-			sorting = value;
-		},
-		get rowSelection() {
-			return rowSelection;
-		},
-		set rowSelection(value) {
-			rowSelection = value;
-		},
-		get columnVisibility() {
-			return columnVisibility;
-		},
-		set columnVisibility(value) {
-			columnVisibility = value;
-		},
-		get expanded() {
-			return expanded;
-		},
-		set expanded(value) {
-			expanded = value;
-		},
-		reset() {
-			pageIndex = initial?.pageIndex ?? 0;
-			pageSize = initial?.pageSize ?? 10;
-			sorting = initial?.sorting ?? [];
-			rowSelection = {};
-			columnVisibility = {};
-			expanded = {};
-		}
-	};
+  return {
+    get pageIndex() {
+      return pageIndex;
+    },
+    set pageIndex(value: number) {
+      pageIndex = value;
+    },
+    get pageSize() {
+      return pageSize;
+    },
+    set pageSize(value: number) {
+      pageSize = value;
+    },
+    get sorting() {
+      return sorting;
+    },
+    set sorting(value) {
+      sorting = value;
+    },
+    get rowSelection() {
+      return rowSelection;
+    },
+    set rowSelection(value) {
+      rowSelection = value;
+    },
+    get columnVisibility() {
+      return columnVisibility;
+    },
+    set columnVisibility(value) {
+      columnVisibility = value;
+    },
+    get expanded() {
+      return expanded;
+    },
+    set expanded(value) {
+      expanded = value;
+    },
+    reset() {
+      pageIndex = initial?.pageIndex ?? 0;
+      pageSize = initial?.pageSize ?? 10;
+      sorting = initial?.sorting ?? [];
+      rowSelection = {};
+      columnVisibility = {};
+      expanded = {};
+    }
+  };
 }
 
 /**
@@ -144,18 +144,18 @@ export function createTableState(initial?: TableStateHelperOptions) {
  * relying on that `$derived`-from-store chain and reacts on every emission.
  */
 export function createTable<TData>(options: TableOptions<TData>) {
-	const store = createSvelteTable(options);
-	let table = $state(get(store)) as Table<TData>;
+  const store = createSvelteTable(options);
+  let table = $state(get(store)) as Table<TData>;
 
-	$effect(() => {
-		return store.subscribe((value) => {
-			table = value;
-		});
-	});
+  $effect(() => {
+    return store.subscribe((value) => {
+      table = value;
+    });
+  });
 
-	return {
-		get current() {
-			return table;
-		}
-	};
+  return {
+    get current() {
+      return table;
+    }
+  };
 }

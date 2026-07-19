@@ -37,7 +37,7 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
    - Example:
      ```typescript
      // Mapping selected Option state back to Core model ID
-     const departmentId = selectedOption?.value as string || '';
+     const departmentId = (selectedOption?.value as string) || '';
      ```
 
 ---
@@ -52,7 +52,7 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
 2. **Avoid Tailwind Arbitrary Values**:
    - Do **NOT** use arbitrary values (e.g., `bg-[#f3f3f3]`, `w-[325px]`, `p-[17px]`, `h-[400px]`) in Tailwind classes.
    - Always rely on standard Tailwind classes/spacing scales or the configured `@theme` tokens in the CSS entrypoint.
-	- If a specific custom dimension or color is absolutely necessary, define it as a variable or token inside `@theme` in `app.css` rather than writing inline arbitrary values in component classes.
+   - If a specific custom dimension or color is absolutely necessary, define it as a variable or token inside `@theme` in `app.css` rather than writing inline arbitrary values in component classes.
 
 ---
 
@@ -71,10 +71,10 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
 3. **Beware of Flex Layouts on Custom Components with Inner Wrappers**:
    - Applying layout utility classes like `class="flex flex-col sm:flex-row ..."` directly to custom container components (e.g., `<Card class="...">`) often breaks layout expectations.
    - This occurs because many custom components wrap their `children` snippet inside an internal structural element (e.g., `<div class="text-sm">`). The `flex` class applies to the outermost container, but the inner wrapper remains a standard block element, preventing the actual children from becoming flex items.
-   - **Solution:** Instead of passing layout classes to the component's `class` prop, wrap your content inside a standard `<div class="flex ... w-full">` *inside* the component's slot.
+   - **Solution:** Instead of passing layout classes to the component's `class` prop, wrap your content inside a standard `<div class="flex ... w-full">` _inside_ the component's slot.
 
 4. **Typography Color Variants and Dark Mode Overrides**:
-   - The `<Typography>` component applies a default `color="primary"` prop, which compiles to `text-slate-900 dark:text-slate-100`. 
+   - The `<Typography>` component applies a default `color="primary"` prop, which compiles to `text-slate-900 dark:text-slate-100`.
    - If you attempt to override the text color using a class (e.g., `class="text-brand-primary"`), it will successfully apply in light mode, but the component's internal `dark:text-slate-100` will override your color in dark mode, causing the text to unexpectedly turn white.
    - **Solution:** Always use the component's native `color` prop (e.g., `color="brand"`, `color="muted"`) to change text colors.
 

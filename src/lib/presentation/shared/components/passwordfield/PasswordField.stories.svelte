@@ -10,31 +10,31 @@
     argTypes: {
       variant: {
         control: 'select',
-        options: ['default', 'error', 'success'],
+        options: ['default', 'error', 'success']
       },
       size: {
         control: 'select',
-        options: ['sm', 'md', 'lg'],
+        options: ['sm', 'md', 'lg']
       },
       disabled: {
-        control: 'boolean',
+        control: 'boolean'
       },
       label: {
-        control: 'text',
+        control: 'text'
       },
       placeholder: {
-        control: 'text',
+        control: 'text'
       },
       helperText: {
-        control: 'text',
+        control: 'text'
       },
       error: {
-        control: 'text',
-      },
+        control: 'text'
+      }
     },
     args: {
       label: 'Password',
-      placeholder: 'Enter your password',
+      placeholder: 'Enter your password'
     }
   });
 </script>

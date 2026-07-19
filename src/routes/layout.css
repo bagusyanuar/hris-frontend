@@ -32,8 +32,7 @@
   --color-neutral-bg: var(--color-slate-950);
   --color-neutral-card: var(--color-slate-900);
   --color-neutral-border: var(--color-slate-800);
-  
+
   /* Update text elements to slate-100 for readability in dark mode */
   color: var(--color-slate-100);
 }
-

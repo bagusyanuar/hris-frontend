@@ -6,7 +6,7 @@ Rules and patterns for writing clean, type-safe, lint-free Svelte 5 and TypeScri
 
 ## 1. Keyed Each Blocks (CRITICAL)
 
-Always use keyed `{#each}` blocks to ensure Svelte can track element identities during updates, preventing rendering bugs and lint/compiler warnings. 
+Always use keyed `{#each}` blocks to ensure Svelte can track element identities during updates, preventing rendering bugs and lint/compiler warnings.
 Every `{#each}` block MUST have a key expression.
 
 ### ✅ Correct
@@ -73,6 +73,7 @@ $effect(() => {
 ### Why?
 
 `void expr` evaluates the expression (registering the reactive dependency for Svelte's compiler) and returns `undefined`. This satisfies:
+
 - **Svelte 5 reactivity**: the value is read, so the effect re-runs when it changes.
 - **ESLint `no-unused-vars`**: no variable is created.
 - **ESLint `no-unused-expressions`**: `void` makes it a valid expression statement.
@@ -104,12 +105,14 @@ $effect(() => {
 ---
 
 ## 7. Custom Runes & Folders
+
 - Place all custom reusable UI states and reactive controllers under `/runes` folders (e.g. `src/lib/presentation/modules/employee/runes/`).
 - Avoid using the term `hooks` for UI-state modules to prevent naming collisions and conceptual confusion with SvelteKit's request/response middleware `hooks` (`src/hooks.server.ts`).
 
 ---
 
 ## 8. SvelteKit Client-Side Routing
+
 - Always use standard anchor tags (`<a href="...">`) for normal page transitions to enable SvelteKit's prefetching and routing optimizations.
 - Use `$app/state` or `$app/navigation` selectively:
   - Import `page` from `$app/state` to retrieve query parameters or the current pathname reatively.
@@ -131,14 +134,14 @@ All class field initializers run before the constructor body executes — this i
 
 ```ts
 export class DepartmentFilterStore {
-	departments = $state<DepartmentModel[]>([]);
-	assignableParents: DepartmentModel[];
+  departments = $state<DepartmentModel[]>([]);
+  assignableParents: DepartmentModel[];
 
-	constructor(private excludeId: string) {
-		this.assignableParents = $derived(
-			DepartmentService.getAssignableParents(this.departments, this.excludeId)
-		);
-	}
+  constructor(private excludeId: string) {
+    this.assignableParents = $derived(
+      DepartmentService.getAssignableParents(this.departments, this.excludeId)
+    );
+  }
 }
 ```
 
@@ -146,10 +149,12 @@ export class DepartmentFilterStore {
 
 ```ts
 export class DepartmentFilterStore {
-	// runs before constructor body → this.excludeId not assigned yet
-	assignableParents = $derived(DepartmentService.getAssignableParents(this.departments, this.excludeId));
+  // runs before constructor body → this.excludeId not assigned yet
+  assignableParents = $derived(
+    DepartmentService.getAssignableParents(this.departments, this.excludeId)
+  );
 
-	constructor(private excludeId: string) {}
+  constructor(private excludeId: string) {}
 }
 ```
 
@@ -177,26 +182,22 @@ When building nested interactive components (e.g., an actionable Dropdown or an 
 ```svelte
 <!-- Action button inside a clickable table row -->
 <button
-	onclick={(e) => {
-		e.stopPropagation(); // Prevents the parent row's onclick from triggering
-		toggleDropdown();
-	}}
+  onclick={(e) => {
+    e.stopPropagation(); // Prevents the parent row's onclick from triggering
+    toggleDropdown();
+  }}
 >
-	...
+  ...
 </button>
 ```
 
 ### ❌ Incorrect (Will trigger parent events)
 
 ```svelte
-<button onclick={toggleDropdown}>
-	...
-</button>
+<button onclick={toggleDropdown}> ... </button>
 
 <!-- Svelte 4 modifiers are no longer valid / recommended in Svelte 5 -->
-<button onclick|stopPropagation={toggleDropdown}>
-	...
-</button>
+<button onclick|stopPropagation={toggleDropdown}> ... </button>
 ```
 
 ---
@@ -206,35 +207,39 @@ When building nested interactive components (e.g., an actionable Dropdown or an 
 For SaaS and Enterprise applications, **Filter, Search, Pagination, and Tab states must be stored in the URL (Search Params)**, not purely in local Svelte `$state()`.
 
 ### Why?
+
 - **Shareable Links:** Users can share a URL with their exact filters applied.
 - **Refresh-Safe:** Refreshing the page keeps the table exactly where it was.
 - **Browser History:** Back/Forward buttons work correctly.
 
 ### ✅ Correct (URL State Pattern)
+
 ```svelte
 <script lang="ts">
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import { goto } from '$app/navigation';
 
-	// 1. Read initial state from URL
-	let searchQuery = $derived(page.url.searchParams.get('search') || '');
-	
-	// 2. Update URL on change (using SvelteKit's goto with keepFocus/replaceState)
-	function updateSearch(query: string) {
-		const url = new URL(page.url);
-		if (query) url.searchParams.set('search', query);
-		else url.searchParams.delete('search');
-		
-		goto(url, { keepFocus: true, replaceState: true, noScroll: true });
-	}
+  // 1. Read initial state from URL
+  let searchQuery = $derived(page.url.searchParams.get('search') || '');
+
+  // 2. Update URL on change (using SvelteKit's goto with keepFocus/replaceState)
+  function updateSearch(query: string) {
+    const url = new URL(page.url);
+    if (query) url.searchParams.set('search', query);
+    else url.searchParams.delete('search');
+
+    goto(url, { keepFocus: true, replaceState: true, noScroll: true });
+  }
 </script>
 ```
 
 ### Kapan menggunakan `$state()` lokal?
-Hanya untuk *state* UI yang bersifat sementara (*ephemeral*) dan tidak relevan untuk dibagikan:
+
+Hanya untuk _state_ UI yang bersifat sementara (_ephemeral_) dan tidak relevan untuk dibagikan:
+
 - Modal/Dialog/Drawer (buka/tutup)
-- *Hover states*
-- *Form inputs* (yang belum di-*submit*)
+- _Hover states_
+- _Form inputs_ (yang belum di-_submit_)
 
 ---
 
@@ -246,17 +251,21 @@ Do not use `$effect` to synchronize one piece of state with another. Instead of 
 
 ```svelte
 <script lang="ts">
-	let count = $state(0);
-	
-	// Writable derived pattern
-	const double = {
-		get value() { return count * 2; },
-		set value(v: number) { count = v / 2; }
-	};
+  let count = $state(0);
+
+  // Writable derived pattern
+  const double = {
+    get value() {
+      return count * 2;
+    },
+    set value(v: number) {
+      count = v / 2;
+    }
+  };
 </script>
 
 <button onclick={() => count++}>Count: {count}</button>
-<button onclick={() => double.value = 10}>Set Double to 10</button>
+<button onclick={() => (double.value = 10)}>Set Double to 10</button>
 <p>Double: {double.value}</p>
 ```
 
@@ -264,13 +273,12 @@ Do not use `$effect` to synchronize one piece of state with another. Instead of 
 
 ```svelte
 <script lang="ts">
-	let count = $state(0);
-	let double = $state(0);
-	
-	// Anti-pattern: Syncing state in an effect
-	$effect(() => {
-		double = count * 2;
-	});
+  let count = $state(0);
+  let double = $state(0);
+
+  // Anti-pattern: Syncing state in an effect
+  $effect(() => {
+    double = count * 2;
+  });
 </script>
 ```
-

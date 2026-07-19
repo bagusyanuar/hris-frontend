@@ -48,6 +48,7 @@ src/lib/
 ## Generation Guidelines
 
 ### 1. Core Layer (Pure TypeScript)
+
 - **`[domain-name].model.ts`**: Declare models with suffix `Model` (e.g., `UserModel`), inputs with `Input` (e.g., `CreateUserInput`), and params with `Params`. For paginated lists, `[Domain]Params` MUST extend `PaginationSortParam` from `$lib/core/shared`, and functions should return `PaginatedResult<[Domain]Model>`.
 - **`[domain-name].repository.ts`**: Define repository interface starting with `I` (e.g., `IUserRepository`).
 - **`[domain-name].usecase.ts`**: Class for **async orchestration + business rules that touch the repository** (`getAll`/`getById`/`create`/`update`/`delete`, plus invariants that read other records). Constructor-injected with `I[Domain]Repository`. Pure TS, no Svelte runes, no external libraries.
@@ -55,6 +56,7 @@ src/lib/
 - **`index.ts`**: Barrel export all of the above.
 
 ### 2. Infrastructure Layer
+
 - **`[domain-name].schema.ts`**: Declare API request/response structures with suffixes `Request`, `Response`, or `Query`. For paginated lists, `[Domain]Query` should extend `PaginationSortQuery` and the API will return `ApiListResponse<[Domain]Response>`.
 - **`[domain-name].validator.ts`**: Define Zod validation schemas (e.g. `Create[Domain]Schema`, and derive `Update[Domain]Schema = Create[Domain]Schema.and(z.object({ id: z.string().min(1) }))`) representing the input structures. Used by Superforms for client-side form validation. For `T | null` domain fields use `.nullable().default(null)`, **not** `.optional()` (optional injects `undefined` and breaks assignability to `CreateXInput`). See `architecture/error-handling.md` §3.1.
 - **`[domain-name].mapper.ts`**: Static class mapping schema types (in snake_case) to core models (camelCase) and vice versa. Use the declarative object spread pattern (e.g., `...(params.search && { search: params.search })`) for `toQuery` mappings. Use `PaginationMapper.toQuery(params)` and `PaginationMapper.toResult(...)` to handle pagination conversions.
@@ -64,6 +66,7 @@ src/lib/
 - **`index.ts`**: Barrel export the mapper, provider, mock, implementation, and schema.
 
 ### 3. Presentation Layer
+
 - **`runes/[domain-name].keys.ts` + `runes/[domain-name]-query.svelte.ts`** (**default**): Function-based Custom Query Runes using `createQuery`/`createMutation` from `@tanstack/svelte-query`, each calling `provide[Domain]UseCase()` (imported from Infrastructure) directly. No intermediate Store class. Follow the full pattern — query key factory, generics, invalidation, mutation variable shapes, `isPending` vs `isFetching` — in the **`tanstack-query` skill**; do not improvise it here.
 - **`runes/[Domain]Store.svelte.ts`** (fallback only): A class managing reactive UI state (e.g., `$state(isLoading)`, `$state(error)`) is for **pure client-side UI state that never fetches/persists domain data** — e.g. auth session, wizard step, sidebar/filter-only state. It also exports the `provide[Domain]Store()` singleton factory from this same file, calling `provide[Domain]UseCase()` (imported from Infrastructure) if it needs one. This keeps the dependency arrow one-way: Core ← Infrastructure ← Presentation.
   - If a `$derived` field's expression reads `this.useCase` (the constructor-injected UseCase), assign it inside the constructor body (`this.tree = $derived(...)`), not as a top-level field initializer — see rule #9 in `svelte/conventions.md`. Never replace it with a plain getter; that breaks memoization and can cause render loops in consumers like DataTable.

@@ -9,37 +9,37 @@
     argTypes: {
       variant: {
         control: 'select',
-        options: ['default', 'error', 'success'],
+        options: ['default', 'error', 'success']
       },
       size: {
         control: 'select',
-        options: ['sm', 'md', 'lg'],
+        options: ['sm', 'md', 'lg']
       },
       disabled: {
-        control: 'boolean',
+        control: 'boolean'
       },
       label: {
-        control: 'text',
+        control: 'text'
       },
       placeholder: {
-        control: 'text',
+        control: 'text'
       },
       helperText: {
-        control: 'text',
+        control: 'text'
       },
       error: {
-        control: 'text',
+        control: 'text'
       },
       value: {
-        control: 'number',
+        control: 'number'
       },
       currencyPrefix: {
-        control: 'text',
-      },
+        control: 'text'
+      }
     },
     args: {
       label: 'Salary',
-      placeholder: '0',
+      placeholder: '0'
     }
   });
 </script>
@@ -48,7 +48,10 @@
 
 <Story name="With Initial Value" args={{ value: 15000000 }} />
 
-<Story name="Custom Currency (USD)" args={{ currencyPrefix: '$', label: 'Budget', value: 500000 }} />
+<Story
+  name="Custom Currency (USD)"
+  args={{ currencyPrefix: '$', label: 'Budget', value: 500000 }}
+/>
 
 <Story name="Error State" args={{ error: 'Amount exceeds maximum limit.', value: 999999999 }} />
 

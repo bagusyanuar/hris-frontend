@@ -7,6 +7,7 @@ This is the central reference catalog of all reusable presentation components in
 ## 📦 Component Index
 
 ### 1. Button
+
 - **Path:** [Button.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/button/Button.svelte)
 - **Props:**
   - `variant`: `'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'` (defaults to `'primary'`)
@@ -22,6 +23,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 2. TextField
+
 - **Path:** [TextField.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/textfield/TextField.svelte)
 - **Props:**
   - `value`: `string | number | string[]` (bindable)
@@ -37,9 +39,10 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 3. PasswordField
+
 - **Path:** [PasswordField.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/passwordfield/PasswordField.svelte)
 - **Props:**
-  - *Inherits all props from TextField* (except `type` and `suffix` which are managed internally).
+  - _Inherits all props from TextField_ (except `type` and `suffix` which are managed internally).
 - **Description:**
   - Provides a password input field with a toggleable show/hide eye icon.
 - **Example:**
@@ -48,11 +51,12 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 4. CurrencyField
+
 - **Path:** [CurrencyField.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/currencyfield/CurrencyField.svelte)
 - **Props:**
   - `value`: `number | null` (bindable unmasked integer value, e.g. `5000000`)
   - `currencyPrefix`: `string` (defaults to `"Rp"`)
-  - *Inherits all other props from TextField* (except `type` which is set to text).
+  - _Inherits all other props from TextField_ (except `type` which is set to text).
 - **Description:**
   - Uses `imask` to auto-format numeric currency inputs with thousands separator (`.`) and radix (`,`).
 - **Example:**
@@ -61,6 +65,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 5. Typography
+
 - **Path:** [Typography.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/typography/Typography.svelte)
 - **Props:**
   - `tag`: `'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' | 'label'` (optional; automatically inferred from variant if not provided)
@@ -74,6 +79,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 6. Label
+
 - **Path:** [Label.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/label/Label.svelte)
 - **Props:**
   - `required`: `boolean` (optional; displays a red asterisk next to the label content if true)
@@ -84,6 +90,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 7. HelperText
+
 - **Path:** [HelperText.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/helpertext/HelperText.svelte)
 - **Props:**
   - `variant`: `'default' | 'error'` (defaults to `'default'`)
@@ -94,6 +101,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 8. Checkbox
+
 - **Path:** [Checkbox.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/checkbox/Checkbox.svelte)
 - **Props:**
   - `checked`: `boolean` (bindable; reflects checked state)
@@ -106,6 +114,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 9. Radio
+
 - **Path:** [Radio.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/radio/Radio.svelte)
 - **Props:**
   - `value`: `any` (the value this radio represents)
@@ -119,6 +128,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 10. Combobox
+
 - **Path:** [Combobox.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/combobox/Combobox.svelte)
 - **Props:**
   - `options`: `Option[]` (list of selectable options, where `Option` is `{ value: string | number; label: string }`)
@@ -148,6 +158,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 11. Toast / Toaster
+
 - **Path:** [Toaster.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/toast/Toaster.svelte) / [toast.svelte.ts](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/toast/toast.svelte.ts)
 - **Methods:**
   - `toast.success(message: string, title?: string, duration?: number)`
@@ -165,6 +176,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 12. Dialog
+
 - **Path:** [Dialog.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dialog/Dialog.svelte)
 - **Props:**
   - `open`: `boolean` (bindable; controls the visibility of the dialog)
@@ -180,13 +192,14 @@ This is the central reference catalog of all reusable presentation components in
   <Dialog bind:open={isOpen} title="Confirm Action" size="sm">
     <p>Are you sure you want to proceed?</p>
     {#snippet footer()}
-      <Button variant="outline" onclick={() => isOpen = false}>Cancel</Button>
+      <Button variant="outline" onclick={() => (isOpen = false)}>Cancel</Button>
       <Button onclick={confirmAction}>Proceed</Button>
     {/snippet}
   </Dialog>
   ```
 
 ### 13. AlertDialog
+
 - **Path:** [AlertDialog.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dialog/AlertDialog.svelte)
 - **Props:**
   - `open`: `boolean` (bindable; controls the visibility of the alert dialog)
@@ -219,6 +232,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 14. Switch
+
 - **Path:** [Switch.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/switch/Switch.svelte)
 - **Props:**
   - `checked`: `boolean` (bindable; reflects active state)
@@ -229,10 +243,15 @@ This is the central reference catalog of all reusable presentation components in
   - Standard accessibility-compliant switch toggle component. Fully supports key focus, sliding micro-animations, custom labels, descriptions, and error states.
 - **Example:**
   ```svelte
-  <Switch bind:checked={isNotificationsEnabled} label="Enable Notifications" description="Receive real-time alerts." />
+  <Switch
+    bind:checked={isNotificationsEnabled}
+    label="Enable Notifications"
+    description="Receive real-time alerts."
+  />
   ```
 
 ### 15. Card
+
 - **Path:** [Card.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/card/Card.svelte)
 - **Props:**
   - `variant`: `'default' | 'accent-primary' | 'accent-success' | 'accent-danger' | 'accent-warning' | 'glass' | 'glow' | 'gradient'` (design style variant)
@@ -258,6 +277,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 16. DatePicker
+
 - **Path:** [DatePicker.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/date-picker/DatePicker.svelte)
 - **Props:**
   - `value`: `DateValue | undefined` (bindable; active selected date value)
@@ -281,6 +301,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 17. DateRangePicker
+
 - **Path:** [DateRangePicker.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/date-picker/DateRangePicker.svelte)
 - **Props:**
   - `value`: `DateRange | undefined` (bindable; active range `{ start: DateValue, end: DateValue }`)
@@ -303,6 +324,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 18. Dropdown
+
 - **Path:** [Dropdown.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropdown/Dropdown.svelte) / [DropdownItem.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropdown/DropdownItem.svelte) / [DropdownDivider.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropdown/DropdownDivider.svelte)
 - **Props (Dropdown):**
   - `align`: `'left' | 'right'` (defaults to `'left'`; alignment of the popup box)
@@ -330,6 +352,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 19. Navbar
+
 - **Path:** [Navbar.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/navbar/Navbar.svelte) (along with breadcrumbs, toggles, notifications, and search components in the `navbar/` folder)
 - **Description:**
   - Desktop-optimized headers containing brand titles, breadcrumbs, search, notification triggers, and user theme toggles.
@@ -349,6 +372,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 20. Sidebar / DashboardSidebar
+
 - **Path:** [Sidebar.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/sidebar/Sidebar.svelte) / [DashboardSidebar.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/sidebar/DashboardSidebar.svelte)
 - **Props (DashboardSidebar):**
   - `isCollapsed`: `boolean` (bindable)
@@ -369,6 +393,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 21. Dropzone
+
 - **Path:** [Dropzone.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/dropzone/Dropzone.svelte)
 - **Props:**
   - `files`: `File[]` (bindable; array of selected/dropped files)
@@ -390,14 +415,11 @@ This is the central reference catalog of all reusable presentation components in
     let uploadedFiles = $state<File[]>([]);
   </script>
 
-  <Dropzone
-    bind:files={uploadedFiles}
-    accept="image/*, .pdf, .xlsx"
-    maxSize={5 * 1024 * 1024}
-  />
+  <Dropzone bind:files={uploadedFiles} accept="image/*, .pdf, .xlsx" maxSize={5 * 1024 * 1024} />
   ```
 
 ### 22. DataTable
+
 - **Path:** [table/](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/table/) — `Root` / `Header` / `Head` / `Body` / `Row` / `Cell` / `Pagination` (import via `import * as TableUI from '$lib/presentation/shared/components/table'`)
 - **Helpers (`helpers.svelte.ts`):**
   - `createTable(options: TableOptions<TData>)`: wraps `@tanstack/svelte-table`'s `createSvelteTable` for Svelte 5. Returns `{ get current(): Table<TData> }` — **always read the table via `.current`**, never wrap the return value in `let x = $derived(...)` around a raw store; TanStack re-emits the same `Table` object reference on every state change, which a `$derived`-from-store chain fails to react to (silently stops updating sort/pagination/expand).
@@ -413,7 +435,12 @@ This is the central reference catalog of all reusable presentation components in
 - **Example:**
   ```svelte
   <script lang="ts">
-    import { getCoreRowModel, getSortedRowModel, getPaginationRowModel, type ColumnDef } from '@tanstack/svelte-table';
+    import {
+      getCoreRowModel,
+      getSortedRowModel,
+      getPaginationRowModel,
+      type ColumnDef
+    } from '@tanstack/svelte-table';
     import * as TableUI from '$lib/presentation/shared/components/table';
     import { createTable } from '$lib/presentation/shared/components/table/helpers.svelte';
 
@@ -452,6 +479,7 @@ This is the central reference catalog of all reusable presentation components in
   ```
 
 ### 23. Badge
+
 - **Path:** [Badge.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/badge/Badge.svelte)
 - **Props:**
   - `variant`: `'default' | 'primary' | 'success' | 'danger' | 'warning'` (defaults to `'default'`)

@@ -3,11 +3,13 @@
 These rules define the UI standards, theming conventions, and layout guidelines for the HRIS frontend project. All components and pages must adhere to these rules to maintain visual consistency, premium aesthetics, and professional user experience.
 
 ## 1. Design Philosophy
+
 - **Modern Corporate SaaS / Clean Dashboard**: Clean layout, premium feel, subtle border lines, spacious elements, and rich typography.
 - **Card-based Layout**: Main data and sections must be grouped in structured, independent cards with consistent padding, subtle shadows, and rounded corners.
 - **Aesthetic Excellence**: Avoid generic colors or raw CSS borders. Use proper shadows, micro-interactions, transitions, and hover states.
 
 ## 2. Color Palette (Abstracted Tokens)
+
 We use a premium, configurable color theme. All component classes should use abstract tokens rather than hardcoded tailwind colors (e.g. use `bg-brand-primary` instead of `bg-emerald-600`), making it trivial to change colors if requested by clients.
 
 - **Primary / Brand Color Tokens**:
@@ -28,13 +30,17 @@ We use a premium, configurable color theme. All component classes should use abs
   - Info: Sky/Blue (`sky-600` / `sky-50`)
 
 ## 3. Dark Mode Support
+
 The application defaults to **Light Mode** and fully supports **Dark Mode** via class toggling (`.dark` on the `html` or `body` element).
+
 - Design system variables (neutral backgrounds, cards, and borders) will automatically invert values when the `.dark` class is active.
 - Always use the semantic abstract token classes (e.g., `bg-neutral-bg`, `bg-neutral-card`, `border-neutral-border`) to ensure layout components transition seamlessly.
 - Avoid absolute colors like `bg-white` or `bg-slate-50` on core layout wrappers, use `bg-neutral-card` and `bg-neutral-bg` respectively.
 
 ## 3. Card-based Layout Guidelines
+
 Every content card must have:
+
 - **Borders & Shadows**: Soft borders (`border border-neutral-border`). **IMPORTANT**: Avoid using drop shadows (`shadow-sm`, etc.) on parent/layout containers (such as the Sidebar, Page Header, and Main Content wrap in Bento Grid) to keep the app minimal; rely entirely on border lines for structural definition.
 - **Rounding**: Consistent rounded corners, preferably `rounded-xl`.
 - **Padding**: Generous spacing inside the card, minimum `p-6` (24px) for desktop, `p-4` (16px) for mobile.
@@ -60,21 +66,25 @@ Every content card must have:
 ```
 
 ## 4. Iconography & Domain Consistency
+
 - **Synchronized Icons**: When choosing an icon to represent a domain entity (e.g., `lucide:building-2` for Departments or `lucide:users` for Employees), use it consistently across the **Sidebar Navigation**, **Page Headers**, and any related metric cards to build strong visual recognition.
 
-
 ## 5. Bento Grid & Floating Panels Layout
+
 For premium SaaS dashboards, use the **Bento Grid / Floating Panels** layout:
+
 - **Outer Viewport**: `h-screen flex p-3 gap-3 overflow-hidden bg-neutral-bg`.
 - **Layout Container (`<main>`)**: The main content wrapper in `+layout.svelte` MUST be transparent and without card styling (`bg-transparent border-0 rounded-none overflow-y-auto`). Do NOT style the `<main>` tag as a large white card, otherwise, it breaks the floating panels illusion.
-- **Page Panels (The "Bento" Boxes)**: 
+- **Page Panels (The "Bento" Boxes)**:
   - Every individual section of a page (e.g., Page Header, Metric Cards, Data Table) must be enclosed in its own independent floating card (`bg-neutral-card border border-neutral-border rounded-2xl p-6`).
   - **CRITICAL**: Do NOT wrap an entire page's content inside a single overarching `<Card>` component.
 - **Uniform Spacing**: All gaps between panels—both vertical and horizontal—must use a strict `gap-3` (12px) to match the outer viewport gap. Use `<div class="flex flex-col gap-3">` for vertical stacking and `<div class="grid gap-3">` for horizontal grids. Avoid `space-y-*` if it differs from the grid gap.
 - **Internal Scrolling**: Set `overflow-y-auto` and `flex-1` on individual panels (like Sidebar menu and Main workspace body) instead of scrolling the whole window.
 
 ## 5. Custom Scrollbars
+
 Never use browser default scrollbars on scrollable panels.
+
 - Add global styling for Webkit and Firefox scrollbars to make them extremely thin and subtle:
   ```css
   :global(*::-webkit-scrollbar) {
@@ -88,6 +98,7 @@ Never use browser default scrollbars on scrollable panels.
   ```
 
 ## 6. Typography & Spacing
+
 - **Font**: Use clean, modern geometric fonts (e.g., `font-sans`).
 - **Mandatory Typography Component**: **ALL** text content (headings, body copy, descriptions, captions, spans, labels, etc.) must be rendered using the `Typography` component. Never use raw HTML text tags (`<h1>`, `<p>`, `<span>`, `<label>`) with manual classes or custom styles directly in pages or components.
 - **Consistency**: Maintain a strict spacing rhythm (e.g., `gap-4`, `space-y-6`, `p-6`). Do not use ad-hoc pixel values; rely entirely on Tailwind CSS utility spacing values.

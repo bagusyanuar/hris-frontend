@@ -4,7 +4,7 @@ export const ssr = false;
 export const prerender = false;
 
 export async function load({ fetch }) {
-	// Panggil init dengan fetch bawaan SvelteKit untuk menjaga kompabilitas load function
-	await RuntimeConfig.init(fetch);
-	return {};
+  // Panggil init dengan fetch bawaan SvelteKit untuk menjaga kompabilitas load function
+  await RuntimeConfig.init(fetch);
+  return {};
 }

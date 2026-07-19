@@ -4,14 +4,16 @@ This project strictly follows a Clean/Layered Architecture tailored for Svelte 5
 All domains and business logic must be placed inside `src/lib`, strictly separated into three layers:
 
 ### 1. Presentation Layer (`src/routes` & `src/lib/presentation`)
+
 - **`src/routes`**: Exclusively used for routing (SvelteKit controllers). `+page.svelte` files here should be as thin as possible and contain NO business logic. They should only import the actual Page component from the Presentation layer and render it.
-- **`src/lib/presentation`**: Contains the actual UI. 
+- **`src/lib/presentation`**: Contains the actual UI.
   - `/shared`: Dumb components (e.g., `<Button>`, `<Input>`).
   - `/modules/[domain]/pages`: The actual page components (e.g., `EmployeePage.svelte`).
   - `/modules/[domain]/components`: Smart components tied to a domain.
   - `/modules/[domain]/runes`: Svelte 5 Custom Runes for UI/server state. **Default** for any domain with server-fetched data: function-based TanStack Query runes (`[domain].keys.ts` + `[domain]-query.svelte.ts`, see the `tanstack-query` skill). Reserve class-based `[Domain]Store.svelte.ts` for pure client-side UI state that never fetches/persists domain data (e.g. auth session, wizard step).
 
 ### 2. Core Layer (`src/lib/core`)
+
 - Contains business logic, use cases, domain services, domain models, and interfaces.
 - **Rule**: MUST be pure TypeScript. NEVER import `.svelte` files, UI components, Svelte Runes (`$state`, `$derived`), or any external frameworks/libraries here.
 - **Rule**: This layer must be completely agnostic of outside dependencies. State management for the UI should be handled in the Presentation Layer, while the Core Layer focuses exclusively on pure business logic.
@@ -21,6 +23,7 @@ All domains and business logic must be placed inside `src/lib`, strictly separat
   - **Why split:** keeps the UseCase focused and lets the Presentation layer call pure logic **directly** (`DepartmentService.buildTree(...)`) without going through `provide[Domain]UseCase()` — a Domain Service needs no provider because it has no dependencies to wire. Do not put pure transforms on the UseCase just because it already exists.
 
 ### 3. Infrastructure Layer (`src/lib/infrastructure`)
+
 - Contains external integrations, API clients, repository implementations, schemas, mappers, and dependency providers.
 - **Components**:
   - **Schemas (`*.schema.ts`)**: Defines request, response, and query payload structures as received from/sent to the backend API (e.g., in `snake_case`).
@@ -46,6 +49,7 @@ Strict one-way dependency flow: **Core ← Infrastructure ← Presentation**. An
 - **Presentation**: may import from both Core and Infrastructure. The `provide[Domain]Store()` singleton factory belongs in the presentation layer itself — export it from `presentation/modules/[domain]/runes/[Domain]Store.svelte.ts`, where it calls `provide[Domain]UseCase()` imported from Infrastructure.
 
 ### ✅ Correct — `infrastructure/department/department.provider.ts`
+
 ```ts
 import { DepartmentUseCase } from '$lib/core/department';
 import { DepartmentRepositoryImpl } from './department.repository.impl';
@@ -53,38 +57,45 @@ import { DepartmentRepositoryImpl } from './department.repository.impl';
 let departmentUseCaseInstance: DepartmentUseCase | null = null;
 
 export function provideDepartmentUseCase(): DepartmentUseCase {
-	if (!departmentUseCaseInstance) {
-		departmentUseCaseInstance = new DepartmentUseCase(new DepartmentRepositoryImpl());
-	}
-	return departmentUseCaseInstance;
+  if (!departmentUseCaseInstance) {
+    departmentUseCaseInstance = new DepartmentUseCase(new DepartmentRepositoryImpl());
+  }
+  return departmentUseCaseInstance;
 }
 ```
 
 ### ✅ Correct — `presentation/modules/department/runes/DepartmentStore.svelte.ts`
+
 ```ts
 import { provideDepartmentUseCase } from '$lib/infrastructure/department';
 
-export class DepartmentStore { /* ... */ }
+export class DepartmentStore {
+  /* ... */
+}
 
 let departmentStoreInstance: DepartmentStore | null = null;
 
 export function provideDepartmentStore(): DepartmentStore {
-	if (!departmentStoreInstance) {
-		departmentStoreInstance = new DepartmentStore(provideDepartmentUseCase());
-	}
-	return departmentStoreInstance;
+  if (!departmentStoreInstance) {
+    departmentStoreInstance = new DepartmentStore(provideDepartmentUseCase());
+  }
+  return departmentStoreInstance;
 }
 ```
 
 ### ❌ Incorrect — infra reaching into presentation
+
 ```ts
 // infrastructure/department/department.provider.ts
 import { DepartmentStore } from '$lib/presentation/modules/department/runes/DepartmentStore.svelte'; // WRONG LAYER
 
-export function provideDepartmentStore(): DepartmentStore { /* ... */ }
+export function provideDepartmentStore(): DepartmentStore {
+  /* ... */
+}
 ```
 
 ## HTTP & API Client Rules
+
 - **Axios HTTP Client**: Use `httpClient` from `$lib/infrastructure/http/client` for all external REST API communications. This client is wrapped to automatically extract the `data` payload from the Axios response, so `httpClient.get<ApiResponse<T>>()` returns the `ApiResponse` object directly without needing to access `res.data.data`.
 - **Base URL & Config**: Never hardcode base URLs. Use `RuntimeConfig.apiBaseUrl` which automatically loads configuration dynamically (from `.env` in development, and from `/config.json` in production for Docker environments).
 - **Authentication**:
@@ -93,4 +104,3 @@ export function provideDepartmentStore(): DepartmentStore { /* ... */ }
   - 401 Unauthorized handling (token refresh and request queuing) is managed centrally by Axios interceptors. Repositories should not try to handle token refresh manually.
 - **Response Format**: All successful responses match the standard `ApiResponse<T>` envelope (or `ApiListResponse<T>` for paginated lists). Generic errors are typed as `ApiErrorResponse` and validation errors as `ValidationError[]`.
 - **Pagination**: Standardized globally. Core layer uses `PaginationSortParam` and `PaginatedResult` from `$lib/core/shared`. Infrastructure layer uses `PaginationSortQuery` and `ApiListResponse` from `$lib/infrastructure/http/types`, using `PaginationMapper` (`http/pagination.mapper.ts`) to handle the conversion.
-

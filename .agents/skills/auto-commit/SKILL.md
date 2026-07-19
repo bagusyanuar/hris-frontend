@@ -18,12 +18,12 @@ Use this skill when you have completed coding tasks and want to commit the chang
    - For each group of changes:
      - Formulate a specific **Conventional Commit** message for that group (e.g., `feat(button): add variant` or `docs(api): update employee docs`).
      - Identify and list a detailed description of the changes for the files in the group.
-     - Stage *only* the files related to this specific context: `git add <file1> <file2>`.
+     - Stage _only_ the files related to this specific context: `git add <file1> <file2>`.
      - Commit the staged files, including a list of change descriptions in the commit body:
        ```bash
        git commit -m "<subject>" -m "- <change description 1>" -m "- <change description 2>"
        ```
-     - *Note:* Do not use `git add .` unless all changes in the workspace strictly belong to the exact same context.
+     - _Note:_ Do not use `git add .` unless all changes in the workspace strictly belong to the exact same context.
 
 3. **Step 3: Push to Remote**
    - Once all groups are committed and the working directory is clean, ask the user if they want to push the commits to the remote repository. If yes, propose `git push`.

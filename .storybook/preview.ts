@@ -1,14 +1,13 @@
-import type { Preview } from '@storybook/sveltekit'
+import type { Preview } from '@storybook/sveltekit';
 import '../src/routes/layout.css';
-
 
 const preview: Preview = {
   parameters: {
     controls: {
       matchers: {
-       color: /(background|color)$/i,
-       date: /Date$/i,
-      },
+        color: /(background|color)$/i,
+        date: /Date$/i
+      }
     },
 
     a11y: {
@@ -17,7 +16,7 @@ const preview: Preview = {
       // 'off' - skip a11y checks entirely
       test: 'todo'
     }
-  },
+  }
 };
 
 export default preview;
