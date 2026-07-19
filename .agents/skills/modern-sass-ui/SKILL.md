@@ -7,6 +7,8 @@ description: Guidelines and utility code templates for building Modern Corporate
 
 Activate this skill when creating or modifying UI components, pages, templates, or layouts for the HRIS frontend, especially when designing dashboards, cards, sidebar/header navigations, and interactive widgets.
 
+> **CRITICAL RULE**: Before you render any UI element (inputs, buttons, modal dialogs, status badges, tables), you **MUST** read the [Component Catalog](file:///Users/dystopia/svelte/hris-frontend/.agents/references/catalog.md) FIRST to find existing reusable components. Do NOT guess component names or write raw HTML/Tailwind for elements that are already cataloged.
+
 This skill ensures that all UI elements conform to the premium **SaaS Design System** and use optimal Tailwind CSS v4 practices with abstract brand tokens so color schemes can be easily changed (e.g., from Emerald to Indigo/Blue) via CSS variables.
 
 ---

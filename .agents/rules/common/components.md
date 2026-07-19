@@ -10,11 +10,11 @@ For the list of currently registered components, see the [Component Catalog](fil
 
 Whenever you need to render a UI element (e.g., inputs, buttons, selections, loaders, modal dialogs, status badges):
 
-1. **Step 1: Check the Catalog first**
-   - Verify if a matching component exists in the [Component Catalog](file:///Users/dystopia/svelte/hris-frontend/.agents/references/catalog.md).
-   - *Note:* The catalog is a reference file. Only read it when you are actively building UI components.
+1. **Step 1: MANDATORY - ALWAYS Check the Catalog FIRST**
+   - **CRITICAL RULE**: Before you even search the `shared/components` directory or assume a component exists (like `<Select>`), you **MUST** read the [Component Catalog](file:///Users/dystopia/svelte/hris-frontend/.agents/references/catalog.md).
+   - The catalog contains the definitive list of what is available, what the exact import paths are, and what props to use. **Do not skip this step.**
 2. **Step 2: Fallback Scan the Physical Directory**
-   - If not cataloged, scan the [shared/components](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components) directory to see if the component exists but was not yet registered in the catalog.
+   - Only if a component is truly not listed in the catalog, scan the [shared/components](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components) directory to see if it exists but was not yet registered.
 3. **Step 3: Slice/Create a New Shared Component**
    - If the component does not exist yet, **do NOT write raw HTML/Tailwind inputs or inline styles directly in page files.**
    - Instead, create a new reusable component under [shared/components](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components).
@@ -84,3 +84,7 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
 
 6. **Strict Badge Variants**:
    - The `<Badge>` component strictly accepts specific variants (`primary`, `success`, `warning`, `default`, `danger`). Do NOT arbitrarily use other terms (e.g., `secondary`) as they will throw type errors. Always default to `"default"` if a specific semantic variant is not applicable.
+
+7. **Component Specific Constraints (TextField & Dialog)**:
+   - **`TextField` is NOT for Textareas**: The `TextField` component in this catalog is strictly an `<input type="text">` wrapper. Do **NOT** attempt to pass `<textarea>` attributes like `multiline` or `rows`. If you need a multiline input and there is no `TextArea` component in the catalog, either use `TextField` normally or create a new `TextArea` component.
+   - **`Dialog` Description**: The `Dialog` component does NOT accept a `description` prop. Do not try to pass `description="..."`. Any descriptive text must be placed manually as a paragraph (e.g., `<p class="text-sm text-slate-500 mb-5">...</p>`) inside the `Dialog`'s default slot, above the form.

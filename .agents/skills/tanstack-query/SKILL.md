@@ -332,3 +332,19 @@ Understanding the difference between `isPending` and `isFetching` is vital to pr
 	{/if}
 </div>
 ```
+
+---
+
+## 7. `onSuccess` Typing
+
+When using `@tanstack/svelte-query`'s `createMutation`, the `data` parameter in `onSuccess` callbacks defaults to `any` unless explicitly typed, triggering ESLint errors. Always explicitly type the `data` parameter.
+
+### ✅ Correct
+```ts
+const updateMutationFn = createMutation(() => ({
+    mutationFn: (input: UpdateInput) => useCase.update(input),
+    onSuccess: (data: DomainModel) => {
+        // ...
+    }
+}));
+```
