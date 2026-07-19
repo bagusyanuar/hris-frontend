@@ -34,9 +34,7 @@
             </span>
             <Badge variant={branch.status === 'active' ? 'success' : 'default'}>
               <Icon
-                icon={branch.status === 'active'
-                  ? 'lucide:check-circle-2'
-                  : 'lucide:minus-circle'}
+                icon={branch.status === 'active' ? 'lucide:check-circle-2' : 'lucide:minus-circle'}
                 class="w-3.5 h-3.5"
               />
               {branch.status === 'active' ? 'Aktif' : 'Nonaktif'}
@@ -63,7 +61,9 @@
 
           <div class="flex flex-col gap-1">
             <span class="text-sm text-slate-500">Alamat</span>
-            <span class="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-pre-line">
+            <span
+              class="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-pre-line"
+            >
               {branch.address || 'Tidak ada alamat'}
             </span>
           </div>

@@ -45,7 +45,7 @@
 
 <!-- DESKTOP SIDEBAR -->
 <aside
-  class="hidden md:flex flex-col shrink-0 bg-neutral-card border border-neutral-border rounded-xl p-4 transition-all duration-300 relative
+  class="hidden md:flex flex-col h-full shrink-0 bg-neutral-card border border-neutral-border rounded-xl p-4 transition-all duration-300 relative
 		{isCollapsed ? 'w-20' : 'w-64'}"
 >
   {@render container(false)}

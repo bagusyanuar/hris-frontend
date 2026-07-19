@@ -17,6 +17,12 @@
 
   let isExpanded = $state(false);
 
+  $effect(() => {
+    if (isActive) {
+      isExpanded = true;
+    }
+  });
+
   function handleClick() {
     if (!sidebar.isCollapsed) {
       isExpanded = !isExpanded;

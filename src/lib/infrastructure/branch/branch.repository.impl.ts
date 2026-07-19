@@ -26,9 +26,7 @@ export class BranchRepositoryImpl implements IBranchRepository {
 
   async getById(id: string): Promise<BranchModel | null> {
     return handleAppError(async () => {
-      const response = await httpClient.get<ApiResponse<BranchResponse>>(
-        `${this.basePath}/${id}`
-      );
+      const response = await httpClient.get<ApiResponse<BranchResponse>>(`${this.basePath}/${id}`);
       return BranchMapper.toModel(response.data);
     });
   }

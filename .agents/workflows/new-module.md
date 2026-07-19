@@ -4,7 +4,6 @@ description: Scaffolds a complete Domain-Driven Design (DDD) module inside the H
 
 # Workflow: `/new-module`
 
-
 ## 🛑 Step 1: Information Gathering & Schema Design (INTERACTIVE)
 
 When the user invokes this workflow, you **MUST STOP** and ask the user for the following information before writing any code:

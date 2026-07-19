@@ -5,11 +5,7 @@ import {
   type ColumnDef,
   type Row
 } from '@tanstack/svelte-table';
-import {
-  JobPositionService,
-  type JobPositionModel,
-  type JobPositionStatus
-} from '$lib/core/job-position';
+import { JobPositionService, type JobPositionModel } from '$lib/core/job-position';
 import { createTable } from '$lib/presentation/shared/components/table/helpers.svelte';
 import type { Option } from '$lib/presentation/shared/components/combobox';
 import { useJobPositionQueries } from './job-position-query.svelte';
