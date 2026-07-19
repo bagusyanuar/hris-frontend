@@ -29,6 +29,7 @@ export const navigationConfig: NavigationGroup[] = [
   {
     title: 'Master Data',
     items: [
+      { label: 'Cabang', icon: 'lucide:map-pin', href: '/branches' },
       { label: 'Department', icon: 'lucide:building-2', href: '/departments' },
       { label: 'Jabatan', icon: 'lucide:award', href: '/job-titles' },
       { label: 'Posisi', icon: 'lucide:briefcase', href: '/job-positions' }

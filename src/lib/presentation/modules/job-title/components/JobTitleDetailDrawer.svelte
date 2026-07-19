@@ -14,7 +14,7 @@
   let { isOpen, jobTitle, onClose }: Props = $props();
 </script>
 
-<Drawer {isOpen} {onClose} title="Detail Job Title" size="md">
+<Drawer {isOpen} {onClose} title="Detail Job Title">
   {#if jobTitle}
     <div class="flex flex-col gap-6">
       <!-- Header Profile -->
