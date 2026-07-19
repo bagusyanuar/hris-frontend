@@ -54,5 +54,18 @@ export const navigationConfig: NavigationGroup[] = [
       },
       { label: 'Expenses', icon: 'lucide:wallet', href: '#expenses' }
     ]
+  },
+  {
+    title: 'Pengaturan',
+    items: [
+      {
+        label: 'Hak Akses',
+        icon: 'lucide:shield-check',
+        subItems: [
+          { label: 'Role & Permission', href: '/roles' },
+          { label: 'Manajemen Pengguna', href: '/users' }
+        ]
+      }
+    ]
   }
 ];
