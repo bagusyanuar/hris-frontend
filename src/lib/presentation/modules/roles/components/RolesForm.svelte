@@ -3,6 +3,7 @@
   import type { RoleModel, CreateRoleInput } from '$lib/core/roles';
   import { Button } from '$lib/presentation/shared/components/button';
   import { TextField } from '$lib/presentation/shared/components/textfield';
+  import { Checkbox } from '$lib/presentation/shared/components/checkbox';
   import { useRolesForm } from '../runes/roles-form.svelte';
 
   interface Props {
@@ -396,11 +397,9 @@
                       : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-350 dark:hover:border-slate-750'}"
                     onclick={() => handlePermissionToggle(perm.id)}
                   >
-                    <div class="pt-0.5">
-                      <input
-                        type="checkbox"
+                    <div class="pt-0.5 pointer-events-none">
+                      <Checkbox
                         checked={isChecked}
-                        class="h-4.5 w-4.5 rounded-md border-slate-300 dark:border-slate-700 text-brand-primary focus:ring-brand-primary cursor-pointer"
                         readonly
                       />
                     </div>
