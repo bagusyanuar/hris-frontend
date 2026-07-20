@@ -17,24 +17,24 @@ export interface NavigationGroup {
   items: (NavigationItem | NavigationExpandable)[];
 }
 
-export const navigationConfig: NavigationGroup[] = [
+export type NavigationConfigItem = NavigationGroup | NavigationItem | NavigationExpandable;
+
+export const navigationConfig: NavigationConfigItem[] = [
+  { label: 'Dashboard', icon: 'lucide:grid', href: '/' },
   {
     title: 'Employees',
-    items: [
-      { label: 'Dashboard', icon: 'lucide:grid', href: '/' },
-      { label: 'Staff Directory', icon: 'lucide:users', href: '/employees' },
-      { label: 'Time & Attendance', icon: 'lucide:clock', href: '#time' }
-    ]
+    items: [{ label: 'Time & Attendance', icon: 'lucide:clock', href: '#time' }]
   },
   {
     title: 'Master Data',
     items: [
       { label: 'Cabang', icon: 'lucide:map-pin', href: '/branches' },
+      { label: 'Karyawan', icon: 'lucide:users', href: '/employees' },
       {
         label: 'Organisasi',
         icon: 'lucide:network',
         subItems: [
-          { label: 'Department', href: '/departments' },
+          { label: 'Departemen', href: '/departments' },
           { label: 'Jabatan', href: '/job-titles' },
           { label: 'Posisi', href: '/job-positions' }
         ]

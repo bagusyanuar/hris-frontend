@@ -74,30 +74,50 @@
   {/if}
 
   <SidebarNav>
-    {#each navigationConfig as group (group.title)}
-      <SidebarGroup title={group.title}>
-        {#each group.items as item (item.label)}
-          {#if isExpandable(item)}
-            <SidebarExpandable label={item.label} icon={item.icon} isActive={isGroupActive(item)}>
-              {#each item.subItems as sub (sub.label)}
-                <SidebarItem
-                  label={sub.label}
-                  isSubItem
-                  href={sub.href}
-                  isActive={isItemActive(sub.href)}
-                />
-              {/each}
-            </SidebarExpandable>
-          {:else}
+    {#each navigationConfig as node, i (('title' in node ? node.title : node.label) || i)}
+      {#if 'title' in node}
+        <SidebarGroup title={node.title}>
+          {#each node.items as item (item.label)}
+            {#if isExpandable(item)}
+              <SidebarExpandable label={item.label} icon={item.icon} isActive={isGroupActive(item)}>
+                {#each item.subItems as sub (sub.label)}
+                  <SidebarItem
+                    label={sub.label}
+                    isSubItem
+                    href={sub.href}
+                    isActive={isItemActive(sub.href)}
+                  />
+                {/each}
+              </SidebarExpandable>
+            {:else}
+              <SidebarItem
+                label={item.label}
+                icon={item.icon}
+                href={item.href}
+                isActive={isItemActive(item.href)}
+              />
+            {/if}
+          {/each}
+        </SidebarGroup>
+      {:else if isExpandable(node)}
+        <SidebarExpandable label={node.label} icon={node.icon} isActive={isGroupActive(node)}>
+          {#each node.subItems as sub (sub.label)}
             <SidebarItem
-              label={item.label}
-              icon={item.icon}
-              href={item.href}
-              isActive={isItemActive(item.href)}
+              label={sub.label}
+              isSubItem
+              href={sub.href}
+              isActive={isItemActive(sub.href)}
             />
-          {/if}
-        {/each}
-      </SidebarGroup>
+          {/each}
+        </SidebarExpandable>
+      {:else}
+        <SidebarItem
+          label={node.label}
+          icon={node.icon}
+          href={node.href}
+          isActive={isItemActive(node.href)}
+        />
+      {/if}
     {/each}
   </SidebarNav>
 

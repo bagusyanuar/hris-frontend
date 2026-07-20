@@ -60,7 +60,7 @@
     <!-- Custom Hover Flyout Submenu (Collapsed mode) -->
     {#if sidebar.isCollapsed}
       <div
-        class="absolute top-0 left-full pl-2 min-w-[188px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto translate-x-2 group-hover:translate-x-0 transition-all duration-200 z-999"
+        class="absolute top-0 left-full pl-2 min-w-47 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto translate-x-2 group-hover:translate-x-0 transition-all duration-200 z-999"
       >
         <div
           class="bg-white dark:bg-slate-950 border border-slate-100 dark:border-emerald-500/40 rounded-xl shadow-xl p-2 flex flex-col gap-1 w-full relative"
@@ -87,7 +87,7 @@
   {#if !sidebar.isCollapsed && isExpanded}
     <div
       transition:slide={{ duration: 200 }}
-      class="pl-2.5 pr-2 py-0.5 space-y-1 mt-1 border-l border-slate-100 dark:border-slate-800 ml-[20px]"
+      class="pl-2.5 pr-2 py-0.5 space-y-1 mt-1 border-l border-slate-100 dark:border-slate-800 ml-5"
     >
       {@render children?.()}
     </div>
