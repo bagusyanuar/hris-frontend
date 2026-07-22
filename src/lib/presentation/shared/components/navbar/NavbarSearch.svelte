@@ -1,6 +1,7 @@
 <script lang="ts">
   /* eslint-disable svelte/no-navigation-without-resolve */
-  import { slide, fade } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
+  import { safeSlide as slide } from '$lib/presentation/shared/utils/transitions';
   import Icon from '@iconify/svelte';
   import { goto } from '$app/navigation';
 

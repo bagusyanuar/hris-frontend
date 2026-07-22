@@ -2,7 +2,8 @@
   import { Typography } from '$lib/presentation/shared/components/typography';
   import { Card } from '$lib/presentation/shared/components/card';
   import { Button } from '$lib/presentation/shared/components/button';
-  import { slide, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
+  import { safeSlide as slide } from '$lib/presentation/shared/utils/transitions';
   import { onMount } from 'svelte';
   import Icon from '@iconify/svelte';
 

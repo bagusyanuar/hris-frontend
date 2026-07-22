@@ -6,7 +6,7 @@
   import { Badge } from '$lib/presentation/shared/components/badge';
   import Icon from '@iconify/svelte';
   import { cn } from '$lib/presentation/shared/utils/cn';
-  import { slide } from 'svelte/transition';
+  import { safeSlide as slide } from '$lib/presentation/shared/utils/transitions';
 
   let { table }: { table: Table<JobPositionModel & { children?: JobPositionModel[] }> } = $props();
 

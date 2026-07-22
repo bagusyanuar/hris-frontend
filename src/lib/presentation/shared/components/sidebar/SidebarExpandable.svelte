@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { slide } from 'svelte/transition';
+  import { safeSlide as slide } from '$lib/presentation/shared/utils/transitions';
   import Icon from '@iconify/svelte';
   import type { SidebarContext } from './Sidebar.svelte';
 
