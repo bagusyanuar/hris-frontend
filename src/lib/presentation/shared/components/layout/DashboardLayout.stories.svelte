@@ -86,7 +86,7 @@
 
 <Story name="Default">
   <div
-    class="h-[750px] flex bg-slate-100 dark:bg-slate-950 p-3 gap-3 overflow-hidden text-slate-900 transition-colors duration-200"
+    class="h-187.5 flex bg-slate-100 dark:bg-slate-950 p-3 gap-3 overflow-hidden text-slate-900 transition-colors duration-200"
   >
     <!-- REUSABLE SIDEBAR -->
     <Sidebar bind:isCollapsed>

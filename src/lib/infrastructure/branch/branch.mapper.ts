@@ -2,8 +2,7 @@ import type {
   BranchModel,
   CreateBranchInput,
   UpdateBranchInput,
-  BranchParams,
-  BranchStatus
+  BranchParams
 } from '$lib/core/branch';
 import type {
   BranchResponse,
@@ -17,11 +16,12 @@ export class BranchMapper {
   static toModel(response: BranchResponse): BranchModel {
     return {
       id: response.id,
+      companyId: response.company_id,
       code: response.code,
       name: response.name,
-      address: response.address,
-      phone: response.phone,
-      status: response.status as BranchStatus,
+      city: response.city,
+      isMain: response.is_main,
+      isActive: response.is_active,
       createdAt: response.created_at,
       updatedAt: response.updated_at
     };
@@ -31,7 +31,7 @@ export class BranchMapper {
     return {
       ...PaginationMapper.toQuery(params),
       ...(params.search && { search: params.search }),
-      ...(params.status && params.status !== 'all' && { status: params.status })
+      ...(params.isActive !== undefined && params.isActive !== 'all' && { is_active: params.isActive })
     };
   }
 
@@ -39,9 +39,9 @@ export class BranchMapper {
     return {
       code: input.code,
       name: input.name,
-      address: input.address ?? undefined,
-      phone: input.phone ?? undefined,
-      status: input.status
+      city: input.city,
+      is_main: input.isMain,
+      is_active: input.isActive
     };
   }
 

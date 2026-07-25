@@ -44,13 +44,11 @@
     return companies
       .map((company) => {
         const companyMatches =
-          company.name.toLowerCase().includes(query) ||
-          company.short.toLowerCase().includes(query);
+          company.name.toLowerCase().includes(query) || company.short.toLowerCase().includes(query);
 
         const matchedBranches = company.branches.filter(
           (branch) =>
-            branch.name.toLowerCase().includes(query) ||
-            branch.short.toLowerCase().includes(query)
+            branch.name.toLowerCase().includes(query) || branch.short.toLowerCase().includes(query)
         );
 
         // If company matches, show all branches. Otherwise show matched branches.
@@ -96,7 +94,9 @@
     </div>
     {#if !sidebar.isCollapsed}
       <div class="flex-1 min-w-0">
-        <div class="text-[10px] font-bold text-brand-text dark:text-emerald-400 uppercase tracking-wider truncate">
+        <div
+          class="text-[10px] font-bold text-brand-text dark:text-emerald-400 uppercase tracking-wider truncate"
+        >
           {activeCompany ? activeCompany.name : 'Select Company'}
         </div>
         <div class="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate mt-0.5">
@@ -111,7 +111,7 @@
   {#if isDropdownOpen}
     <div
       transition:fly={{ x: 12, duration: 200 }}
-      class="absolute top-0 left-full ml-3 min-w-[260px] w-max max-h-[400px] overflow-y-auto bg-neutral-card border border-neutral-border rounded-xl shadow-lg z-50 p-2 flex flex-col gap-2 scrollable-content"
+      class="absolute top-0 left-full ml-3 min-w-65 w-max max-h-100 overflow-y-auto bg-neutral-card border border-neutral-border rounded-xl shadow-lg z-50 p-2 flex flex-col gap-2 scrollable-content"
     >
       <div
         class="px-2 py-1 text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
@@ -121,7 +121,10 @@
 
       <!-- Search Input -->
       <div class="px-1 py-0.5 relative">
-        <Icon icon="lucide:search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <Icon
+          icon="lucide:search"
+          class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
+        />
         <input
           type="text"
           bind:value={searchQuery}
@@ -143,7 +146,9 @@
           <div class="flex flex-col gap-1">
             <!-- Company Header (Non-clickable label) -->
             <div class="flex items-center gap-2 px-2 py-1 select-none">
-              <div class="w-5 h-5 rounded {company.color} flex items-center justify-center text-[9px] font-extrabold shrink-0">
+              <div
+                class="w-5 h-5 rounded {company.color} flex items-center justify-center text-[9px] font-extrabold shrink-0"
+              >
                 {company.short.slice(0, 2)}
               </div>
               <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">

@@ -16,10 +16,13 @@ import type { ApiResponse } from '$lib/infrastructure/http/types';
 export class BranchRepositoryImpl implements IBranchRepository {
   private readonly basePath = '/v1/branches';
 
-  async getAll(params: BranchParams): Promise<PaginatedResult<BranchModel>> {
+  async getAll(params: BranchParams & { companyId?: string }): Promise<PaginatedResult<BranchModel>> {
     return handleAppError(async () => {
       const query = BranchMapper.toQuery(params);
-      const response = await httpClient.get<BranchListResponse>(this.basePath, { params: query });
+      const url = params.companyId 
+        ? `/v1/companies/${params.companyId}/branches`
+        : this.basePath;
+      const response = await httpClient.get<BranchListResponse>(url, { params: query });
       return PaginationMapper.toResult(response, BranchMapper.toModel);
     });
   }
@@ -34,7 +37,8 @@ export class BranchRepositoryImpl implements IBranchRepository {
   async create(input: CreateBranchInput): Promise<BranchModel> {
     return handleAppError(async () => {
       const request = BranchMapper.toCreateRequest(input);
-      const response = await httpClient.post<ApiResponse<BranchResponse>>(this.basePath, request);
+      const url = `/v1/companies/${input.companyId}/branches`;
+      const response = await httpClient.post<ApiResponse<BranchResponse>>(url, request);
       return BranchMapper.toModel(response.data);
     });
   }

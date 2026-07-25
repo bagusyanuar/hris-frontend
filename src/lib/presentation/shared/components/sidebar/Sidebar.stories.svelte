@@ -72,7 +72,7 @@
 </script>
 
 <Story name="Default">
-  <div class="h-[600px] flex bg-slate-100 dark:bg-slate-950 p-4 gap-4">
+  <div class="h-150 flex bg-slate-100 dark:bg-slate-950 p-4 gap-4">
     <Sidebar bind:isCollapsed>
       <SidebarBrand />
       <SidebarBranchSwitcher {companies} bind:activeBranch />

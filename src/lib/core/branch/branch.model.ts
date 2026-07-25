@@ -1,24 +1,24 @@
 import type { PaginationSortParam } from '$lib/core/shared';
 
-export type BranchStatus = 'active' | 'inactive';
-
 export interface BranchModel {
   id: string;
+  companyId: string;
   code: string;
   name: string;
-  address?: string;
-  phone?: string;
-  status: BranchStatus;
+  city?: string;
+  isMain: boolean;
+  isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export type CreateBranchInput = {
+  companyId: string;
   code: string;
   name: string;
-  address?: string;
-  phone?: string;
-  status: BranchStatus;
+  city?: string;
+  isMain: boolean;
+  isActive: boolean;
 };
 
 export type UpdateBranchInput = CreateBranchInput & {
@@ -27,5 +27,5 @@ export type UpdateBranchInput = CreateBranchInput & {
 
 export interface BranchParams extends PaginationSortParam {
   search?: string;
-  status?: BranchStatus | 'all';
+  isActive?: boolean | 'all';
 }

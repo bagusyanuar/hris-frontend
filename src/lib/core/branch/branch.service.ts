@@ -4,17 +4,18 @@ export class BranchService {
   static toInput(model: BranchModel): UpdateBranchInput {
     return {
       id: model.id,
+      companyId: model.companyId,
       code: model.code,
       name: model.name,
-      address: model.address,
-      phone: model.phone,
-      status: model.status
+      city: model.city,
+      isMain: model.isMain,
+      isActive: model.isActive
     };
   }
 
   static getStats(branches: BranchModel[]) {
     const total = branches.length;
-    const active = branches.filter((b) => b.status === 'active').length;
+    const active = branches.filter((b) => b.isActive).length;
     const inactive = total - active;
     const activePercentage = total === 0 ? 0 : Math.round((active / total) * 100);
 
@@ -28,16 +29,16 @@ export class BranchService {
 
   static filter(
     branches: BranchModel[],
-    filters: { search: string; status: 'all' | 'active' | 'inactive' }
+    filters: { search: string; isActive: 'all' | boolean }
   ): BranchModel[] {
     return branches.filter((branch) => {
       const matchSearch =
         !filters.search ||
         branch.name.toLowerCase().includes(filters.search.toLowerCase()) ||
         branch.code.toLowerCase().includes(filters.search.toLowerCase()) ||
-        (branch.address && branch.address.toLowerCase().includes(filters.search.toLowerCase()));
+        (branch.city && branch.city.toLowerCase().includes(filters.search.toLowerCase()));
 
-      const matchStatus = filters.status === 'all' || branch.status === filters.status;
+      const matchStatus = filters.isActive === 'all' || branch.isActive === filters.isActive;
 
       return !!(matchSearch && matchStatus);
     });

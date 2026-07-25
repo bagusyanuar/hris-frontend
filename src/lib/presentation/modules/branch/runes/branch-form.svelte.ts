@@ -13,13 +13,22 @@ export function useBranchForm(onValid: (input: CreateBranchInput) => Promise<voi
     }
   });
 
-  function load(model: BranchModel | null) {
+  function load(model: BranchModel | null, defaultCompanyId?: string) {
     if (model) {
       form.options.validators = zod4(UpdateBranchSchema);
       form.reset({ data: BranchService.toInput(model) });
     } else {
       form.options.validators = zod4(CreateBranchSchema);
-      form.reset();
+      form.reset({
+        data: {
+          companyId: defaultCompanyId || '',
+          code: '',
+          name: '',
+          city: '',
+          isMain: false,
+          isActive: true
+        }
+      });
     }
   }
 
