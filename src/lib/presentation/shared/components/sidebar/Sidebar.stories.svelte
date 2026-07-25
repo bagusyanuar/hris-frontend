@@ -20,21 +20,49 @@
   let isCollapsed = $state(false);
   let activeMenu = $state('Dashboard');
 
-  const branches = [
+  const companies = [
     {
-      id: '1',
-      name: 'Panorama Veteran',
-      short: 'PV',
-      color: 'bg-emerald-600 dark:bg-emerald-500 text-white'
+      id: 'c1',
+      name: 'PT Panorama Agro',
+      short: 'PA',
+      color: 'bg-emerald-600 dark:bg-emerald-500 text-white',
+      branches: [
+        {
+          id: '1',
+          name: 'Panorama Veteran',
+          short: 'PV',
+          color: 'bg-emerald-600 dark:bg-emerald-500 text-white'
+        },
+        {
+          id: '2',
+          name: 'Panorama Pasar Kliwon',
+          short: 'PK',
+          color: 'bg-blue-600 dark:bg-blue-500 text-white'
+        }
+      ]
     },
     {
-      id: '2',
-      name: 'Panorama Pasar Kliwon',
-      short: 'PK',
-      color: 'bg-blue-600 dark:bg-blue-500 text-white'
+      id: 'c2',
+      name: 'PT Sinergi Mandiri',
+      short: 'SM',
+      color: 'bg-indigo-600 dark:bg-indigo-500 text-white',
+      branches: [
+        {
+          id: '3',
+          name: 'Sinergi Pusat',
+          short: 'SP',
+          color: 'bg-indigo-600 dark:bg-indigo-500 text-white'
+        },
+        {
+          id: '4',
+          name: 'Sinergi Cabang Barat',
+          short: 'SCB',
+          color: 'bg-amber-600 dark:bg-amber-500 text-white'
+        }
+      ]
     }
   ];
-  let activeBranch = $state(branches[0]);
+  let activeBranch = $state(companies[0].branches[0]);
 
   const currentUser = {
     name: 'administrator',
@@ -47,7 +75,7 @@
   <div class="h-[600px] flex bg-slate-100 dark:bg-slate-950 p-4 gap-4">
     <Sidebar bind:isCollapsed>
       <SidebarBrand />
-      <SidebarBranchSwitcher {branches} bind:activeBranch />
+      <SidebarBranchSwitcher {companies} bind:activeBranch />
 
       <SidebarNav>
         <SidebarGroup title="Employees">

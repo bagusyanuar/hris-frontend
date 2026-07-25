@@ -21,6 +21,14 @@
     color: string;
   }
 
+  interface Company {
+    id: string;
+    name: string;
+    short: string;
+    color: string;
+    branches: Branch[];
+  }
+
   interface UserProfile {
     name: string;
     role: string;
@@ -29,14 +37,14 @@
 
   let {
     isCollapsed = $bindable(false),
-    branches = [],
+    companies = [],
     activeBranch = $bindable(),
     user,
     onProfileClick = () => {},
     onLogoutClick = () => {}
   } = $props<{
     isCollapsed?: boolean;
-    branches?: Branch[];
+    companies?: Company[];
     activeBranch?: Branch;
     user: UserProfile;
     onProfileClick?: () => void;
@@ -69,8 +77,8 @@
 
 <Sidebar bind:isCollapsed>
   <SidebarBrand />
-  {#if branches.length > 0}
-    <SidebarBranchSwitcher {branches} bind:activeBranch />
+  {#if companies.length > 0}
+    <SidebarBranchSwitcher {companies} bind:activeBranch />
   {/if}
 
   <SidebarNav>
