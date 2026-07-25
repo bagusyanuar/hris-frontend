@@ -214,33 +214,10 @@ export function useCreateDepartmentMutation() {
   }));
 }
 
-export function useUpdateDepartmentMutation() {
-  const useCase = provideDepartmentUseCase();
-  const queryClient = useQueryClient();
-
-  return createMutation<DepartmentModel, AppError, UpdateDepartmentInput>(() => ({
-    mutationFn: (input) => useCase.update(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: departmentKeys.all });
-      toast.success('Departemen diperbarui');
-    },
-    onError: toastError
-  }));
-}
-
-export function useDeleteDepartmentMutation() {
-  const useCase = provideDepartmentUseCase();
-  const queryClient = useQueryClient();
-
-  return createMutation<void, AppError, DeleteDepartmentVariables>(() => ({
-    mutationFn: ({ id }) => useCase.delete(id),
-    onSuccess: (_data, { name }) => {
-      queryClient.invalidateQueries({ queryKey: departmentKeys.all });
-      toast.success(`"${name}" dihapus`);
-    },
-    onError: toastError
-  }));
-}
+// Note: `useUpdate[Domain]Mutation` is structurally identical to create.
+// For `useDelete[Domain]Mutation`, the structure is also identical, except 
+// `TVariables` should be `DeleteDepartmentVariables` (carrying { id, name }) 
+// so `onSuccess: (_data, { name }) => toast.success(`"${name}" dihapus`)` can work.
 ```
 
 Side-effects already live in the rune (toast + invalidate), so the page only needs to gate **success-path UI** (close dialog / clear state). Do this with `.mutate()` + a **per-call `onSuccess`** — **not** `mutateAsync` + `try/catch`. `.mutate()` is fire-and-forget so there's no rejected promise to handle; the per-call `onSuccess` runs after the rune's `onSuccess`, and the rune's `onError` still fires the toast. This avoids the empty `catch {}` (an ESLint `no-empty` smell) entirely.

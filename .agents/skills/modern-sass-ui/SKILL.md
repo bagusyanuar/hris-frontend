@@ -117,32 +117,10 @@ Cards use the abstract colors to remain flexible:
 
 ```html
 <!-- Base Card Template -->
-<div
-  class="group relative rounded-2xl border border-neutral-border bg-neutral-card p-6 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-100/80"
->
-  <!-- Content -->
-  <div class="flex items-center justify-between">
-    <span class="text-sm font-medium text-slate-500">Metric Title</span>
-    <div
-      class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-light text-brand-primary transition-colors group-hover:bg-brand-primary group-hover:text-white"
-    >
-      <!-- Icon -->
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-        />
-      </svg>
-    </div>
-  </div>
-  <div class="mt-4 flex items-baseline gap-2">
-    <span class="text-2xl font-bold tracking-tight text-slate-900">2,450</span>
-    <span class="rounded-full bg-brand-light/70 px-2 py-0.5 text-xs font-semibold text-brand-text"
-      >+12.5%</span
-    >
-  </div>
+<div class="group relative rounded-2xl border border-neutral-border bg-neutral-card p-6 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-100/80">
+  <!-- Header: flex items-center justify-between -->
+  <!-- Icon container: flex h-8 w-8 items-center justify-center rounded-xl bg-brand-light text-brand-primary group-hover:bg-brand-primary group-hover:text-white -->
+  <!-- Badge: rounded-full bg-brand-light/70 px-2 py-0.5 text-xs font-semibold text-brand-text -->
 </div>
 ```
 
@@ -152,23 +130,13 @@ Active states must use abstract brand variables:
 
 ```html
 <!-- Active Sidebar Link -->
-<a
-  href="/employees"
-  class="group flex items-center gap-3 rounded-xl bg-brand-light px-4 py-3 text-sm font-medium text-brand-text transition-all duration-200"
->
-  <!-- Icon -->
-  <svg class="h-5 w-5 text-brand-primary" ...></svg>
-  <span>Employees</span>
+<a href="#" class="group flex items-center gap-3 rounded-xl bg-brand-light px-4 py-3 text-sm font-medium text-brand-text transition-all duration-200">
+  <!-- Icon: text-brand-primary -->
 </a>
 
 <!-- Inactive Sidebar Link -->
-<a
-  href="/payroll"
-  class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-50 hover:text-slate-900"
->
-  <!-- Icon -->
-  <svg class="h-5 w-5 text-slate-400 group-hover:text-slate-600" ...></svg>
-  <span>Payroll</span>
+<a href="#" class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-50 hover:text-slate-900">
+  <!-- Icon: text-slate-400 group-hover:text-slate-600 -->
 </a>
 ```
 
