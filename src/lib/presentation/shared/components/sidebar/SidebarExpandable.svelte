@@ -36,7 +36,7 @@
     class="w-full flex items-center rounded-xl text-left transition-all duration-150 group relative cursor-pointer
 			{sidebar.isCollapsed ? 'justify-center p-2.5' : 'justify-between p-2.5'}
 			{isActive
-      ? 'bg-brand-light/50 dark:bg-emerald-500/5 text-brand-text dark:text-emerald-400 font-medium'
+      ? 'bg-brand-primary text-white font-medium'
       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
   >
     <div class="flex items-center {sidebar.isCollapsed ? '' : 'gap-3'}">
@@ -51,7 +51,7 @@
     {#if !sidebar.isCollapsed}
       <Icon
         icon="lucide:chevron-down"
-        class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 {isExpanded
+        class="w-3.5 h-3.5 transition-transform duration-200 {isActive ? 'text-white/80' : 'text-slate-400'} {isExpanded
           ? 'rotate-180'
           : ''}"
       />

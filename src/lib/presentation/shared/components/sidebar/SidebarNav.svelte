@@ -12,7 +12,7 @@
 </script>
 
 <nav
-  class="flex-1 mt-6 {sidebar?.isCollapsed
+  class="flex-1 mt-6 pb-6 {sidebar?.isCollapsed
     ? 'overflow-visible'
     : 'overflow-y-auto'} no-scrollbar space-y-4"
 >

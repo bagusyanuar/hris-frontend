@@ -33,14 +33,14 @@
     isSubItem
       ? `w-full flex items-center py-1.5 px-3 rounded-lg text-left text-sm transition-all duration-150 cursor-pointer ${
           computedActive
-            ? 'text-brand-text dark:text-emerald-400 font-semibold bg-brand-light dark:bg-emerald-500/10'
+            ? 'text-white font-semibold bg-brand-primary'
             : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900/80'
         }`
       : `w-full flex items-center rounded-xl text-left transition-all duration-150 group relative cursor-pointer ${
           sidebar.isCollapsed ? 'justify-center p-2.5' : 'gap-3 p-2.5'
         } ${
           computedActive
-            ? 'bg-brand-light dark:bg-emerald-500/10 text-brand-text dark:text-emerald-400 font-medium'
+            ? 'bg-brand-primary text-white font-medium'
             : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'
         }`
   );

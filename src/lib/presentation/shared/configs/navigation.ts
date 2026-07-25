@@ -28,17 +28,17 @@ export const navigationConfig: NavigationConfigItem[] = [
   {
     title: 'Master Data',
     items: [
-      { label: 'Cabang', icon: 'lucide:map-pin', href: '/branches' },
-      { label: 'Karyawan', icon: 'lucide:users', href: '/employees' },
+      // { label: 'Cabang', icon: 'lucide:map-pin', href: '/branches' },
       {
-        label: 'Organisasi',
+        label: 'Struktur Tenaga Kerja',
         icon: 'lucide:network',
         subItems: [
           { label: 'Departemen', href: '/departments' },
           { label: 'Jabatan', href: '/job-titles' },
           { label: 'Posisi', href: '/job-positions' }
         ]
-      }
+      },
+      { label: 'Karyawan', icon: 'lucide:users', href: '/employees' }
     ]
   },
   {
@@ -58,6 +58,7 @@ export const navigationConfig: NavigationConfigItem[] = [
   {
     title: 'Pengaturan',
     items: [
+      { label: 'Perusahaan', icon: 'lucide:building-2', href: '/companies' },
       {
         label: 'Hak Akses',
         icon: 'lucide:shield-check',

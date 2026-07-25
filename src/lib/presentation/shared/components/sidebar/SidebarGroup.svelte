@@ -14,15 +14,15 @@
 
 <div>
   {#if !sidebar.isCollapsed}
-    <div class="px-2 py-1.5 select-none">
+    <div class="px-2 pt-1 pb-0.5 select-none">
       <span
-        class="text-xs font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase"
+        class="text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase"
         >{title}</span
       >
     </div>
   {/if}
 
-  <div class="space-y-1 mt-1">
+  <div class="space-y-1 mt-0.5">
     {@render children?.()}
   </div>
 </div>
