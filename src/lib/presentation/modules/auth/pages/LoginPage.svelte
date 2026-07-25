@@ -28,240 +28,209 @@
 </script>
 
 <div
-  class="min-h-screen bg-neutral-bg flex lg:grid lg:grid-cols-12 font-sans transition-colors duration-300"
+  class="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden"
+  style="background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 30%, #f0fdf8 50%, #ecfdf5 70%, #d1fae5 100%);"
 >
-  <!-- Left Side: Brand Visuals (Only on large screens) -->
+  <!-- Curved Lines - Bottom Left (3 arcs) -->
   <div
-    class="relative hidden lg:flex lg:col-span-7 bg-slate-950 flex-col justify-between p-12 overflow-hidden border-r border-neutral-border"
-  >
-    <!-- Background decorations -->
-    <div
-      class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--color-brand-primary),transparent_45%)] opacity-30"
-    ></div>
-    <div
-      class="absolute -top-40 -left-40 w-96 h-96 bg-brand-primary rounded-full filter blur-3xl opacity-10"
-    ></div>
-    <div
-      class="absolute bottom-10 right-10 w-80 h-80 bg-emerald-700 rounded-full filter blur-3xl opacity-15"
-    ></div>
-    <div
-      class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[24px_24px]"
-    ></div>
+    class="absolute pointer-events-none"
+    style="bottom: -200px; left: -300px; width: 700px; height: 700px; border: 2px solid rgba(16,185,129,0.18); border-radius: 50%;"
+  ></div>
+  <div
+    class="absolute pointer-events-none"
+    style="bottom: -230px; left: -330px; width: 750px; height: 750px; border: 1.5px solid rgba(16,185,129,0.14); border-radius: 50%;"
+  ></div>
+  <div
+    class="absolute pointer-events-none"
+    style="bottom: -260px; left: -360px; width: 800px; height: 800px; border: 1px solid rgba(16,185,129,0.10); border-radius: 50%;"
+  ></div>
 
-    <!-- Top Header -->
-    <div class="relative z-10 flex items-center gap-3">
-      <div
-        class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-white shadow-lg shadow-brand-primary/20"
-      >
-        <Icon icon="lucide:layers" class="h-5 w-5" />
-      </div>
-      <Typography variant="h4" weight="bold" color="inherit" class="text-white tracking-wide">
-        HRIS Portal
-      </Typography>
-    </div>
+  <!-- Curved Lines - Top Right (2 arcs) -->
+  <div
+    class="absolute pointer-events-none"
+    style="top: -250px; right: -300px; width: 650px; height: 650px; border: 2px solid rgba(16,185,129,0.16); border-radius: 50%;"
+  ></div>
+  <div
+    class="absolute pointer-events-none"
+    style="top: -280px; right: -330px; width: 700px; height: 700px; border: 1.5px solid rgba(16,185,129,0.12); border-radius: 50%;"
+  ></div>
 
-    <!-- Middle Quote / Benefit -->
-    <div class="relative z-10 my-auto max-w-lg space-y-6">
-      <Typography variant="h2" weight="bold" color="inherit" class="text-white leading-tight">
-        Simplify your workforce management.
-      </Typography>
-      <Typography variant="body-lg" color="inherit" class="text-slate-300">
-        An elegant, all-in-one corporate portal to streamline payroll, attendance, leaves, and
-        talent management with enterprise-grade security.
-      </Typography>
+  <!-- Filled Dots -->
+  <div class="absolute w-2.5 h-2.5 rounded-full bg-emerald-400/40 pointer-events-none" style="top: 15%; left: 10%;"></div>
+  <div class="absolute w-2 h-2 rounded-full bg-emerald-400/35 pointer-events-none" style="top: 40%; left: 6%;"></div>
+  <div class="absolute w-2.5 h-2.5 rounded-full bg-emerald-400/30 pointer-events-none" style="top: 70%; left: 15%;"></div>
+  <div class="absolute w-2.5 h-2.5 rounded-full bg-emerald-400/35 pointer-events-none" style="top: 12%; right: 15%;"></div>
+  <div class="absolute w-2 h-2 rounded-full bg-emerald-400/30 pointer-events-none" style="top: 35%; right: 8%;"></div>
+  <div class="absolute w-2.5 h-2.5 rounded-full bg-emerald-400/25 pointer-events-none" style="top: 65%; right: 20%;"></div>
+  <div class="absolute w-2 h-2 rounded-full bg-emerald-400/35 pointer-events-none" style="top: 85%; left: 45%;"></div>
+  <div class="absolute w-2 h-2 rounded-full bg-emerald-400/30 pointer-events-none" style="top: 8%; left: 35%;"></div>
 
-      <!-- Premium Badge card -->
-      <div
-        class="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-300 hover:border-white/20"
-      >
-        <div class="flex items-start gap-4">
+  <!-- Open Rings -->
+  <div
+    class="absolute rounded-full pointer-events-none"
+    style="top: 20%; right: 10%; width: 16px; height: 16px; border: 2px solid rgba(16,185,129,0.30);"
+  ></div>
+  <div
+    class="absolute rounded-full pointer-events-none"
+    style="top: 60%; left: 8%; width: 14px; height: 14px; border: 2px solid rgba(16,185,129,0.25);"
+  ></div>
+  <div
+    class="absolute rounded-full pointer-events-none"
+    style="top: 75%; right: 18%; width: 12px; height: 12px; border: 2px solid rgba(16,185,129,0.28);"
+  ></div>
+  <div
+    class="absolute rounded-full pointer-events-none"
+    style="top: 25%; left: 18%; width: 11px; height: 11px; border: 2px solid rgba(16,185,129,0.22);"
+  ></div>
+
+  <div class="w-full max-w-md space-y-4 relative z-10">
+    <!-- Login Card -->
+    <div
+      class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg shadow-slate-200/60 transition-all duration-300"
+    >
+      {#if store.isAuthenticated}
+        <!-- Authenticated State -->
+        <div class="text-center space-y-6 py-4">
           <div
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-primary/20 text-brand-primary"
+            class="w-16 h-16 bg-brand-light text-brand-text rounded-full flex items-center justify-center mx-auto text-3xl shadow-sm border border-brand-border"
           >
-            <Icon icon="lucide:sparkles" class="h-6 w-6" />
+            <Icon icon="lucide:check" class="h-8 w-8" />
           </div>
-          <div class="space-y-1">
-            <Typography variant="body-md" weight="semibold" color="inherit" class="text-white">
-              Powered by Antigravity AI
-            </Typography>
-            <Typography variant="body-sm" color="inherit" class="text-slate-400">
-              Experience automated talent mapping, smart scheduling, and real-time dashboard
-              generation.
-            </Typography>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Footer Info -->
-    <div class="relative z-10 flex justify-between items-center text-slate-400 text-sm">
-      <Typography variant="caption" color="inherit">
-        &copy; {new Date().getFullYear()} HRIS System. All rights reserved.
-      </Typography>
-      <div class="flex gap-4">
-        <a href="#privacy" class="hover:text-white transition-colors duration-200">
-          <Typography variant="caption" color="inherit">Privacy Policy</Typography>
-        </a>
-        <a href="#terms" class="hover:text-white transition-colors duration-200">
-          <Typography variant="caption" color="inherit">Terms of Service</Typography>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right Side: Login Form -->
-  <div
-    class="flex-1 lg:col-span-5 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-12 xl:px-16 py-12 relative overflow-hidden bg-neutral-bg"
-  >
-    <!-- Decorative Background Ambient Glow for Mobile/Tablet -->
-    <div
-      class="lg:hidden absolute top-0 right-0 w-80 h-80 bg-brand-primary rounded-full filter blur-3xl opacity-10"
-    ></div>
-    <div
-      class="lg:hidden absolute bottom-0 left-0 w-80 h-80 bg-emerald-500 rounded-full filter blur-3xl opacity-5"
-    ></div>
-
-    <div class="w-full max-w-md space-y-8 relative z-10">
-      <!-- Mobile Logo Header -->
-      <div class="flex flex-col items-center text-center lg:items-start lg:text-left">
-        <div
-          class="flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary text-white shadow-lg shadow-brand-primary/20 mb-4"
-        >
-          <Icon icon="lucide:layers" class="h-6 w-6" />
-        </div>
-        <Typography
-          variant="h3"
-          weight="bold"
-          class="tracking-tight text-slate-900 dark:text-slate-100"
-        >
-          Welcome back
-        </Typography>
-        <Typography variant="body-md" color="muted" class="mt-2">
-          Enter your credentials to access your account
-        </Typography>
-      </div>
-
-      <!-- Login Card -->
-      <div
-        class="rounded-2xl border border-neutral-border bg-neutral-card p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md"
-      >
-        {#if store.isAuthenticated}
-          <!-- Authenticated State -->
-          <div class="text-center space-y-6 py-4">
-            <div
-              class="w-16 h-16 bg-brand-light text-brand-text rounded-full flex items-center justify-center mx-auto text-3xl shadow-sm border border-brand-border"
-            >
-              <Icon icon="lucide:check" class="h-8 w-8" />
-            </div>
-            <div class="space-y-2">
-              <Typography variant="h4" weight="bold">Selamat datang kembali!</Typography>
-              <Typography variant="body-md" color="muted">
-                Anda berhasil masuk sebagai <span
-                  class="font-semibold text-slate-900 dark:text-slate-100">{store.user?.name}</span
-                >
-                ({store.user?.role})
-              </Typography>
-            </div>
-
-            <Button variant="danger" class="w-full h-11" onclick={() => store.logout()}>
-              Keluar dari Sesi
-            </Button>
-          </div>
-        {:else}
-          <!-- Login Form -->
-          <form class="space-y-5" onsubmit={handleSubmit}>
-            <!-- Alert Error -->
-            {#if store.error}
-              <div
-                class="bg-rose-50 dark:bg-rose-950/30 border-l-4 border-rose-500 p-4 rounded-xl transition-all duration-200"
+          <div class="space-y-2">
+            <Typography variant="h4" weight="bold">Selamat datang kembali!</Typography>
+            <Typography variant="body-md" color="muted">
+              Anda berhasil masuk sebagai <span
+                class="font-semibold text-slate-900 dark:text-slate-100">{store.user?.name}</span
               >
-                <div class="flex">
-                  <div class="shrink-0 text-rose-500">
-                    <Icon icon="lucide:alert-circle" class="h-5 w-5" />
-                  </div>
-                  <div class="ml-3">
-                    <Typography variant="body-sm" color="error" weight="medium">
-                      {store.error}
-                    </Typography>
-                  </div>
+              ({store.user?.role})
+            </Typography>
+          </div>
+
+          <Button variant="danger" class="w-full h-11 rounded-lg" onclick={() => store.logout()}>
+            Keluar dari Sesi
+          </Button>
+        </div>
+      {:else}
+        <!-- Login Form Header -->
+        <div class="text-center mb-6">
+          <div
+            class="w-14 h-14 bg-brand-primary text-white rounded-full flex items-center justify-center mx-auto mb-3"
+          >
+            <Icon icon="lucide:shield-check" class="h-7 w-7" />
+          </div>
+          <Typography
+            variant="h3"
+            weight="bold"
+            class="tracking-tight text-slate-900 dark:text-slate-100"
+          >
+            Masuk ke HRIS
+          </Typography>
+          <Typography variant="body-sm" color="muted" class="mt-1.5">
+            Kelola SDM dengan mudah dan efisien
+          </Typography>
+        </div>
+
+        <!-- Login Form -->
+        <form class="space-y-4" onsubmit={handleSubmit}>
+          <!-- Alert Error -->
+          {#if store.error}
+            <div
+              class="bg-rose-50 dark:bg-rose-950/30 border-l-4 border-rose-500 p-4 rounded-xl transition-all duration-200"
+            >
+              <div class="flex">
+                <div class="shrink-0 text-rose-500">
+                  <Icon icon="lucide:alert-circle" class="h-5 w-5" />
+                </div>
+                <div class="ml-3">
+                  <Typography variant="body-sm" color="error" weight="medium">
+                    {store.error}
+                  </Typography>
                 </div>
               </div>
-            {/if}
-
-            <TextField
-              id="email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              bind:value={email}
-              label="Email Address"
-              placeholder="admin@hris.com"
-              class="h-11"
-            >
-              {#snippet prefix()}
-                <Icon icon="lucide:mail" class="h-4 w-4 text-slate-400" />
-              {/snippet}
-            </TextField>
-
-            <div class="space-y-1.5">
-              <PasswordField
-                id="password"
-                name="password"
-                autocomplete="current-password"
-                required
-                bind:value={password}
-                label="Password"
-                placeholder="••••••••"
-                class="h-11"
-              >
-                {#snippet prefix()}
-                  <Icon icon="lucide:lock" class="h-4 w-4 text-slate-400" />
-                {/snippet}
-              </PasswordField>
             </div>
+          {/if}
 
-            <!-- Remember & Forgot Password -->
-            <div class="flex items-center justify-between pt-1">
-              <Checkbox bind:checked={rememberMe} label="Remember me" />
-              <a
-                href="#forgot"
-                class="hover:underline text-brand-primary transition-all duration-150"
-              >
-                <Typography variant="body-sm" color="brand" weight="medium">
-                  Forgot password?
-                </Typography>
-              </a>
-            </div>
+          <TextField
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            bind:value={email}
+            label="Email"
+            placeholder="nama@perusahaan.com"
+            class="h-11"
+          >
+            {#snippet prefix()}
+              <Icon icon="lucide:mail" class="h-4 w-4 text-slate-400" />
+            {/snippet}
+          </TextField>
 
-            <Button
-              type="submit"
-              class="w-full h-11 bg-brand-primary hover:bg-brand-hover text-white transition-all duration-200 mt-2 font-medium shadow-sm shadow-brand-primary/10"
-              isLoading={store.isLoading}
-              loadingText="Verifying details..."
+          <PasswordField
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+            bind:value={password}
+            label="Password"
+            placeholder="••••••••"
+            class="h-11"
+          >
+            {#snippet prefix()}
+              <Icon icon="lucide:lock" class="h-4 w-4 text-slate-400" />
+            {/snippet}
+          </PasswordField>
+
+          <!-- Remember & Forgot Password -->
+          <div class="flex items-center justify-between pt-1">
+            <Checkbox bind:checked={rememberMe} label="Ingat Saya" />
+            <a
+              href="#forgot"
+              class="hover:underline text-brand-primary transition-all duration-150"
             >
-              Masuk
-            </Button>
-          </form>
-        {/if}
-      </div>
+              <Typography variant="body-sm" color="brand" weight="medium">
+                Lupa Password?
+              </Typography>
+            </a>
+          </div>
 
-      <!-- Bottom Hints / Instructions -->
-      <div
-        class="rounded-xl bg-slate-100 dark:bg-slate-900 border border-neutral-border p-4 text-center"
-      >
-        <Typography variant="caption" color="muted">
-          Hint: Gunakan <code
-            class="bg-white dark:bg-slate-950 border border-neutral-border px-1.5 py-0.5 rounded text-slate-800 dark:text-slate-200 font-mono"
-            >admin@hris.com</code
+          <Button
+            type="submit"
+            class="w-full h-11 bg-brand-primary hover:bg-brand-hover text-white transition-all duration-200 mt-2 font-semibold shadow-xs"
+            isLoading={store.isLoading}
+            loadingText="Memverifikasi..."
           >
-          dan
-          <code
-            class="bg-white dark:bg-slate-950 border border-neutral-border px-1.5 py-0.5 rounded text-slate-800 dark:text-slate-200 font-mono"
-            >password123</code
-          >
-        </Typography>
-      </div>
+            Masuk
+          </Button>
+        </form>
+
+        <!-- Footer inside card -->
+        <div class="text-center mt-5">
+          <Typography variant="body-sm" color="muted">
+            Belum punya akun? <a href="#contact" class="text-brand-primary font-medium hover:underline transition-colors duration-150">Hubungi Admin</a>
+          </Typography>
+        </div>
+      {/if}
+    </div>
+
+    <!-- Bottom Hints (Dev only, remove in production) -->
+    <div
+      class="rounded-xl bg-slate-100/80 dark:bg-slate-900 border border-neutral-border p-3 text-center"
+    >
+      <Typography variant="caption" color="muted">
+        Petunjuk: Gunakan <code
+          class="bg-white dark:bg-slate-950 border border-neutral-border px-1.5 py-0.5 rounded text-slate-800 dark:text-slate-200 font-mono text-xs"
+          >admin@hris.com</code
+        >
+        /
+        <code
+          class="bg-white dark:bg-slate-950 border border-neutral-border px-1.5 py-0.5 rounded text-slate-800 dark:text-slate-200 font-mono text-xs"
+          >password123</code
+        >
+      </Typography>
     </div>
   </div>
 </div>
+
+
+
