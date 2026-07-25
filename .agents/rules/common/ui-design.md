@@ -148,3 +148,97 @@ When implementing tooltips or flyout panels in a collapsed/mini-sidebar layout, 
    - Include a "View Details" fallback action.
    - Separate dangerous actions (like Delete) with a subtle divider line (`<div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>`).
    - Keep font sizes proportional (e.g., `text-xs font-normal`) so dropdown items don't look excessively large compared to the table data.
+
+---
+
+## 10. Premium Layout Design Patterns
+
+These patterns capture the design language for building layouts that feel professional and polished, not basic "AI-generated" UIs. Follow these rules strictly when building any management/settings/CRUD page.
+
+### A. Split-Panel Layout (Master–Detail)
+
+When a page manages a list of entities with detail views, use a **Split-Panel (Master–Detail)** layout instead of a full-page table:
+
+- **Left panel** = compact scrollable list (sidebar-style)
+- **Right panel** = detailed workspace for the selected entity
+- Grid: `grid-cols-12`, left `col-span-4 xl:col-span-3`, right `col-span-8 xl:col-span-9`
+- Gap between panels: `gap-3` (consistent with Bento grid)
+
+### B. Left Panel (Sidebar List) Rules
+
+The left list panel must feel **compact and dense** — it's a navigation tool, not a showcase:
+
+1. **Header card** must be tight:
+   - Padding: `p-4 pb-3.5` (never `p-5` or `p-6`)
+   - Icon: `h-8 w-8` with flat `bg-brand-light text-brand-primary` (NOT gradient)
+   - Title: `body-sm` bold (NOT `body-md`)
+   - Subtitle: `text-[11px]` raw span (NOT Typography component — too heavy for micro labels)
+   - Add a count badge next to the title: `text-[10px] bg-slate-100 px-1.5 rounded-full`
+   - "Add" button: `variant="primary" size="icon"` with small size `h-7 w-7 rounded-md` — solid brand color is the CTA
+   - Alignment: Use `items-start` so icon and text top-align
+
+2. **List items** must be slim and interactive:
+   - Padding: `p-3.5` with `gap-1.5` between items
+   - Use `rounded-xl` (NOT `rounded-2xl`)
+   - Active state: subtle background `bg-brand-light/40` + left accent bar (`w-[3px] bg-brand-primary rounded-r-full`)
+   - Active icon: `bg-brand-primary text-white shadow-sm`
+   - Inactive hover: `hover:bg-slate-50/80` (barely visible)
+   - Context menu (⋯): **hidden by default**, shown on hover via `opacity-0 group-hover:opacity-100`
+   - Use `<Button variant="ghost" size="icon">` for context triggers — NEVER raw `<button>`
+   - Company name: `text-[13px] font-semibold`
+   - Meta info (code, branch count, status dot): `text-[10px]`-`text-[11px]` inline
+
+3. **Anti-patterns to AVOID on list panels**:
+   - ❌ Large gradient icons (`h-10+ bg-gradient-to-br`) — too dominant for a list
+   - ❌ Large padding (`p-5`, `p-6`) — wastes space
+   - ❌ `body-md` or `h5` for panel titles — too large
+   - ❌ Permanently visible context menus — clutters the list
+   - ❌ `rounded-2xl` on list items — too round, feels bloated
+
+### C. Right Panel (Detail Workspace) Rules
+
+The detail workspace should feel informative and spacious:
+
+1. **Profile/Header section**:
+   - Avatar: `h-14 w-14 rounded-2xl bg-gradient-to-br` with `shadow-lg` — gradient IS appropriate here for the hero element
+   - Overlay status dot on avatar corner (like Slack): `absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-emerald-500 border-[2.5px] border-white`
+   - Title: `h4` bold with `tracking-tight`
+   - Code badge: `text-[11px] font-mono bg-slate-100 px-2 py-0.5 rounded-md border`
+   - Status: Use `Badge` with micro-icon (`check-circle-2` for active, `minus-circle` for inactive)
+   - Decorative gradient: subtle `from-brand-primary/[0.06]` overlay, NOT heavy solid gradients
+
+2. **Info/Stat cards** (e.g., NPWP, BPJS):
+   - Use a 2-column grid with individual mini-cards
+   - Background: `bg-slate-100/70` with `border-slate-200/80` — must be **clearly visible**, not washed out
+   - Icon container: `bg-white border-slate-200 shadow-sm` — white on gray for contrast
+   - Icon color: `text-brand-primary/70` — NOT plain `text-slate-400`
+   - Label: `text-[10px] uppercase tracking-wider text-slate-500`
+   - Value: `text-[13px] font-semibold text-slate-800`
+   - **Anti-pattern**: ❌ `bg-slate-50/80` with `border-slate-100/80` — too pale, looks faded
+
+3. **Action buttons hierarchy**:
+   - Primary action (Edit): `<Button variant="outline" size="sm">` — visible but not aggressive
+   - Destructive action (Delete): **ALWAYS** hidden inside a dropdown (⋯) — NEVER show a red "Hapus" button directly
+   - Use `<Button variant="outline" size="icon">` for the dropdown trigger, NOT raw `<button>`
+
+### D. Sub-entity Section (e.g., Branches inside Company)
+
+When an entity has child entities displayed on the same page:
+
+1. **Separate card** for the sub-entity section with its own header + "Tambah" button
+2. Header: icon badge + title + count pill + add button, separated by `border-b`
+3. Grid: `grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`
+4. Empty state: dashed border card with icon + text CTA
+5. "Add" mini-card: inline with existing cards, compact horizontal layout (icon + text)
+6. Cards: `rounded-xl` (not `rounded-2xl`), hover with `hover:border-slate-200 hover:shadow-sm` (subtle, not dramatic)
+
+### E. General Anti-Patterns (NEVER DO)
+
+- ❌ Using raw `<button>` for clickable triggers — always use `<Button>` component
+- ❌ Overriding `rounded-*` on `<Button>` — respect the component's default `rounded-lg`
+- ❌ `animate-bounce` on empty states — feels cheap
+- ❌ Heavy `shadow-xl` or `shadow-lg` on static content cards — shadows are for hover states only
+- ❌ `hover:-translate-y-1.5` or larger — too dramatic; use `-translate-y-0.5` or `-translate-y-1` max
+- ❌ Mixing `<Typography>` with raw `<span>` for the same visual purpose — pick one per context
+- ❌ Using `body-md`/`body-lg` for labels/subtitles in compact areas — use raw `text-[11px]` spans
+
