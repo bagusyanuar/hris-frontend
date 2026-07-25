@@ -12,7 +12,9 @@ This skill provides patterns for building form validations using `sveltekit-supe
 When using `sveltekit-superforms` in SPA mode (client-side only without form actions):
 
 - **Always provide a Generic Type**: Use `superForm<InputType>(...)` so that `form.data` is strictly typed according to your Domain Model, overriding Zod's default inferences (which may include unwanted `null` types).
+<never_do>
 - **Do not cancel on validation errors**: Never call `cancel()` inside `onUpdate` just because `!form.valid`. Canceling stops the Superforms lifecycle completely, preventing validation errors from being rendered in the UI.
+</never_do>
 
 ### ✅ Correct (SPA Mode `onUpdate`)
 
@@ -31,7 +33,9 @@ const sf = superForm<CreateJobTitleInput>(defaults(zod(schema)), {
 
 ## 2. Zod Schema vs Domain Model (Optional Fields)
 
+<CRITICAL_RULES>
 When a Domain Model defines a property as optional (e.g. `description?: string;`), its corresponding Zod schema MUST use `.optional()`, **NOT** `.nullable().default(null)`.
+</CRITICAL_RULES>
 
 Mismatches here will cause TypeScript errors when injecting the model type into `superForm<DomainInput>`. If the schema is strictly `.optional()`, UI components like `TextField` can safely use `bind:value={$form.description}` without needing complex getter/setter workarounds.
 

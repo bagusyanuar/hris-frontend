@@ -15,8 +15,12 @@ All domains and business logic must be placed inside `src/lib`, strictly separat
 ### 2. Core Layer (`src/lib/core`)
 
 - Contains business logic, use cases, domain services, domain models, and interfaces.
+
+<CRITICAL_RULES>
 - **Rule**: MUST be pure TypeScript. NEVER import `.svelte` files, UI components, Svelte Runes (`$state`, `$derived`), or any external frameworks/libraries here.
 - **Rule**: This layer must be completely agnostic of outside dependencies. State management for the UI should be handled in the Presentation Layer, while the Core Layer focuses exclusively on pure business logic.
+</CRITICAL_RULES>
+
 - **Use Case (`[domain].usecase.ts`) vs Domain Service (`[domain].service.ts`)** — split by whether the logic touches the repository:
   - **UseCase**: **async orchestration + business rules that need data/side-effects** — repository calls (`getAll`/`create`/`update`/`delete`) and invariants that read other records (e.g. "cannot delete a department with children", "a department cannot be its own parent"). Constructor-injected with `I[Domain]Repository`.
   - **Domain Service**: **pure, stateless, synchronous domain operations** with **no repository/I-O** — projections and graph/tree logic over data passed in as arguments (e.g. `toInput(model)`, `buildTree(list)`, `getAssignableParents(list, excludeId)`). Static methods; no constructor, no DI.
@@ -42,12 +46,15 @@ For Frontend-first development before the backend API is ready, we use a manual 
 
 ## Dependency Direction (CRITICAL)
 
+<CRITICAL_RULES>
 Strict one-way dependency flow: **Core ← Infrastructure ← Presentation**. An arrow means "is depended on by" — Core knows about nothing, Infrastructure only knows about Core, Presentation may know about both.
 
 - **Core**: zero imports from Infrastructure or Presentation. Enforced already by the "pure TypeScript" rule above.
 - **Infrastructure**: may only import from Core (and its own files). **MUST NOT** import anything from `src/lib/presentation` — no Svelte components, no `.svelte.ts` rune/store classes. This means `provide[Domain]Store()` does **NOT** belong in `infrastructure/[domain]/[domain].provider.ts` — only `provide[Domain]UseCase()` does.
 - **Presentation**: may import from both Core and Infrastructure. The `provide[Domain]Store()` singleton factory belongs in the presentation layer itself — export it from `presentation/modules/[domain]/runes/[Domain]Store.svelte.ts`, where it calls `provide[Domain]UseCase()` imported from Infrastructure.
+</CRITICAL_RULES>
 
+<example>
 ### ✅ Correct — `infrastructure/department/department.provider.ts`
 
 ```ts
@@ -63,7 +70,9 @@ export function provideDepartmentUseCase(): DepartmentUseCase {
   return departmentUseCaseInstance;
 }
 ```
+</example>
 
+<example>
 ### ✅ Correct — `presentation/modules/department/runes/DepartmentStore.svelte.ts`
 
 ```ts
@@ -82,7 +91,9 @@ export function provideDepartmentStore(): DepartmentStore {
   return departmentStoreInstance;
 }
 ```
+</example>
 
+<never_do>
 ### ❌ Incorrect — infra reaching into presentation
 
 ```ts
@@ -93,6 +104,7 @@ export function provideDepartmentStore(): DepartmentStore {
   /* ... */
 }
 ```
+</never_do>
 
 ## HTTP & API Client Rules
 

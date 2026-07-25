@@ -15,8 +15,10 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - **Use Cases**: `[domain].usecase.ts` (e.g., `auth.usecase.ts`)
   - **Repositories (Core Contract)**: `[domain].repository.ts` (e.g., `auth.repository.ts`)
   - **Repositories (Infrastructure Implementation)**: `[domain].repository.impl.ts` (e.g., `auth.repository.impl.ts`)
+<CRITICAL_RULES>
   - **API Schemas (Infrastructure DTO/Payload)**: `[domain].schema.ts` (e.g., `auth.schema.ts`)
     - **Rule**: Types/Interfaces inside schema files must use `Response`, `Request`, or `Query` suffix (e.g. `LoginResponse`, `LoginRequest`, `UserQuery`). Do not use `Schema` suffix.
+</CRITICAL_RULES>
   - **Validators (Zod Schemas)**: `[domain].validator.ts` (e.g., `department.validator.ts`) — exports `Create[Domain]Schema` etc.; consumed by superForm's `zod4` adapter.
   - **Mappers (Data Converters)**: `[domain].mapper.ts` (e.g., `auth.mapper.ts`)
   - **Dependency Providers**: `[domain].provider.ts` (e.g., `auth.provider.ts`)
@@ -39,7 +41,9 @@ This project enforces strict naming conventions to keep the codebase clean, read
   - **Display / Domain Model**: Must end with `Model` suffix (e.g., `UserModel`, `AuthUserModel`).
   - **Input / Payload Data**: Must end with `Input` suffix (e.g., `LoginInput`, `RegisterInput`).
   - **Parameters (e.g., query/route params)**: Must end with `Params` suffix (e.g., `UserParams`, `FilterParams`).
+<CRITICAL_RULES>
 - **Rule (CRITICAL)**: All `[Domain]Input`/`[Domain]Params`/etc. types belong in `core/[domain]/[domain].model.ts` — **never** declare them inline in a Presentation-layer runes/query file (`[domain]-query.svelte.ts`). Those files may only `import type` them from `$lib/core/[domain]`.
+</CRITICAL_RULES>
 - **Rule**: Never hand-duplicate a sibling input type's fields. Derive it from the existing type with TypeScript utility types (`Omit`, `Pick`, `Partial`, `Extend`/`&`) so the two stay structurally locked together and a field added to one cannot silently drift out of sync with the other:
   - **Update = Create + id (flat, not nested)**: an update payload is the create payload plus the record's `id`, as one flat object — never `{ id, input: CreateXInput }`. This keeps the UseCase/Repository/mutation signature a single argument instead of two, and mirrors how the mock/HTTP layer builds the updated record (`{ id, ...request }`).
     ```typescript
@@ -56,6 +60,7 @@ This project enforces strict naming conventions to keep the codebase clean, read
       id: string;
     }
     ```
+    <never_do>
     ```typescript
     // ❌ nested — forces call sites to destructure { id, input } and repository.update(id, input) to take two args
     export interface UpdateDepartmentVariables {
@@ -63,6 +68,7 @@ This project enforces strict naming conventions to keep the codebase clean, read
       input: CreateDepartmentInput;
     }
     ```
+    </never_do>
   - **Partial update (PATCH-style)**: use `Partial<CreateXInput>` (optionally combined with `Pick`/`Omit`) instead of redeclaring every field as optional by hand.
   - **Read-only projections**: use `Pick<XModel, 'id' | 'name'>` for a narrow view instead of a new hand-written interface.
   - Only fall back to a fully hand-written interface when the shape is genuinely unrelated to an existing type (e.g. `DepartmentParams` — filters, not a data payload).

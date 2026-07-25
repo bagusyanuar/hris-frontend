@@ -4,7 +4,9 @@ Mencegah aplikasi _crash_ (White Screen of Death) dan memberikan _feedback_ erro
 
 ## 1. Mencegah Crash pada Komponen UI
 
+<never_do>
 - **Rule:** Komponen Presentasi (Svelte) **TIDAK BOLEH** menebak struktur object error dari backend secara langsung (misal: `catch (e) { toast.error(e.response.data.message) }`).
+</never_do>
 - **Solusi (AppError Pattern):**
   Semua error dari HTTP client (seperti Axios atau Fetch) harus ditangkap di _Infrastructure Layer_ (Repository) dan di-mapping menjadi instance `AppError` standar sebelum dikembalikan ke _Use Case_ dan UI.
 
@@ -52,16 +54,20 @@ Gunakan **Zod** (`z`) untuk memvalidasi _input_ form di layer presentasi dan _pa
 
 - Skema validasi Zod tinggal di **Infrastructure layer**: `src/lib/infrastructure/[domain]/[domain].validator.ts`.
 - Ekspor per operasi: `Create[Domain]Schema`, dan turunkan update-nya dari create (jangan tulis ulang field): `export const UpdateDepartmentSchema = CreateDepartmentSchema.and(z.object({ id: z.string().min(1) }));`.
+<CRITICAL_RULES>
 - **Nullable vs optional (CRITICAL):** kalau domain model memakai `T | null` (mis. `parentId: string | null`), pakai `z.string().nullable().default(null)` — **bukan** `.optional()`. `.optional()` menyisipkan `undefined` ke tipe hasil-infer schema, sehingga tidak assignable ke `CreateXInput` yang mengharuskan `string | null` (error TS2345 "Type 'undefined' is not assignable to type 'string | null'").
+</CRITICAL_RULES>
 
 ### 3.2 Zod v4 + superForm Adapter (CRITICAL)
 
+<CRITICAL_RULES>
 Project ini pakai **Zod v4**. Adapter superForm harus `zod4`, **bukan** `zod`:
 
 ```ts
 // ✅ Zod v4
 import { zod4 } from 'sveltekit-superforms/adapters';
 ```
+</CRITICAL_RULES>
 
 Memakai adapter `zod` yang lama pada schema Zod v4 melempar runtime error:
 
@@ -138,7 +144,9 @@ const {(form, errors, enhance, load, submitting)} = useDepartmentForm((input) =>
 
 ### 3.4 Reset/Populate Form: `reset({ data })` + Function Binding (CRITICAL)
 
+<never_do>
 Untuk populate (edit) & reset (create), **jangan** assign `$form = {...}` manual dan **jangan** buat shadow `$state` + `$effect` sinkronisasi per widget. Dua anti-pattern ini yang bikin file membengkak saat field bertambah, plus 2 bug halus.
+</never_do>
 
 **a. Pakai `reset({ data })`, bukan `$form = {...}`.** `$form = {...}` hanya menimpa data — **errors** dan **tainted** dari sesi sebelumnya tertinggal (form dibuka ulang masih merah). `reset()` membersihkan data + errors + tainted sekaligus. Populate/reset dijalankan lewat satu `$effect` tipis yang hanya bergantung pada `open`:
 

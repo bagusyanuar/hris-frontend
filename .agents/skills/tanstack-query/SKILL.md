@@ -42,6 +42,18 @@ If you're scaffolding a brand-new project or find this wiring missing, that's th
 
 To maintain **DRY** (Don't Repeat Yourself) principles and ensure robust cache invalidation, Query Keys must not be inline arrays. Instead, define a **Query Key Factory** in the **Presentation Layer** right next to your runes.
 
+### Why Use a Query Key Factory?
+In the HRIS application, data is highly interconnected. If an HR user changes a "Department" status to inactive, department tables on other screens must automatically refresh. Without a Query Key Factory, executing `queryClient.invalidateQueries({ queryKey: ['departments'] })` is highly prone to typos and inconsistency.
+
+### Factory Structure Rules
+1. Every domain feature (e.g., Employee, Department, Attendance) must have exactly one Factory Object (e.g., `departmentKeys`).
+2. The hierarchical structure MUST follow this base pattern:
+   - `all`: The root key for all queries in the feature.
+   - `lists`: The base key for all list/table views.
+   - `list(filters)`: A specific list view with filters (Search Params).
+   - `details`: The base key for item details.
+   - `detail(id)`: The specific detail view of a single item.
+
 ### Directory Placement
 
 ```
@@ -54,10 +66,12 @@ src/lib/presentation/modules/[domain]/runes/
 
 Use `as const` assertions to ensure TypeScript registers keys as strict read-only tuples.
 
+<CRITICAL_RULES>
 > [!IMPORTANT]
 > **Clean Architecture Boundary Rule:**
 > All UI parameters, query filters, and data types used in Key Factories and Query Runes **MUST be imported from the Core Layer** (e.g. `$lib/core/[domain]/*.model.ts`).
 > **NEVER import API Schemas (`*.schema.ts`) from the Infrastructure Layer** into the Presentation Layer. This keeps the UI decoupled from backend database casing (e.g. snake_case) and naming conventions.
+</CRITICAL_RULES>
 
 ```typescript
 import type { DepartmentParams } from '$lib/core/department'; // ALWAYS import from Core, NEVER from Schema
@@ -156,7 +170,9 @@ createMutation<TData, TError, TVariables, TContext>;
 
 ### Side-effects belong in the mutation, not the page (CRITICAL)
 
+<CRITICAL_RULES>
 Toasts and cache invalidation are **mutation** concerns, not page concerns. Put them in `onSuccess`/`onError` **inside the rune**, so every call site behaves identically and the page's `handleSubmit` shrinks to just `mutateAsync` + close-on-success. Do **not** duplicate `toast.success`/`toast.error` in each page `try/catch`.
+</CRITICAL_RULES>
 
 - **`onError`** — one shared `toastError` helper per rune file. Because every UseCase method throws an `AppError` subclass (see §1), the message is already user-friendly.
 - **`onSuccess`** — invalidate `[domain]Keys.all` (see §2) **and** fire the success toast here.
@@ -291,7 +307,9 @@ In Svelte 5, TanStack Query states are natively reactive:
 
 ### Deriving values from query data
 
+<never_do>
 Never re-derive query data through a plain (non-`$derived`) getter or function called from a template loop or an imperative consumer like TanStack Table's `data` option — it rebuilds a **new** array/object graph on every access, and any consumer that compares by reference will treat every read as "changed," causing endless re-render loops. Always wrap it in a component-level `$derived`:
+</never_do>
 
 ```typescript
 import { DepartmentService } from '$lib/core/department';

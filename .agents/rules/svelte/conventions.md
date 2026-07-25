@@ -6,8 +6,10 @@ Rules and patterns for writing clean, type-safe, lint-free Svelte 5 and TypeScri
 
 ## 1. Keyed Each Blocks (CRITICAL)
 
+<CRITICAL_RULES>
 Always use keyed `{#each}` blocks to ensure Svelte can track element identities during updates, preventing rendering bugs and lint/compiler warnings.
 Every `{#each}` block MUST have a key expression.
+</CRITICAL_RULES>
 
 ### ✅ Correct
 
@@ -33,7 +35,9 @@ Every `{#each}` block MUST have a key expression.
 
 ## 2. TypeScript & Typesafety (CRITICAL)
 
+<CRITICAL_RULES>
 - **ABSOLUTELY NO `any` ALLOWED UNDER ANY CIRCUMSTANCES.** Even for quick fixes or third-party libraries, use proper typing, `unknown` with a type guard, or utility/generic types.
+</CRITICAL_RULES>
 - Ensure all callback props, event handlers, and helper function parameters are explicitly typed.
 - Prefer strict interfaces for Svelte component props.
 
@@ -122,7 +126,9 @@ $effect(() => {
 
 ## 9. `$derived` Class Fields That Depend on Constructor Parameters (CRITICAL)
 
+<CRITICAL_RULES>
 If a `$derived` field's expression reads `this.someConstructorParam` (any constructor parameter — an injected dependency, or a plain value like an id), assign it **inside the constructor body**, not as a top-level class field initializer — even if the field is declared textually below the constructor.
+</CRITICAL_RULES>
 
 ### Why?
 
@@ -173,9 +179,11 @@ A plain (non-`$derived`) getter has no caching — every read produces a new ref
 
 ## 10. Event Propagation and Modifiers in Svelte 5
 
+<CRITICAL_RULES>
 Svelte 5 removes built-in event modifiers like `|stopPropagation` and `|preventDefault` in favor of standard web APIs.
 
 When building nested interactive components (e.g., an actionable Dropdown or an expander button placed inside a clickable Datatable row), **you must manually stop propagation** to prevent the parent's `onclick` handler from firing (Event Bubbling / "Bocor").
+</CRITICAL_RULES>
 
 ### ✅ Correct (Svelte 5)
 
@@ -191,6 +199,7 @@ When building nested interactive components (e.g., an actionable Dropdown or an 
 </button>
 ```
 
+<never_do>
 ### ❌ Incorrect (Will trigger parent events)
 
 ```svelte
@@ -199,6 +208,7 @@ When building nested interactive components (e.g., an actionable Dropdown or an 
 <!-- Svelte 4 modifiers are no longer valid / recommended in Svelte 5 -->
 <button onclick|stopPropagation={toggleDropdown}> ... </button>
 ```
+</never_do>
 
 ---
 
@@ -269,6 +279,7 @@ Do not use `$effect` to synchronize one piece of state with another. Instead of 
 <p>Double: {double.value}</p>
 ```
 
+<never_do>
 ### ❌ Incorrect (State Syncing with `$effect`)
 
 ```svelte
@@ -282,3 +293,4 @@ Do not use `$effect` to synchronize one piece of state with another. Instead of 
   });
 </script>
 ```
+</never_do>

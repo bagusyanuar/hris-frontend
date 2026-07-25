@@ -52,7 +52,9 @@ src/lib/
 - **`[domain-name].model.ts`**: Declare models with suffix `Model` (e.g., `UserModel`), inputs with `Input` (e.g., `CreateUserInput`), and params with `Params`. For paginated lists, `[Domain]Params` MUST extend `PaginationSortParam` from `$lib/core/shared`, and functions should return `PaginatedResult<[Domain]Model>`.
 - **`[domain-name].repository.ts`**: Define repository interface starting with `I` (e.g., `IUserRepository`).
 - **`[domain-name].usecase.ts`**: Class for **async orchestration + business rules that touch the repository** (`getAll`/`getById`/`create`/`update`/`delete`, plus invariants that read other records). Constructor-injected with `I[Domain]Repository`. Pure TS, no Svelte runes, no external libraries.
+<CRITICAL_RULES>
 - **`[domain-name].service.ts`** (Domain Service — only when the domain has pure logic): Static class of **pure, stateless, synchronous** domain operations with **no repository/I-O** — projections (`toInput(model)`) and tree/graph logic (`buildTree`, `getAssignableParents`). No constructor, no DI, **no provider** — Presentation calls it directly (`DepartmentService.buildTree(...)`). See the UseCase-vs-Service split in `architecture/ddd.md` §2. Do NOT pile pure transforms onto the UseCase.
+</CRITICAL_RULES>
 - **`index.ts`**: Barrel export all of the above.
 
 ### 2. Infrastructure Layer
@@ -62,7 +64,9 @@ src/lib/
 - **`[domain-name].mapper.ts`**: Static class mapping schema types (in snake_case) to core models (camelCase) and vice versa. Use the declarative object spread pattern (e.g., `...(params.search && { search: params.search })`) for `toQuery` mappings. Use `PaginationMapper.toQuery(params)` and `PaginationMapper.toResult(...)` to handle pagination conversions.
 - **`[domain-name].repository.mock.ts`**: Manual mock repository implementing `I[Domain]Repository` with dummy data and fake delay.
 - **`[domain-name].repository.impl.ts`**: Implements `I[Domain]Repository`, calls actual API using `httpClient` (which automatically unpacks `ApiResponse`), and uses the mapper to return domain models. Use a dummy base path (e.g., `/v1/[domain]`) if the actual endpoint is unknown. **CRITICAL**: Every API call must be wrapped inside `handleAppError(async () => { ... })` from `http/error.mapper.ts`. Do NOT use `.data.data` as `httpClient.get<ApiResponse<T>>()` directly returns the payload.
+<CRITICAL_RULES>
 - **`[domain-name].provider.ts`**: Exposes **only** `provide[Domain]UseCase()` (instantiates Repository + UseCase as a singleton). Must use a `USE_MOCK = true` flag to conditionally inject the Mock or Impl repository. This file must import from Core only — **never** from `$lib/presentation` (see Dependency Direction rule in `architecture/ddd.md`). Do NOT put `provide[Domain]Store()` here.
+</CRITICAL_RULES>
 - **`index.ts`**: Barrel export the mapper, provider, mock, implementation, and schema.
 
 ### 3. Presentation Layer
