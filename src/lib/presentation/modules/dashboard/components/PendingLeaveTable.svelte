@@ -11,18 +11,32 @@
     requests: PendingLeaveRequest[];
   }
 
-  let { requests: initialRequests }: Props = $props();
+  let { requests }: Props = $props();
 
-  let requestsList = $state([...initialRequests]);
+  // Declared with `let` so it can be reassigned locally.
+  // Stays in sync automatically when `requests` prop changes.
+  let requestsList = $derived([...requests]);
 
   function handleApprove(req: PendingLeaveRequest) {
+    // Optimistically update the UI by overriding the derived state
     requestsList = requestsList.filter((r) => r.id !== req.id);
     toast.success(`Pengajuan cuti ${req.name} telah disetujui`);
   }
 
   function handleReject(req: PendingLeaveRequest) {
+    // Optimistically update the UI by overriding the derived state
     requestsList = requestsList.filter((r) => r.id !== req.id);
     toast.info(`Pengajuan cuti ${req.name} ditolak`);
+  }
+
+  function getLeaveBadgeVariant(
+    type: string
+  ): 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default' {
+    const lower = type.toLowerCase();
+    if (lower.includes('sakit')) return 'danger';
+    if (lower.includes('melahirkan')) return 'success';
+    if (lower.includes('tahunan')) return 'info';
+    return 'default';
   }
 </script>
 
@@ -45,7 +59,9 @@
     <div class="overflow-x-auto flex-1">
       <table class="w-full text-left text-xs border-collapse">
         <thead>
-          <tr class="text-slate-400 dark:text-slate-500 font-semibold border-b border-neutral-border pb-2">
+          <tr
+            class="text-slate-400 dark:text-slate-500 font-semibold border-b border-neutral-border pb-2"
+          >
             <th class="py-2 font-semibold">Karyawan</th>
             <th class="py-2 font-semibold">Jenis Cuti</th>
             <th class="py-2 font-semibold">Durasi</th>
@@ -59,7 +75,11 @@
                 <div class="flex items-center gap-3">
                   <Avatar name={req.name} src={req.avatar} size="sm" />
                   <div class="flex flex-col">
-                    <Typography variant="body-sm" weight="bold" class="text-slate-800 dark:text-slate-200">
+                    <Typography
+                      variant="body-sm"
+                      weight="bold"
+                      class="text-slate-800 dark:text-slate-200"
+                    >
                       {req.name}
                     </Typography>
                     <Typography variant="caption" color="muted" class="text-[10px]">
@@ -69,7 +89,7 @@
                 </div>
               </td>
               <td class="py-3 px-2">
-                <Badge variant="primary" size="sm">{req.type}</Badge>
+                <Badge variant={getLeaveBadgeVariant(req.type)} size="sm">{req.type}</Badge>
               </td>
               <td class="py-3 px-2">
                 <Typography variant="body-sm" color="secondary">

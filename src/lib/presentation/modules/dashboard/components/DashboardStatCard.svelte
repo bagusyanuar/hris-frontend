@@ -25,7 +25,12 @@
   }: Props = $props();
 </script>
 
-<Card variant="glow" hoverable={true} padding="md" class="relative overflow-hidden transition-all duration-200">
+<Card
+  variant="glow"
+  hoverable={true}
+  padding="md"
+  class="relative overflow-hidden transition-all duration-200"
+>
   <div class="flex items-center justify-between">
     <Typography variant="caption" color="secondary" weight="medium">{title}</Typography>
     <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {iconColor}">

@@ -294,3 +294,48 @@ Do not use `$effect` to synchronize one piece of state with another. Instead of 
 </script>
 ```
 </never_do>
+
+---
+
+## 13. Local State Overrides from Props (Optimistic UI)
+
+When you need local state that is initialized from a prop but also needs to be mutated locally (e.g., Optimistic UI updates like removing an item from a list before the server confirms it), **do not** use `$state` combined with `$effect` to sync the prop. This will trigger Svelte's `state_referenced_locally` warning.
+
+Instead, use a `let`-bound `$derived` value. Svelte 5 allows reassignment of `$derived` variables declared with `let`. When the dependencies change (the prop updates), it will automatically overwrite the manual override.
+
+### ✅ Correct (Optimistic Override)
+
+```svelte
+<script lang="ts">
+  let { requests } = $props();
+
+  // Declared with `let` so it can be reassigned locally.
+  // Stays in sync automatically when `requests` prop changes.
+  let requestsList = $derived([...requests]);
+
+  function handleApprove(id: string) {
+    // Optimistically update the UI by overriding the derived state
+    requestsList = requestsList.filter((r) => r.id !== id);
+    
+    // ... call API
+  }
+</script>
+```
+
+<never_do>
+### ❌ Incorrect (State Syncing & Warning)
+
+```svelte
+<script lang="ts">
+  let { requests } = $props();
+
+  // ⚠️ Warning: state_referenced_locally
+  let requestsList = $state([...requests]);
+
+  // Anti-pattern: Syncing prop to local state
+  $effect(() => {
+    requestsList = [...requests];
+  });
+</script>
+```
+</never_do>
