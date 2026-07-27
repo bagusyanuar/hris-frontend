@@ -56,3 +56,14 @@ The application defaults to **Light Mode** and fully supports **Dark Mode** via 
    - Do **NOT** use arbitrary values such as `bg-[#6366f1]`, `w-[360px]`, `h-[48px]`, or `top-[8px]`.
    - Prefer Tailwind's native layout, spacing, and sizing scales (e.g., `w-80`, `h-12`, `top-2`).
    - If a specific custom spacing, color, or dimension is needed, configure it as a design token variable inside the `@theme` block in `src/app.css` (Tailwind v4) rather than using an inline arbitrary value.
+## 6. Anti-AI Slop UI Slicing
+
+<CRITICAL_RULES>
+To prevent generic, unpolished "AI Slop" designs, you **MUST** apply the following principles when slicing UI:
+
+1. **Micro-Interactions & Transitions:** Never leave interactive elements static. Always add smooth transitions (e.g., `transition-all duration-300 ease-out`), subtle scale effects on hover (`hover:-translate-y-1 hover:shadow-lg`), and soft glow effects on focus/active states.
+2. **Depth & Nuance over Default Colors:** Avoid flat, default Tailwind colors (like `bg-blue-500` or raw `shadow-md`). Use multiple soft drop-shadows, low-opacity borders (`border-white/10` in dark mode), subtle glassmorphism (`backdrop-blur-md bg-white/30`), and nuanced gradients to add depth.
+3. **Extreme Typography Hierarchy & Whitespace:** Do not use uniform spacing. Be generous with whitespace and padding (especially in Bento Grid layouts). Use contrasting font weights (e.g., Extra Bold for headings, Medium/Regular with muted colors for subtitles) and tight tracking for large headings (`tracking-tight`).
+4. **Realistic Content & Context:** **NEVER** use "Lorem Ipsum" or generic placeholder icons. Always inject realistic, domain-specific dummy data (e.g., real names, salaries, statuses) and use consistent, high-quality icons (e.g., Lucide).
+5. **Intentional Asymmetry:** Break the monotony of perfect grids. Use varied card treatments (e.g., one card with a dark gradient background, others light) or overlapping elements to make the layout feel dynamic and handcrafted.
+</CRITICAL_RULES>
