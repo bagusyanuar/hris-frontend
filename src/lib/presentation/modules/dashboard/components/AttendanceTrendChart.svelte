@@ -2,7 +2,6 @@
   import { Typography } from '$lib/presentation/shared/components/typography';
   import { Card } from '$lib/presentation/shared/components/card';
   import { Badge } from '$lib/presentation/shared/components/badge';
-  import Icon from '@iconify/svelte';
   import type { AttendanceTrendPoint } from '../runes/dashboard-query.svelte';
 
   interface Props {
@@ -87,7 +86,7 @@
       </defs>
 
       <!-- Horizontal gridlines -->
-      {#each [0, 50, 100, 150, 200] as gridVal}
+      {#each [0, 50, 100, 150, 200] as gridVal (gridVal)}
         {@const y = getY(gridVal)}
         <line
           x1={paddingX}
@@ -117,7 +116,7 @@
       {/if}
 
       <!-- Data points & interactive hover -->
-      {#each data as item, i}
+      {#each data as item, i (i)}
         {@const pt = points[i]}
         <!-- Vertical guide line on hover -->
         {#if activeIndex === i}
@@ -134,13 +133,18 @@
 
         <!-- Point dot -->
         <circle
+          role="button"
+          aria-label="{item.day}: {item.present} hadir"
+          tabindex="0"
           cx={pt.x}
           cy={pt.y}
           r={activeIndex === i ? '6' : '4'}
-          class="fill-white stroke-brand-primary transition-all duration-150"
+          class="fill-white stroke-brand-primary transition-all duration-150 cursor-pointer focus:outline-none"
           stroke-width="2.5"
           onmouseenter={() => (activeIndex = i)}
           onmouseleave={() => (activeIndex = null)}
+          onfocus={() => (activeIndex = i)}
+          onblur={() => (activeIndex = null)}
         />
 
         <!-- X-axis label -->
@@ -168,7 +172,11 @@
           </Typography>
         </div>
         <div class="flex items-center gap-3">
-          <Typography variant="caption" color="secondary" class="text-amber-600 dark:text-amber-400">
+          <Typography
+            variant="caption"
+            color="secondary"
+            class="text-amber-600 dark:text-amber-400"
+          >
             Terlambat: {active.late}
           </Typography>
           <Typography variant="caption" color="secondary" class="text-rose-600 dark:text-rose-400">
