@@ -12,6 +12,7 @@ export const typographyVariants = cva('', {
       'body-lg': 'text-lg leading-relaxed',
       'body-md': 'text-base leading-relaxed',
       'body-sm': 'text-sm leading-relaxed',
+      'body-xs': 'text-xs leading-relaxed',
       caption: 'text-xs text-slate-500 dark:text-slate-400',
       code: 'font-mono text-sm bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5'
     },

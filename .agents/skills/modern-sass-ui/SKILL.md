@@ -232,3 +232,9 @@ All components must be fully accessible by design:
 - [ ] **Hover Transitions**: Apply `transition-all duration-200 active:scale-[0.98]` to all hoverable elements.
 - [ ] **Consistent Heights**: Verify that input fields, selectors, and buttons placed side-by-side share the exact same height class (`py-2.5` for Medium/40px).
 - [ ] **A11y Focus Rings**: Every button and input must have a clear `focus-visible` outline or ring style.
+- [ ] **Anti-Slop - Skeleton Loaders**: Used structural `animate-pulse` skeletons instead of lazy generic spinners for loading states.
+- [ ] **Anti-Slop - Empty & Error States**: Provide thoughtfully designed empty/error states with icons and clear messaging, avoiding generic "No Data".
+- [ ] **Edge Cases Proactive Fixes**: Truncate (`truncate`), clamp (`line-clamp-2`), or break words for dynamic text to prevent layout breaks.
+- [ ] **Proportional Padding**: Avoid overly thick padding (like `p-5` or `p-6`) on small metric widgets; prefer tighter density (`p-4` or `p-3`) to prevent a bulky "AI Slop" look.
+- [ ] **Tinted Text Colors**: Ensure no `text-black` or `text-white` is used. Use tinted slates (e.g., `text-slate-800`, `text-slate-100`) for a premium SaaS feel.
+- [ ] **Anti-Slop - Mock Data**: Used varied, realistic mock data without copy-pasting identical rows.
