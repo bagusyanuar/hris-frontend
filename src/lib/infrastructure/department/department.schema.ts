@@ -6,7 +6,7 @@ export interface DepartmentResponse {
   name: string;
   parent_id: string | null;
   description?: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'restructuring' | 'hiring' | 'planning' | 'growing';
   manager_name?: string;
   manager_avatar?: string;
   employee_count?: number;
@@ -17,10 +17,10 @@ export interface DepartmentRequest {
   name: string;
   parent_id: string | null;
   description?: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'restructuring' | 'hiring' | 'planning' | 'growing';
 }
 
 export interface DepartmentQuery extends PaginationSortQuery {
   search?: string;
-  status?: 'active' | 'inactive' | 'all';
+  status?: 'active' | 'inactive' | 'restructuring' | 'hiring' | 'planning' | 'growing' | 'all';
 }

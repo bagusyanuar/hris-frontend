@@ -1,6 +1,6 @@
 import type { PaginationSortParam } from '$lib/core/shared';
 
-export type DepartmentStatus = 'active' | 'inactive';
+export type DepartmentStatus = 'active' | 'inactive' | 'restructuring' | 'hiring' | 'planning' | 'growing';
 
 export interface DepartmentModel {
   id: string;

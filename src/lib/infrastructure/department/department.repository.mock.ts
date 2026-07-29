@@ -15,93 +15,93 @@ const MOCK_LATENCY_MS = 500;
 let mockDepartments: DepartmentResponse[] = [
   {
     id: 'DEPT001',
-    code: 'ENG',
-    name: 'Engineering',
+    code: 'IT-ENG',
+    name: 'IT & Engineering',
     parent_id: null,
-    description: 'Product engineering division',
+    description: 'Fokus pada pengembangan Core System v2.0 dan keamanan infrastruktur.',
     status: 'active',
-    manager_name: 'John Doe',
-    employee_count: 42
+    manager_name: 'Alice Nguyen',
+    employee_count: 145
   },
   {
     id: 'DEPT002',
-    code: 'ENG-FE',
-    name: 'Frontend',
+    code: 'IT-FE',
+    name: 'Frontend Development',
     parent_id: 'DEPT001',
-    description: 'Client-side application development',
-    status: 'active',
-    manager_name: 'Alice Smith',
-    employee_count: 14
+    description: 'Pengembangan antarmuka klien menggunakan Svelte dan React.',
+    status: 'hiring',
+    manager_name: 'David Kim',
+    employee_count: 32
   },
   {
     id: 'DEPT003',
-    code: 'ENG-BE',
-    name: 'Backend',
+    code: 'IT-BE',
+    name: 'Backend Systems',
     parent_id: 'DEPT001',
-    description: 'Server-side & infrastructure development',
-    status: 'active',
-    manager_name: 'Bob Johnson',
-    employee_count: 18
+    description: 'Skalabilitas database dan integrasi API pihak ketiga.',
+    status: 'restructuring',
+    manager_name: 'Sarah Jones',
+    employee_count: 48
   },
   {
     id: 'DEPT004',
-    code: 'ENG-QA',
+    code: 'QA',
     name: 'Quality Assurance',
     parent_id: 'DEPT001',
-    description: 'Testing & release quality',
-    status: 'active',
-    manager_name: 'Eve Davis',
-    employee_count: 10
+    description: 'Memastikan rilis bebas bug dengan automasi Cypress.',
+    status: 'planning',
+    manager_name: 'Emily Davis',
+    employee_count: 15
   },
   {
     id: 'DEPT005',
     code: 'HR',
     name: 'Human Resources',
     parent_id: null,
-    description: 'People operations & talent management',
-    status: 'active',
-    manager_name: 'Sarah Wilson',
-    employee_count: 5
+    description: 'Rekrutmen, pengembangan talenta, dan operasional karyawan.',
+    status: 'inactive',
+    manager_name: '',
+    employee_count: 0
   },
   {
     id: 'DEPT006',
     code: 'FIN',
-    name: 'Finance',
+    name: 'Finance & Legal',
     parent_id: null,
-    description: 'Financial planning & accounting',
-    status: 'active',
-    manager_name: 'Michael Brown',
-    employee_count: 8
+    description: 'Perencanaan anggaran kuartalan dan kepatuhan pajak.',
+    status: 'restructuring',
+    manager_name: 'Michael Chen',
+    employee_count: 68
   },
   {
     id: 'DEPT007',
     code: 'FIN-ACC',
     name: 'Accounting',
     parent_id: 'DEPT006',
-    description: 'Bookkeeping & tax compliance',
+    description: 'Pembukuan harian dan manajemen invoice vendor.',
     status: 'active',
-    manager_name: 'Lisa Taylor',
-    employee_count: 4
+    manager_name: 'Budi Santoso',
+    employee_count: 12
   },
   {
     id: 'DEPT008',
-    code: 'DES',
-    name: 'Product Design',
+    code: 'MKT-CRT',
+    name: 'Marketing & Creative',
     parent_id: null,
-    description: 'UX/UI & product design',
-    status: 'active',
-    manager_name: 'David Lee',
-    employee_count: 6
+    description: 'Strategi pemasaran digital dan produksi aset kreatif.',
+    status: 'hiring',
+    manager_name: 'Anisa Larasati',
+    employee_count: 82
   },
   {
     id: 'DEPT009',
-    code: 'MKT',
-    name: 'Marketing',
+    code: 'SLS',
+    name: 'Sales & Expansion',
     parent_id: null,
-    description: 'Brand & growth marketing',
-    status: 'inactive',
-    manager_name: 'Emma White',
-    employee_count: 0
+    description: 'Membuka pasar baru di kawasan Asia Tenggara.',
+    status: 'growing',
+    manager_name: 'Jessica Brown',
+    employee_count: 165
   }
 ];
 
