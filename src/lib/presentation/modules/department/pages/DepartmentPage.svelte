@@ -70,7 +70,7 @@
 
 <div class="flex flex-col gap-3">
   <!-- Page Header -->
-  <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+  <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
     <div class="flex flex-col gap-1">
       <Typography variant="h4" weight="bold">Departemen</Typography>
       <Typography variant="body-sm" color="secondary">
@@ -112,9 +112,9 @@
     <!-- Master-Detail Split Pane (Bento Grid) -->
     <div class="flex flex-col md:flex-row gap-4 flex-1 h-150">
       <!-- Master List Card -->
-      <Card class="w-full md:w-70 flex flex-col shrink-0 overflow-hidden">
+      <Card class="w-full md:w-70 flex flex-col shrink-0 overflow-hidden self-start max-h-full">
         <div
-          class="pb-3.5 mb-2 border-b border-slate-100 dark:border-slate-800 shrink-0 flex items-center px-2"
+          class="pb-3.5 mb-4 border-b border-slate-100 dark:border-slate-800 shrink-0 flex items-center px-2"
         >
           <Typography variant="h6" weight="semibold">Direktori Departemen</Typography>
         </div>
@@ -307,41 +307,235 @@
               </div>
             </div>
 
+            <!-- Head of Department Profile -->
+            <Card
+              class="p-5 border border-slate-100 dark:border-slate-800 shadow-none relative overflow-hidden group"
+            >
+              <!-- Decorative background -->
+              <div
+                class="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-bl-[100px] z-0 transition-transform duration-500 group-hover:scale-110"
+              ></div>
+
+              <div
+                class="flex flex-col sm:flex-row gap-5 items-start sm:items-center relative z-10"
+              >
+                <Avatar
+                  name={selectedDept.managerName || 'Belum Ditentukan'}
+                  size="xl"
+                  variant="primary"
+                  class="ring-4 ring-brand-primary/10 w-20 h-20 text-xl shrink-0"
+                />
+
+                <div class="flex-1 w-full">
+                  <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <Typography variant="h5" weight="bold"
+                      >{selectedDept.managerName || 'Belum Ditentukan'}</Typography
+                    >
+                    <Badge variant="primary" class="h-5 text-[10px] px-1.5 uppercase tracking-wider"
+                      >Kepala Departemen</Badge
+                    >
+                  </div>
+
+                  <Typography variant="body-sm" color="secondary" class="mb-4">
+                    Memimpin {selectedDept.name} dan bertanggung jawab atas operasional serta pencapaian
+                    target tim.
+                  </Typography>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-4">
+                    <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400">
+                      <div
+                        class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0"
+                      >
+                        <Icon icon="lucide:mail" class="w-3.5 h-3.5" />
+                      </div>
+                      <span class="text-xs font-medium truncate"
+                        >{selectedDept.managerName
+                          ? selectedDept.managerName.toLowerCase().replace(/\s+/g, '.') +
+                            '@perusahaan.com'
+                          : '-'}</span
+                      >
+                    </div>
+                    <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400">
+                      <div
+                        class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0"
+                      >
+                        <Icon icon="lucide:phone" class="w-3.5 h-3.5" />
+                      </div>
+                      <span class="text-xs font-medium">+62 812-3456-7890</span>
+                    </div>
+                    <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400">
+                      <div
+                        class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0"
+                      >
+                        <Icon icon="lucide:briefcase" class="w-3.5 h-3.5" />
+                      </div>
+                      <span class="text-xs font-medium truncate">VP of {selectedDept.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400">
+                      <div
+                        class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0"
+                      >
+                        <Icon icon="lucide:map-pin" class="w-3.5 h-3.5" />
+                      </div>
+                      <span class="text-xs font-medium truncate">Kantor Pusat (Lantai 3)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
             <!-- Metrics -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Card
-                class="p-4 border border-slate-100 dark:border-slate-800 shadow-none flex items-center gap-4"
+                class="p-4 border border-slate-100 dark:border-slate-800 shadow-none flex flex-col gap-3 group hover:border-brand-primary/30 transition-colors cursor-pointer"
               >
-                <Avatar name={selectedDept.managerName || 'Kosong'} size="md" variant="primary" />
-                <div>
-                  <Typography
-                    variant="body-xs"
-                    color="secondary"
-                    weight="medium"
-                    class="uppercase tracking-wider">Kepala Departemen</Typography
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
                   >
-                  <Typography variant="body-sm" weight="semibold" class="mt-0.5"
-                    >{selectedDept.managerName || 'Belum Ditentukan'}</Typography
+                    <Icon icon="lucide:users" class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <Typography
+                      variant="body-xs"
+                      color="secondary"
+                      weight="medium"
+                      class="uppercase tracking-wider">Total Karyawan</Typography
+                    >
+                    <Typography variant="body-sm" weight="semibold" class="mt-0.5"
+                      >24 Orang</Typography
+                    >
+                  </div>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4"
+                >
+                  <span>15 Tetap, 9 Kontrak</span>
+                  <span class="text-brand-primary font-medium group-hover:underline"
+                    >Lihat Detail</span
                   >
                 </div>
               </Card>
+
               <Card
-                class="p-4 border border-slate-100 dark:border-slate-800 shadow-none flex items-center gap-4"
+                class="p-4 border border-slate-100 dark:border-slate-800 shadow-none flex flex-col gap-3 group hover:border-brand-primary/30 transition-colors cursor-pointer"
               >
-                <div
-                  class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"
-                >
-                  <Icon icon="lucide:users" class="w-5 h-5" />
-                </div>
-                <div>
-                  <Typography
-                    variant="body-xs"
-                    color="secondary"
-                    weight="medium"
-                    class="uppercase tracking-wider">Total Karyawan</Typography
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
                   >
-                  <Typography variant="body-sm" weight="semibold" class="mt-0.5"
-                    >Kalkulasi Otomatis...</Typography
+                    <Icon icon="lucide:line-chart" class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <Typography
+                      variant="body-xs"
+                      color="secondary"
+                      weight="medium"
+                      class="uppercase tracking-wider">Performa Rata-rata</Typography
+                    >
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <Typography variant="body-sm" weight="semibold">4.5</Typography>
+                      <span class="text-xs text-slate-500">/ 5.0</span>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col gap-1.5 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4"
+                >
+                  <div class="flex justify-between text-xs text-slate-500">
+                    <span>Target: 4.0</span>
+                    <span class="font-medium text-emerald-600 dark:text-emerald-500">Exceeds</span>
+                  </div>
+                  <div
+                    class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden"
+                  >
+                    <div
+                      class="bg-indigo-500 h-full rounded-full transition-all duration-1000"
+                      style="width: 90%"
+                    ></div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                class="p-4 border border-slate-100 dark:border-slate-800 shadow-none flex flex-col gap-3 group hover:border-brand-primary/30 transition-colors cursor-pointer"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
+                  >
+                    <Icon icon="lucide:user-check" class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <Typography
+                      variant="body-xs"
+                      color="secondary"
+                      weight="medium"
+                      class="uppercase tracking-wider">Tingkat Kehadiran</Typography
+                    >
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <Typography variant="body-sm" weight="semibold">98.5%</Typography>
+                      <span
+                        class="flex items-center text-[10px] font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-1.5 py-0.5 rounded-sm"
+                      >
+                        <Icon icon="lucide:trending-up" class="w-3 h-3 mr-0.5" />
+                        +2%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4"
+                >
+                  <span>Rata-rata bulan ini</span>
+                  <span class="text-amber-600 dark:text-amber-500 font-medium">1 Sakit, 2 Cuti</span
+                  >
+                </div>
+              </Card>
+
+              <Card
+                class="p-4 border border-slate-100 dark:border-slate-800 shadow-none flex flex-col gap-3 group hover:border-brand-primary/30 transition-colors cursor-pointer"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
+                  >
+                    <Icon icon="lucide:briefcase" class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <Typography
+                      variant="body-xs"
+                      color="secondary"
+                      weight="medium"
+                      class="uppercase tracking-wider">Posisi Terbuka</Typography
+                    >
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <Typography variant="body-sm" weight="semibold">3 Posisi</Typography>
+                      <span
+                        class="flex items-center text-[10px] font-medium text-purple-600 bg-purple-100 dark:bg-purple-900/30 px-1.5 py-0.5 rounded-sm"
+                      >
+                        Hiring
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-wrap gap-1.5 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4"
+                >
+                  <Badge
+                    variant="default"
+                    class="text-[10px] h-5 py-0 px-1.5 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    >Frontend</Badge
+                  >
+                  <Badge
+                    variant="default"
+                    class="text-[10px] h-5 py-0 px-1.5 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    >Backend</Badge
+                  >
+                  <Badge
+                    variant="default"
+                    class="text-[10px] h-5 py-0 px-1.5 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    >QA</Badge
                   >
                 </div>
               </Card>
@@ -358,67 +552,132 @@
 
             <!-- Employee List Datatable -->
             <div class="mb-4">
-              <div class="flex items-center justify-between mb-3">
+              <div class="mb-3">
                 <Typography variant="body-sm" weight="semibold">Daftar Karyawan</Typography>
-                <Button variant="outline" size="sm" class="h-7 text-xs px-2.5 py-0">
-                  <Icon icon="lucide:plus" class="w-3 h-3 mr-1" />
-                  Tambah
-                </Button>
               </div>
-              
+
               <div class="border border-slate-100 dark:border-slate-800 rounded-lg overflow-hidden">
                 <div class="relative w-full overflow-x-auto bg-neutral-card">
                   <table class="w-full caption-bottom text-sm border-collapse">
-                    <thead class="[&_tr]:border-b bg-slate-50/50 dark:bg-slate-800/50">
-                      <tr class="border-b-0 hover:bg-transparent">
-                        <th class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5 w-1/2">Nama Karyawan</th>
-                        <th class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5">Posisi</th>
-                        <th class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5">Status</th>
+                    <thead
+                      class="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50"
+                    >
+                      <tr class="hover:bg-transparent">
+                        <th
+                          class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5 w-5/12"
+                          >Nama Karyawan</th
+                        >
+                        <th
+                          class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5"
+                          >Posisi</th
+                        >
+                        <th
+                          class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5"
+                          >Performa</th
+                        >
+                        <th
+                          class="px-4 text-left align-middle font-semibold text-slate-500 text-xs py-2.5"
+                          >Status</th
+                        >
                       </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0">
                       <!-- Mock Data -->
-                      <tr class="border-b border-neutral-border transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      <tr
+                        class="border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      >
                         <td class="px-4 align-middle py-2.5">
                           <div class="flex items-center gap-3">
                             <Avatar name="Sarah Jeni" size="sm" variant="primary" />
                             <div class="flex flex-col">
-                              <span class="text-sm font-medium text-slate-900 dark:text-slate-100">Sarah Jeni</span>
+                              <span class="text-sm font-medium text-slate-900 dark:text-slate-100"
+                                >Sarah Jeni</span
+                              >
                               <span class="text-xs text-slate-500">sarah@perusahaan.com</span>
                             </div>
                           </div>
                         </td>
-                        <td class="px-4 align-middle py-2.5 text-sm text-slate-600 dark:text-slate-400">Senior Designer</td>
+                        <td
+                          class="px-4 align-middle py-2.5 text-sm text-slate-600 dark:text-slate-400"
+                          >Senior Designer</td
+                        >
+                        <td class="px-4 align-middle py-2.5">
+                          <div class="flex items-center gap-1.5">
+                            <Icon
+                              icon="lucide:star"
+                              class="w-3.5 h-3.5 text-amber-500 fill-amber-500"
+                            />
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300"
+                              >5.0</span
+                            >
+                          </div>
+                        </td>
                         <td class="px-4 align-middle py-2.5">
                           <Badge variant="success">Tetap</Badge>
                         </td>
                       </tr>
-                      <tr class="border-b border-neutral-border transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      <tr
+                        class="border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      >
                         <td class="px-4 align-middle py-2.5">
                           <div class="flex items-center gap-3">
                             <Avatar name="Budi Santoso" size="sm" variant="default" />
                             <div class="flex flex-col">
-                              <span class="text-sm font-medium text-slate-900 dark:text-slate-100">Budi Santoso</span>
+                              <span class="text-sm font-medium text-slate-900 dark:text-slate-100"
+                                >Budi Santoso</span
+                              >
                               <span class="text-xs text-slate-500">budi@perusahaan.com</span>
                             </div>
                           </div>
                         </td>
-                        <td class="px-4 align-middle py-2.5 text-sm text-slate-600 dark:text-slate-400">Frontend Developer</td>
+                        <td
+                          class="px-4 align-middle py-2.5 text-sm text-slate-600 dark:text-slate-400"
+                          >Frontend Developer</td
+                        >
+                        <td class="px-4 align-middle py-2.5">
+                          <div class="flex items-center gap-1.5">
+                            <Icon
+                              icon="lucide:star"
+                              class="w-3.5 h-3.5 text-amber-500 fill-amber-500"
+                            />
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300"
+                              >4.2</span
+                            >
+                          </div>
+                        </td>
                         <td class="px-4 align-middle py-2.5">
                           <Badge variant="primary">Kontrak</Badge>
                         </td>
                       </tr>
-                      <tr class="border-b border-neutral-border transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      <tr
+                        class="border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      >
                         <td class="px-4 align-middle py-2.5">
                           <div class="flex items-center gap-3">
                             <Avatar name="Andi Setiawan" size="sm" variant="default" />
                             <div class="flex flex-col">
-                              <span class="text-sm font-medium text-slate-900 dark:text-slate-100">Andi Setiawan</span>
+                              <span class="text-sm font-medium text-slate-900 dark:text-slate-100"
+                                >Andi Setiawan</span
+                              >
                               <span class="text-xs text-slate-500">andi@perusahaan.com</span>
                             </div>
                           </div>
                         </td>
-                        <td class="px-4 align-middle py-2.5 text-sm text-slate-600 dark:text-slate-400">QA Tester</td>
+                        <td
+                          class="px-4 align-middle py-2.5 text-sm text-slate-600 dark:text-slate-400"
+                          >QA Tester</td
+                        >
+                        <td class="px-4 align-middle py-2.5">
+                          <div class="flex items-center gap-1.5">
+                            <Icon
+                              icon="lucide:star"
+                              class="w-3.5 h-3.5 text-amber-500 fill-amber-500"
+                            />
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300"
+                              >3.8</span
+                            >
+                          </div>
+                        </td>
                         <td class="px-4 align-middle py-2.5">
                           <Badge variant="warning">Probation</Badge>
                         </td>
