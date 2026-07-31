@@ -1,14 +1,14 @@
 # Error Handling & Validation Rules
 
-Mencegah aplikasi _crash_ (White Screen of Death) dan memberikan _feedback_ error yang jelas kepada user adalah kunci dari aplikasi _SaaS/Enterprise_ seperti HRIS.
+Preventing the application from crashing (White Screen of Death) and providing clear error feedback to the user are key for SaaS/Enterprise applications like HRIS.
 
-## 1. Mencegah Crash pada Komponen UI
+## 1. Preventing UI Component Crashes
 
 <never_do>
-- **Rule:** Komponen Presentasi (Svelte) **TIDAK BOLEH** menebak struktur object error dari backend secara langsung (misal: `catch (e) { toast.error(e.response.data.message) }`).
+- **Rule:** Presentation Components (Svelte) **MUST NOT** guess the error object structure directly from the backend (e.g., `catch (e) { toast.error(e.response.data.message) }`).
 </never_do>
-- **Solusi (AppError Pattern):**
-  Semua error dari HTTP client (seperti Axios atau Fetch) harus ditangkap di _Infrastructure Layer_ (Repository) dan di-mapping menjadi instance `AppError` standar sebelum dikembalikan ke _Use Case_ dan UI.
+- **Solution (AppError Pattern):**
+  All errors from the HTTP client (like Axios or Fetch) must be caught in the _Infrastructure Layer_ (Repository) and mapped to a standard `AppError` instance before being returned to the _Use Case_ and UI.
 
 ### ✅ Correct (UI Layer)
 
@@ -16,14 +16,14 @@ Mencegah aplikasi _crash_ (White Screen of Death) dan memberikan _feedback_ erro
 try {
 	await submitMutation.mutateAsync(data);
 } catch (err) {
-	// err sudah dijamin merupakan instance dari Error / AppError oleh Infrastructure Layer
-	toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan sistem');
+	// err is guaranteed to be an instance of Error / AppError by the Infrastructure Layer
+	toast.error(err instanceof Error ? err.message : 'A system error occurred');
 }
 ```
 
 ## 2. API Response Wrapper
 
-Semua API call di _Infrastructure layer_ harus menggunakan pembungkus `handleAppError` (dari `$lib/infrastructure/http/error.mapper`) untuk otomatis menerjemahkan raw Axios/HTTP errors menjadi instance `AppError` yang ramah (User Friendly).
+All API calls in the _Infrastructure layer_ must use the `handleAppError` wrapper (from `$lib/infrastructure/http/error.mapper`) to automatically translate raw Axios/HTTP errors into user-friendly `AppError` instances.
 
 ### ✅ Correct (Infrastructure Layer - Repository Impl)
 
@@ -38,30 +38,30 @@ async getAll(): Promise<Model[]> {
 }
 ```
 
-- `400 Bad Request` -> Tampilkan pesan error validasi (form).
-- `401 Unauthorized` -> Redirect ke login (dilakukan via interceptor global).
-- `403 Forbidden` -> "Anda tidak memiliki akses ke fitur ini".
-- `404 Not Found` -> "Data tidak ditemukan".
-- `500 Internal Error` -> "Terjadi kesalahan pada server. Silakan coba beberapa saat lagi."
+- `400 Bad Request` -> Show validation error message (form).
+- `401 Unauthorized` -> Redirect to login (handled via global interceptor).
+- `403 Forbidden` -> "You do not have permission to access this feature".
+- `404 Not Found` -> "Data not found".
+- `500 Internal Error` -> "A server error occurred. Please try again later."
 
-## 3. Zod untuk Validasi Skema (Form & Payload)
+## 3. Zod for Schema Validation (Form & Payload)
 
-Gunakan **Zod** (`z`) untuk memvalidasi _input_ form di layer presentasi dan _payload_ API di layer infrastruktur.
+Use **Zod** (`z`) to validate form _input_ in the presentation layer and API _payload_ in the infrastructure layer.
 
-- Pesan _error_ dari Zod harus di-mapping dan dilempar ke prop `error={...}` pada komponen form (seperti `TextField` atau `Combobox`).
+- Error messages from Zod must be mapped and passed to the `error={...}` prop on form components (like `TextField` or `Combobox`).
 
-### 3.1 Lokasi & Penamaan Schema
+### 3.1 Schema Location & Naming
 
-- Skema validasi Zod tinggal di **Infrastructure layer**: `src/lib/infrastructure/[domain]/[domain].validator.ts`.
-- Ekspor per operasi: `Create[Domain]Schema`, dan turunkan update-nya dari create (jangan tulis ulang field): `export const UpdateDepartmentSchema = CreateDepartmentSchema.and(z.object({ id: z.string().min(1) }));`.
+- Zod validation schemas live in the **Infrastructure layer**: `src/lib/infrastructure/[domain]/[domain].validator.ts`.
+- Export per operation: `Create[Domain]Schema`, and derive the update schema from create (do not rewrite fields): `export const UpdateDepartmentSchema = CreateDepartmentSchema.and(z.object({ id: z.string().min(1) }));`.
 <CRITICAL_RULES>
-- **Nullable vs optional (CRITICAL):** kalau domain model memakai `T | null` (mis. `parentId: string | null`), pakai `z.string().nullable().default(null)` — **bukan** `.optional()`. `.optional()` menyisipkan `undefined` ke tipe hasil-infer schema, sehingga tidak assignable ke `CreateXInput` yang mengharuskan `string | null` (error TS2345 "Type 'undefined' is not assignable to type 'string | null'").
+- **Nullable vs optional (CRITICAL):** if the domain model uses `T | null` (e.g., `parentId: string | null`), use `z.string().nullable().default(null)` — **not** `.optional()`. `.optional()` injects `undefined` into the inferred schema result type, making it unassignable to `CreateXInput` which requires `string | null` (TS2345 error "Type 'undefined' is not assignable to type 'string | null'").
 </CRITICAL_RULES>
 
 ### 3.2 Zod v4 + superForm Adapter (CRITICAL)
 
 <CRITICAL_RULES>
-Project ini pakai **Zod v4**. Adapter superForm harus `zod4`, **bukan** `zod`:
+This project uses **Zod v4**. The superForm adapter must be `zod4`, **not** `zod`:
 
 ```ts
 // ✅ Zod v4
@@ -69,20 +69,20 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 ```
 </CRITICAL_RULES>
 
-Memakai adapter `zod` yang lama pada schema Zod v4 melempar runtime error:
+Using the old `zod` adapter on a Zod v4 schema throws a runtime error:
 
 > `SchemaError: No shape could be created for schema. If using Zod v4, import { zod4 } from "sveltekit-superforms/adapters" instead of { zod }.`
 
-Dengan `zod4`, tipe sudah cocok — **jangan** tambahkan cast `as unknown as ...` pada schema.
+With `zod4`, the types match perfectly — **do not** add an `as unknown as ...` cast on the schema.
 
-### 3.3 superForm SPA di-init di Rune, bukan di Komponen
+### 3.3 SPA superForm is initialized in Rune, not in Component
 
-Inisialisasi superForm (adapter + validators + `onUpdate`) tinggal di **rune factory** presentation layer, bukan inline di `.svelte`. Rune juga mengekspos helper `load()` untuk populate/reset (lihat §3.4). Komponen hanya menyimpan binding template (`$form`, `$errors`, `enhance`) — **tanpa** shadow state atau `$effect` sinkronisasi per-widget.
+The superForm initialization (adapter + validators + `onUpdate`) lives in the **rune factory** in the presentation layer, not inline in `.svelte`. The rune also exposes a `load()` helper for populate/reset (see §3.4). The component only holds the template bindings (`$form`, `$errors`, `enhance`) — **without** shadow states or per-widget synchronization `$effect`s.
 
-Mapping **Model → Input** hidup di **Core**, bukan di rune atau di infra `*.mapper.ts`. Ini transform Core-type → Core-type (tak menyentuh Schema snake_case), jadi masuk **Domain Service** `[Domain]Service` (lihat `architecture/ddd.md` — Domain Service = operasi domain murni/stateless), bareng transform murni lain (`buildTree`, `getAssignableParents`):
+Mapping **Model → Input** lives in **Core**, not in the rune or in the infra `*.mapper.ts`. This is a Core-type → Core-type transform (it does not touch snake_case Schemas), so it belongs in the **Domain Service** `[Domain]Service` (see `architecture/ddd.md` — Domain Service = pure/stateless domain operations), alongside other pure transforms (`buildTree`, `getAssignableParents`):
 
 ```ts
-// core/[domain]/[domain].service.ts — pure & stateless, tanpa repository
+// core/[domain]/[domain].service.ts — pure & stateless, no repository
 export class DepartmentService {
   /** Projects a department into the create/update form input shape (Model -> Input). */
   static toInput(department: DepartmentModel): CreateDepartmentInput {
@@ -98,7 +98,7 @@ export class DepartmentService {
 }
 ```
 
-> **Jangan** taruh `toInput` di `infrastructure/[domain]/[domain].mapper.ts` (itu batas API — **Schema ↔ Model**), **jangan** di `[Domain]UseCase` (itu untuk orkestrasi async + aturan bisnis: `create`/`update`/`delete` + repository). `toInput` murni & sinkron → **Domain Service**.
+> **Do not** put `toInput` in `infrastructure/[domain]/[domain].mapper.ts` (that is the API boundary — **Schema ↔ Model**), and **do not** put it in `[Domain]UseCase` (which is for async orchestration + business rules: `create`/`update`/`delete` + repository). `toInput` is pure & synchronous → **Domain Service**.
 
 ```ts
 // presentation/modules/[domain]/runes/[domain]-form.svelte.ts
@@ -111,7 +111,7 @@ import {
 } from '$lib/core/department';
 import { CreateDepartmentSchema } from '$lib/infrastructure/department/department.validator';
 
-// Harus dipanggil sinkron di top-level <script> komponen — superForm memakai onDestroy.
+// Must be called synchronously at the top-level <script> of the component — superForm uses onDestroy.
 export function useDepartmentForm(onValid: (input: CreateDepartmentInput) => void | Promise<void>) {
   const sf = superForm<CreateDepartmentInput>(defaults(zod4(CreateDepartmentSchema)), {
     SPA: true,
@@ -123,43 +123,43 @@ export function useDepartmentForm(onValid: (input: CreateDepartmentInput) => voi
 
   return {
     ...sf,
-    // Populate dari record (edit) atau reset ke default Zod (create). Mapping di Core Service.
+    // Populate from record (edit) or reset to Zod default (create). Mapping is in Core Service.
     load: (d: DepartmentModel | null) =>
       sf.reset(d ? { data: DepartmentService.toInput(d) } : undefined)
   };
 }
 ```
 
-> Domain Service dipanggil langsung dari Presentation (`DepartmentService.toInput(...)`, `DepartmentService.buildTree(...)`) — **tanpa** `provide[Domain]UseCase()`. Pakai provider/UseCase hanya untuk operasi yang menyentuh repository (fetch/persist).
+> Domain Services are called directly from Presentation (`DepartmentService.toInput(...)`, `DepartmentService.buildTree(...)`) — **without** `provide[Domain]UseCase()`. Use the provider/UseCase only for operations that touch the repository (fetch/persist).
 
 ```svelte
-<!-- Komponen: bungkus callback prop dalam closure agar membaca nilai prop terkini -->
-<!-- (hindari warning Svelte state_referenced_locally / initial-value capture). -->
+<!-- Component: wrap callback prop in a closure to read the latest prop value -->
+<!-- (prevents Svelte state_referenced_locally / initial-value capture warnings). -->
 const {(form, errors, enhance, load, submitting)} = useDepartmentForm((input) => onsubmit(input));
 ```
 
-**Kenapa closure?** Meneruskan prop `onsubmit` langsung (`useDepartmentForm(onsubmit)`) hanya menangkap nilai awalnya; membungkusnya `(input) => onsubmit(input)` memastikan submit memanggil `onsubmit` versi terbaru.
+**Why closure?** Passing the `onsubmit` prop directly (`useDepartmentForm(onsubmit)`) only captures its initial value; wrapping it in `(input) => onsubmit(input)` ensures submit calls the latest version of `onsubmit`.
 
-**Alur submit end-to-end:** komponen `onValid` → panggil prop `onsubmit` (data sudah tervalidasi & type-safe) → page `handleSubmit` → `mutateAsync` (toast & invalidate ditangani di `onError`/`onSuccess` mutation, lihat skill `tanstack-query`).
+**End-to-end submit flow:** component `onValid` → calls `onsubmit` prop (data is validated & type-safe) → page `handleSubmit` → `mutateAsync` (toast & invalidate handled in mutation's `onError`/`onSuccess`, see `tanstack-query` skill).
 
-### 3.4 Reset/Populate Form: `reset({ data })` + Function Binding (CRITICAL)
+### 3.4 Form Reset/Populate: `reset({ data })` + Function Binding (CRITICAL)
 
 <never_do>
-Untuk populate (edit) & reset (create), **jangan** assign `$form = {...}` manual dan **jangan** buat shadow `$state` + `$effect` sinkronisasi per widget. Dua anti-pattern ini yang bikin file membengkak saat field bertambah, plus 2 bug halus.
+For populate (edit) & reset (create), **do not** manually assign `$form = {...}` and **do not** create shadow `$state` + sync `$effect`s per widget. These two anti-patterns bloat files as fields grow, plus cause subtle bugs.
 </never_do>
 
-**a. Pakai `reset({ data })`, bukan `$form = {...}`.** `$form = {...}` hanya menimpa data — **errors** dan **tainted** dari sesi sebelumnya tertinggal (form dibuka ulang masih merah). `reset()` membersihkan data + errors + tainted sekaligus. Populate/reset dijalankan lewat satu `$effect` tipis yang hanya bergantung pada `open`:
+**a. Use `reset({ data })`, not `$form = {...}`.** `$form = {...}` only overwrites data — **errors** and **tainted** states from the previous session remain (re-opening the form still shows red). `reset()` clears data + errors + tainted all at once. Populate/reset runs via one thin `$effect` that only depends on `open`:
 
 ```svelte
-// Populate saat edit, reset ke default saat create. Nol enumerasi field di komponen.
+// Populate on edit, reset to default on create. Zero field enumeration in the component.
 $effect(() => {
 	if (open) load(department);
 });
 ```
 
-> **Jangan** masukkan `parentOptions` (atau data async lain) sebagai dependency effect populate. Kalau options datang belakangan, effect re-run dan **menimpa** editan user. Combobox cukup men-_derive_ label dari `$form.parentId` (lihat b).
+> **Do not** include `parentOptions` (or other async data) as a dependency for the populate effect. If options arrive late, the effect re-runs and **overwrites** user edits. Combobox can just derive the label from `$form.parentId` (see b).
 
-**b. Widget non-teks pakai function binding (get/set) langsung ke `$form`** — hapus shadow `$state` + `$effect` sinkronisasi. Butuh Svelte ≥ 5.9.
+**b. Non-text widgets use function binding (get/set) directly to `$form`** — remove shadow `$state` + sync `$effect`. Requires Svelte ≥ 5.9.
 
 ```svelte
 <!-- Switch: boolean <-> enum status -->
@@ -167,7 +167,7 @@ $effect(() => {
   bind:checked={() => $form.status === 'active', (v) => ($form.status = v ? 'active' : 'inactive')}
 />
 
-<!-- Combobox: Option {value,label} <-> id primitif di $form.parentId -->
+<!-- Combobox: Option {value,label} <-> primitive id in $form.parentId -->
 <Combobox
   options={parentOptions}
   bind:value={
@@ -177,6 +177,6 @@ $effect(() => {
 />
 ```
 
-**Hasil scaling:** tambah field baru = sentuh **2 tempat** saja — `toInput` di rune + input-nya di markup. Tidak ada `$state` baru, `$effect` baru, atau blok populate yang memanjang. TextField yang bind langsung ke `$form` bahkan nol usaha.
+**Scaling result:** adding a new field = touching **2 places** only — `toInput` in the rune + its input in the markup. No new `$state`, no new `$effect`, or long populate blocks. A TextField binding directly to `$form` requires zero extra effort.
 
-> Svelte < 5.9 (tanpa function binding): fallback pakai `$derived` untuk getter Combobox, bukan menghidupkan lagi shadow `$state` + `$effect`.
+> Svelte < 5.9 (without function binding): fallback to using `$derived` for Combobox getter, rather than reviving the shadow `$state` + `$effect` pattern.

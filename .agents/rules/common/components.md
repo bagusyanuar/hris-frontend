@@ -53,12 +53,13 @@ When binding complex UI components (such as `Combobox` which expects `{ value, l
    - Define variants in a separate `<component>.variants.ts` file alongside the Svelte component.
    - Do not write ad-hoc style conditionals directly in Svelte class attributes.
 
-<never_do>
-2. **Avoid Tailwind Arbitrary Values**:
-   - Do **NOT** use arbitrary values (e.g., `bg-[#f3f3f3]`, `w-[325px]`, `p-[17px]`, `h-[400px]`) in Tailwind classes.
+<CRITICAL_RULES>
+2. **Avoid Tailwind Arbitrary Values (CRITICAL)**:
+   - **YOU WILL BE PENALIZED FOR USING ARBITRARY VALUES** (e.g., `bg-[#f3f3f3]`, `w-[325px]`, `p-[17px]`, `h-[400px]`) in Tailwind classes.
+   - **Rounding Rule**: If a specific dimension (e.g., 325px) is requested, **YOU MUST ROUND IT** to the nearest standard Tailwind spacing scale (e.g., `w-80`). Being off by 2-4px is perfectly acceptable to maintain the design system.
    - Always rely on standard Tailwind classes/spacing scales or the configured `@theme` tokens in the CSS entrypoint.
-   - If a specific custom dimension or color is absolutely necessary, define it as a variable or token inside `@theme` in `app.css` rather than writing inline arbitrary values in component classes.
-</never_do>
+   - If a specific custom dimension or color is absolutely necessary, define it as a variable or token inside `@theme` in `app.css` rather than writing inline arbitrary values `[]` in component classes.
+</CRITICAL_RULES>
 
 ---
 

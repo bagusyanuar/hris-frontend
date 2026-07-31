@@ -243,13 +243,13 @@ For SaaS and Enterprise applications, **Filter, Search, Pagination, and Tab stat
 </script>
 ```
 
-### Kapan menggunakan `$state()` lokal?
+### When to use local `$state()`?
 
-Hanya untuk _state_ UI yang bersifat sementara (_ephemeral_) dan tidak relevan untuk dibagikan:
+Only for UI _state_ that is temporary (_ephemeral_) and not relevant to be shared:
 
-- Modal/Dialog/Drawer (buka/tutup)
+- Modal/Dialog/Drawer (open/close states)
 - _Hover states_
-- _Form inputs_ (yang belum di-_submit_)
+- _Form inputs_ (that have not been submitted yet)
 
 ---
 

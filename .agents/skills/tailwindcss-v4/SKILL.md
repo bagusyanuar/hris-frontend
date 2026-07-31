@@ -54,10 +54,12 @@ Always write class utilities in their updated v4 shorthands:
 
 To maintain a consistent design system, prevent visual drift, and preserve a clean codebase:
 
-<never_do>
-- **Do NOT use arbitrary values** (e.g., `w-[150px]`, `h-[32px]`, `bg-[#4f46e5]`, `mt-[7px]`) inside component classes.
+<CRITICAL_RULES>
+- **YOU WILL BE PENALIZED FOR USING ARBITRARY VALUES** (e.g., `w-[150px]`, `h-[32px]`, `bg-[#4f46e5]`, `mt-[7px]`) inside component classes.
 - **Do NOT use arbitrary `rem` values**. In Tailwind v4, many standard scales cover fractions of `rem`. Translate them to the official scale (e.g., `w-[1.5rem]` must be written as `w-6`, `w-[0.5rem]` as `w-2`, `p-[1rem]` as `p-4`).
-</never_do>
+- **Rounding Rule (CRITICAL)**: If a design requires a specific pixel value that doesn't perfectly match Tailwind's scale, **YOU MUST ROUND IT** to the nearest standard scale (e.g. 325px -> `w-80`). It is completely acceptable and expected for your UI implementation to be off by 2-4px to adhere to the design system. 
+- **NEVER** use arbitrary values `[]` to force an exact match unless you are defining a custom token in `app.css`.
+</CRITICAL_RULES>
 - Always use standard Tailwind spacing, sizing, and position scales (e.g., `w-36`, `h-8`, `bg-indigo-600`, `mt-1.5`).
 - If you require a custom width, height, color, or other layout dimension that does not match standard Tailwind scales, **define it as a token** (CSS variable) in the `@theme` block of your CSS entrypoint (e.g. `src/app.css`):
   ```css
