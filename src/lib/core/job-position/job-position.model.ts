@@ -12,6 +12,7 @@ export interface JobPositionModel {
   parentId: string | null;
   parentName?: string;
   headcountQuota: number;
+  employeeCount?: number;
   description?: string;
   status: JobPositionStatus;
   createdAt?: string;

@@ -1,27 +1,15 @@
 import {
-  getCoreRowModel,
-  getExpandedRowModel,
-  getPaginationRowModel,
-  type ColumnDef,
-  type Row
-} from '@tanstack/svelte-table';
-import { JobPositionService, type JobPositionModel } from '$lib/core/job-position';
-import { createTable } from '$lib/presentation/shared/components/table/helpers.svelte';
+  JobPositionService,
+  type JobPositionModel,
+  type CreateJobPositionInput,
+  type UpdateJobPositionInput
+} from '$lib/core/job-position';
 import type { Option } from '$lib/presentation/shared/components/combobox';
 import { useJobPositionQueries } from './job-position-query.svelte';
+import { useDepartmentsQuery } from '$lib/presentation/modules/department/runes/department-query.svelte';
+import { useJobTitleQueries } from '$lib/presentation/modules/job-title/runes/job-title-query.svelte';
 
 type StatusFilter = 'all' | 'active' | 'inactive';
-type ViewMode = 'table' | 'orgChart';
-
-const columns: ColumnDef<JobPositionModel>[] = [
-  { accessorKey: 'name', header: 'Job Position', meta: { className: 'font-medium' } },
-  { accessorKey: 'departmentName', header: 'Departemen' },
-  { accessorKey: 'jobTitleName', header: 'Job Title' },
-  { accessorKey: 'headcountQuota', header: 'Headcount Quota', meta: { align: 'center' } },
-  { accessorKey: 'description', header: 'Deskripsi' },
-  { accessorKey: 'status', header: 'Status', meta: { align: 'center' } },
-  { id: 'actions', header: '', enableSorting: false, meta: { align: 'right' } }
-];
 
 export function useJobPositionDirectory() {
   const queries = useJobPositionQueries();
@@ -30,6 +18,10 @@ export function useJobPositionDirectory() {
   const updateMutation = queries.updateJobPosition;
   const deleteMutation = queries.deleteJobPosition;
 
+  const departmentQuery = useDepartmentsQuery();
+  const jobTitleQueries = useJobTitleQueries();
+  const jobTitleQuery = jobTitleQueries.getJobTitles({ page: 1, limit: 1000 });
+
   // Ephemeral UI state
   let isFormOpen = $state(false);
   let editingPosition = $state<JobPositionModel | null>(null);
@@ -37,7 +29,6 @@ export function useJobPositionDirectory() {
   let isDeleteOpen = $state(false);
   let searchQuery = $state('');
   let statusFilter = $state<StatusFilter>('all');
-  let viewMode = $state<ViewMode>('table');
   let isDrawerOpen = $state(false);
   let selectedPosition = $state<JobPositionModel | null>(null);
 
@@ -47,34 +38,26 @@ export function useJobPositionDirectory() {
   const filtered = $derived(
     JobPositionService.filter(data, { search: searchQuery, status: statusFilter })
   );
-  const tree = $derived(JobPositionService.buildTree(filtered));
   const parentOptions = $derived<Option[]>(
     JobPositionService.getAssignableParents(data, editingPosition?.id).map((pos) => ({
       value: pos.id,
       label: pos.name
     }))
   );
+  const departmentOptions = $derived<Option[]>(
+    departmentQuery.data?.map((dept) => ({
+      value: dept.id,
+      label: dept.name
+    })) ?? []
+  );
+  const jobTitleOptions = $derived<Option[]>(
+    jobTitleQuery.data?.items.map((jt) => ({
+      value: jt.id,
+      label: jt.name
+    })) ?? []
+  );
   const isSubmitting = $derived(createMutation.isPending || updateMutation.isPending);
 
-  const table = createTable({
-    get data() {
-      return tree;
-    },
-    columns,
-    getSubRows: (row: JobPositionModel & { children?: JobPositionModel[] }) =>
-      row.children && row.children.length > 0 ? row.children : undefined,
-    getRowCanExpand: (row: Row<JobPositionModel & { children?: JobPositionModel[] }>) =>
-      (row.original.children?.length ?? 0) > 0,
-    initialState: { pagination: { pageIndex: 0, pageSize: 10 } },
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel()
-  });
-
-  function isRowExpanded(rowId: string): boolean {
-    const expanded = table.current.getState().expanded;
-    return expanded === true || !!expanded?.[rowId];
-  }
 
   // Actions
   function openCreate() {
@@ -112,6 +95,16 @@ export function useJobPositionDirectory() {
     deleteTarget = null;
   }
 
+  function submit(data: CreateJobPositionInput | UpdateJobPositionInput) {
+    if (editingPosition) {
+      updateMutation.mutate({ ...data, id: editingPosition.id } as UpdateJobPositionInput, {
+        onSuccess: () => closeForm()
+      });
+    } else {
+      createMutation.mutate(data as CreateJobPositionInput, { onSuccess: () => closeForm() });
+    }
+  }
+
   function handleDelete() {
     if (deleteTarget) {
       deleteMutation.mutate(deleteTarget.id, {
@@ -130,8 +123,8 @@ export function useJobPositionDirectory() {
     get stats() {
       return stats;
     },
-    get table() {
-      return table.current;
+    get items() {
+      return filtered;
     },
     get searchQuery() {
       return searchQuery;
@@ -145,14 +138,14 @@ export function useJobPositionDirectory() {
     set statusFilter(val) {
       statusFilter = val;
     },
-    get viewMode() {
-      return viewMode;
-    },
-    set viewMode(val) {
-      viewMode = val;
-    },
     get parentOptions() {
       return parentOptions;
+    },
+    get departmentOptions() {
+      return departmentOptions;
+    },
+    get jobTitleOptions() {
+      return jobTitleOptions;
     },
     get isFormOpen() {
       return isFormOpen;
@@ -181,7 +174,6 @@ export function useJobPositionDirectory() {
     get deleteTarget() {
       return deleteTarget;
     },
-    isRowExpanded,
     openCreate,
     openEdit,
     closeForm,
@@ -189,6 +181,7 @@ export function useJobPositionDirectory() {
     closeDetail,
     confirmDelete,
     closeDelete,
+    submit,
     handleDelete
   };
 }

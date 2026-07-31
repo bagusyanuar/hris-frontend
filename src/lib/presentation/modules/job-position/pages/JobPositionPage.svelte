@@ -1,16 +1,13 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  import { cn } from '$lib/presentation/shared/utils/cn';
   import { Typography } from '$lib/presentation/shared/components/typography';
-  import { Card } from '$lib/presentation/shared/components/card';
   import { Button } from '$lib/presentation/shared/components/button';
   import { Dropdown, DropdownItem } from '$lib/presentation/shared/components/dropdown';
-  import * as TableUI from '$lib/presentation/shared/components/table';
   import TextField from '$lib/presentation/shared/components/textfield/TextField.svelte';
   import { Badge } from '$lib/presentation/shared/components/badge';
+  import { Avatar } from '$lib/presentation/shared/components/avatar';
   import JobPositionFormDialog from '../components/JobPositionFormDialog.svelte';
   import JobPositionDetailDrawer from '../components/JobPositionDetailDrawer.svelte';
-  import JobPositionOrgChart from '../components/JobPositionOrgChart.svelte';
   import { useJobPositionDirectory } from '../runes/job-position-directory.svelte';
 
   const dir = useJobPositionDirectory();
@@ -27,263 +24,336 @@
 {/snippet}
 
 <div class="flex flex-col gap-3">
-  <!-- Header Panel -->
-  <Card>
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-      <div class="flex items-center gap-4">
+  <!-- Premium Page Header -->
+  <section
+    id="page-header"
+    data-testid="page-header"
+    class="relative w-full rounded-xl bg-neutral-card border border-neutral-border overflow-hidden"
+  >
+    <!-- Decorative background elements -->
+    <div
+      class="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-brand-primary/10 dark:bg-brand-primary/20 blur-[50px] rounded-full pointer-events-none"
+    ></div>
+    <div
+      class="absolute bottom-0 right-1/3 w-32 h-32 bg-emerald-500/5 dark:bg-emerald-500/10 blur-2xl rounded-full pointer-events-none"
+    ></div>
+
+    <div
+      class="relative p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
+    >
+      <div class="flex items-center gap-5">
         <div
-          class="hidden sm:flex h-12 w-12 items-center justify-center rounded-xl bg-brand-light text-brand-primary shrink-0"
+          class="w-14 h-14 rounded-xl bg-brand-primary/5 dark:bg-brand-primary/10 border border-brand-primary/10 flex items-center justify-center backdrop-blur-md shrink-0"
         >
-          <Icon icon="lucide:briefcase" class="w-6 h-6" />
+          <Icon icon="lucide:briefcase" class="w-7 h-7 text-brand-primary drop-shadow-sm" />
         </div>
-        <div class="flex flex-col gap-1">
-          <Typography variant="h4" weight="bold">Job Positions</Typography>
-          <Typography variant="body-sm" color="secondary">
-            Kelola data posisi jabatan (Job Position) dan struktur reporting line.
-          </Typography>
+        <div class="flex flex-col gap-1.5 text-slate-900 dark:text-slate-100">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight drop-shadow-sm">Posisi</h1>
+          <p
+            class="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-lg leading-relaxed"
+          >
+            Kelola data posisi jabatan dan struktur reporting line dalam organisasi perusahaan.
+          </p>
         </div>
       </div>
-      <div
-        class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800 self-stretch sm:self-auto"
-      >
-        <div class="flex items-center gap-2 px-3">
-          <Icon icon="lucide:layers" class="w-4 h-4 text-slate-400" />
-          <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {dir.stats.total} <span class="text-slate-500 font-normal">Posisi</span>
+
+      <div class="flex items-center gap-3 w-full lg:w-auto self-stretch lg:self-auto">
+        <!-- Stat Item -->
+        <div
+          class="flex-1 lg:flex-none flex flex-col gap-1.5 bg-white dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl px-5 py-3.5 min-w-32.5 backdrop-blur-sm"
+        >
+          <span
+            class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1.5"
+          >
+            <Icon icon="lucide:layers" class="w-3.5 h-3.5" /> Total Posisi
           </span>
-        </div>
-        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
-        <div class="flex items-center gap-2 px-3">
-          <Icon icon="lucide:activity" class="w-4 h-4 text-emerald-500" />
-          <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {dir.stats.activePercentage}% <span class="text-slate-500 font-normal">Aktif</span>
-          </span>
+          <span class="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-none"
+            >{dir.stats.total}</span
+          >
         </div>
       </div>
     </div>
-  </Card>
+  </section>
 
-  <!-- Main Content Panel -->
-  <Card>
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-      <Typography variant="h5" weight="semibold">Direktori Job Position</Typography>
-      <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
-        <div
-          class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 h-9"
-        >
-          <button
-            class={cn(
-              'h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors',
-              dir.viewMode === 'table'
-                ? 'bg-brand-primary text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-            )}
-            onclick={() => (dir.viewMode = 'table')}
+  <section
+    id="job-position-list"
+    data-testid="job-position-list"
+    class="bg-neutral-card border border-neutral-border rounded-2xl shadow-xs p-4 md:p-6 transition-all duration-300"
+  >
+    <div class="text-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div class="flex flex-col">
+          <Typography variant="h4" class="text-slate-900 dark:text-slate-100 font-bold"
+            >Direktori Posisi</Typography
           >
-            <Icon icon="lucide:table-2" class="w-4 h-4" />
-            <span class="hidden sm:inline">Tabel</span>
-          </button>
-          <button
-            class={cn(
-              'h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors',
-              dir.viewMode === 'orgChart'
-                ? 'bg-brand-primary text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-            )}
-            onclick={() => (dir.viewMode = 'orgChart')}
-          >
-            <Icon icon="lucide:network" class="w-4 h-4" />
-            <span class="hidden sm:inline">Bagan</span>
-          </button>
+          <span class="text-sm text-slate-500 font-medium">Manajemen Struktur Posisi</span>
         </div>
-        <TextField
-          placeholder="Cari posisi..."
-          size="sm"
-          class="w-full sm:w-64"
-          bind:value={() => dir.searchQuery, (v) => (dir.searchQuery = v)}
-        >
-          {#snippet prefix()}
-            <Icon icon="lucide:search" class="w-4 h-4 text-slate-400" />
-          {/snippet}
-        </TextField>
-        <Dropdown align="right">
-          {#snippet trigger(toggle)}
-            <Button
-              variant="outline"
-              size="sm"
-              class="whitespace-nowrap text-xs font-normal"
-              onclick={toggle}
-            >
-              <Icon icon="lucide:filter" class="w-4 h-4" />
-              {dir.statusFilter === 'all'
-                ? 'Semua Status'
-                : dir.statusFilter === 'active'
-                  ? 'Aktif'
-                  : 'Nonaktif'}
-            </Button>
-          {/snippet}
-          {#snippet content()}
-            <DropdownItem
-              class="text-xs font-normal gap-2"
-              onclick={() => (dir.statusFilter = 'all')}
-            >
-              <Icon icon="lucide:layers" class="w-4 h-4" />
-              Semua Status
-            </DropdownItem>
-            <DropdownItem
-              class="text-xs font-normal gap-2"
-              onclick={() => (dir.statusFilter = 'active')}
-            >
-              <Icon
-                icon="lucide:check-circle-2"
-                class="w-4 h-4 text-emerald-600 dark:text-emerald-500"
-              />
-              <span class="text-emerald-600 dark:text-emerald-500">Aktif</span>
-            </DropdownItem>
-            <DropdownItem
-              class="text-xs font-normal gap-2"
-              onclick={() => (dir.statusFilter = 'inactive')}
-            >
-              <Icon icon="lucide:minus-circle" class="w-4 h-4 text-slate-500 dark:text-slate-400" />
-              <span class="text-slate-500 dark:text-slate-400">Nonaktif</span>
-            </DropdownItem>
-          {/snippet}
-        </Dropdown>
-        <Button variant="primary" size="sm" onclick={dir.openCreate} class="whitespace-nowrap">
-          <Icon icon="lucide:plus" class="w-4 h-4 shrink-0" />
-          Tambah Posisi
-        </Button>
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
+          <TextField
+            placeholder="Cari posisi..."
+            size="sm"
+            class="w-full sm:w-64"
+            bind:value={() => dir.searchQuery, (v) => (dir.searchQuery = v)}
+          >
+            {#snippet prefix()}
+              <Icon icon="lucide:search" class="w-4 h-4 text-slate-400" />
+            {/snippet}
+          </TextField>
+          <Dropdown align="right">
+            {#snippet trigger(toggle)}
+              <Button
+                variant="outline"
+                size="sm"
+                class="px-2.5 flex items-center justify-center shrink-0"
+                onclick={toggle}
+              >
+                <Icon icon="lucide:filter" class="w-4 h-4" />
+              </Button>
+            {/snippet}
+            {#snippet content()}
+              <DropdownItem
+                class="text-xs font-normal gap-2"
+                onclick={() => (dir.statusFilter = 'all')}
+              >
+                <Icon icon="lucide:layers" class="w-4 h-4" />
+                Semua Status
+              </DropdownItem>
+              <DropdownItem
+                class="text-xs font-normal gap-2"
+                onclick={() => (dir.statusFilter = 'active')}
+              >
+                <Icon
+                  icon="lucide:check-circle-2"
+                  class="w-4 h-4 text-emerald-600 dark:text-emerald-500"
+                />
+                <span class="text-emerald-600 dark:text-emerald-500">Aktif</span>
+              </DropdownItem>
+              <DropdownItem
+                class="text-xs font-normal gap-2"
+                onclick={() => (dir.statusFilter = 'inactive')}
+              >
+                <Icon
+                  icon="lucide:minus-circle"
+                  class="w-4 h-4 text-slate-500 dark:text-slate-400"
+                />
+                <span class="text-slate-500 dark:text-slate-400">Nonaktif</span>
+              </DropdownItem>
+            {/snippet}
+          </Dropdown>
+        </div>
       </div>
-    </div>
 
-    {#if dir.viewMode === 'table'}
-      <TableUI.Root table={dir.table} isLoading={dir.isLoading}>
-        <TableUI.Header>
-          {#each dir.table.getHeaderGroups() as headerGroup (headerGroup.id)}
-            <TableUI.Row>
-              {#each headerGroup.headers as header (header.id)}
-                <TableUI.Head {header} />
-              {/each}
-            </TableUI.Row>
-          {/each}
-        </TableUI.Header>
-        <TableUI.Body>
-          {#each dir.table.getRowModel().rows as row (row.id)}
-            <TableUI.Row
-              hoverable={true}
-              onclick={() => dir.openDetail(row.original)}
-              class="cursor-pointer"
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {#if dir.isLoading}
+          <div class="col-span-full flex items-center justify-center p-12 text-slate-400">
+            <Icon icon="lucide:loader-2" class="w-6 h-6 animate-spin" />
+          </div>
+        {:else}
+          {#if dir.items.length === 0}
+            <div
+              class="col-span-full flex flex-col items-center justify-center p-12 text-slate-500 gap-2 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl"
             >
-              {#each row.getVisibleCells() as cell (cell.id)}
-                <TableUI.Cell {cell}>
-                  {#if cell.column.id === 'name'}
-                    <div class="flex items-center gap-2" style="padding-left: {row.depth * 1.5}rem">
-                      {#if row.getCanExpand()}
-                        <button
-                          onclick={(e) => {
-                            e.stopPropagation();
-                            row.toggleExpanded();
-                          }}
-                          class="p-0.5 rounded shrink-0 text-slate-400 hover:text-brand-primary dark:hover:text-brand-primary cursor-pointer bg-slate-50 hover:bg-brand-light dark:bg-slate-800 transition-colors"
-                        >
-                          <Icon
-                            icon="lucide:chevron-right"
-                            class={cn(
-                              'w-4 h-4 transition-transform',
-                              dir.isRowExpanded(row.id) && 'rotate-90'
-                            )}
-                          />
-                        </button>
-                      {:else}
-                        <div class="w-5 shrink-0 flex justify-center">
-                          <div class="w-px h-5 bg-slate-200 dark:bg-slate-700"></div>
-                        </div>
-                      {/if}
-                      <Icon
-                        icon={row.depth === 0 ? 'lucide:briefcase' : 'lucide:corner-down-right'}
-                        class="w-4 h-4 text-slate-400 shrink-0"
-                      />
-                      <span class="font-medium text-slate-900 dark:text-slate-100"
-                        >{cell.getValue()}</span
-                      >
-                    </div>
-                  {:else if cell.column.id === 'departmentName' || cell.column.id === 'jobTitleName'}
-                    <span class="text-sm text-slate-600 dark:text-slate-300">
-                      {cell.getValue() || '-'}
-                    </span>
-                  {:else if cell.column.id === 'headcountQuota'}
-                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      {cell.getValue()}
-                    </span>
-                  {:else if cell.column.id === 'description'}
-                    <span
-                      class="text-slate-500 dark:text-slate-400 text-sm truncate max-w-[200px] block"
-                      title={cell.getValue() as string}>{cell.getValue() ?? '-'}</span
+              <Icon icon="lucide:inbox" class="w-10 h-10 opacity-20" />
+              <span class="text-sm">Tidak ada data posisi.</span>
+            </div>
+          {/if}
+          {#each dir.items as position (position.id)}
+            {@const occupied = position.employeeCount ?? 0}
+            {@const quota = position.headcountQuota || 0}
+            {@const remaining = Math.max(0, quota - occupied)}
+            <div
+              class="group flex flex-col p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-brand-primary/30 transition-all duration-300 gap-4"
+            >
+              <div class="flex items-start justify-between w-full">
+                <!-- Avatar Initials & Title -->
+                <div class="flex items-start gap-3 overflow-hidden">
+                  <div
+                    class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-lg font-bold bg-brand-primary/5 dark:bg-brand-primary/10 border border-brand-primary/20 dark:border-brand-primary/30 text-brand-primary backdrop-blur-sm"
+                  >
+                    {position.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-base font-bold text-slate-900 dark:text-slate-100 truncate"
+                      >{position.name}</span
                     >
-                  {:else if cell.column.id === 'status'}
-                    {@render statusBadge(cell.getValue() as string)}
-                  {:else if cell.column.id === 'actions'}
-                    <Dropdown align="right">
-                      {#snippet trigger(toggle)}
-                        <button
-                          onclick={(e) => {
-                            e.stopPropagation();
-                            toggle();
-                          }}
-                          class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer"
-                        >
-                          <Icon icon="lucide:more-horizontal" class="w-4 h-4" />
-                        </button>
-                      {/snippet}
-                      {#snippet content()}
-                        <div
-                          class="px-2.5 py-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-                        >
-                          Aksi
-                        </div>
-                        <DropdownItem
-                          class="text-xs font-normal gap-2"
-                          onclick={() => dir.openDetail(row.original)}
-                        >
-                          <Icon icon="lucide:eye" class="w-4 h-4 text-slate-400" />
-                          Lihat Detail
-                        </DropdownItem>
-                        <DropdownItem
-                          class="text-xs font-normal gap-2"
-                          onclick={() => dir.openEdit(row.original)}
-                        >
-                          <Icon icon="lucide:pencil" class="w-4 h-4 text-slate-400" />
-                          Ubah Data
-                        </DropdownItem>
-                        <div class="h-px bg-slate-100 dark:bg-slate-800 my-1"></div>
-                        <DropdownItem
-                          class="text-xs font-normal gap-2 text-red-600 dark:text-red-500 focus:bg-red-50 dark:focus:bg-red-950/50"
-                          onclick={() => dir.confirmDelete(row.original)}
-                        >
-                          <Icon icon="lucide:trash-2" class="w-4 h-4" />
-                          Hapus Posisi
-                        </DropdownItem>
-                      {/snippet}
-                    </Dropdown>
+                    {#if position.departmentName || position.jobTitleName}
+                      <div class="flex items-center gap-1.5 flex-wrap mt-1">
+                        {#if position.departmentName}
+                          <Badge
+                            variant="default"
+                            class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 px-2 py-0.5 text-[10px] rounded-md border-none w-fit"
+                          >
+                            <Icon icon="lucide:building-2" class="w-3 h-3 mr-1" />
+                            {position.departmentName}
+                          </Badge>
+                        {/if}
+                        {#if position.jobTitleName}
+                          <Badge
+                            variant="primary"
+                            class="bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 px-2 py-0.5 text-[10px] rounded-md border-none w-fit"
+                          >
+                            <Icon icon="lucide:award" class="w-3 h-3 mr-1" />
+                            {position.jobTitleName}
+                          </Badge>
+                        {/if}
+                      </div>
+                    {/if}
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <Dropdown align="right">
+                  {#snippet trigger(toggle)}
+                    <button
+                      onclick={toggle}
+                      class="p-1.5 -mr-2 -mt-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer shrink-0"
+                    >
+                      <Icon icon="lucide:more-vertical" class="w-4 h-4" />
+                    </button>
+                  {/snippet}
+                  {#snippet content()}
+                    <DropdownItem class="text-xs gap-2" onclick={() => dir.openDetail(position)}>
+                      <Icon icon="lucide:eye" class="w-4 h-4 text-slate-400" />
+                      Detail
+                    </DropdownItem>
+                    <DropdownItem class="text-xs gap-2" onclick={() => dir.openEdit(position)}>
+                      <Icon icon="lucide:pencil" class="w-4 h-4 text-slate-400" />
+                      Edit
+                    </DropdownItem>
+                    <div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
+                    <DropdownItem
+                      class="text-xs gap-2"
+                      variant="danger"
+                      onclick={() => dir.confirmDelete(position)}
+                    >
+                      <Icon icon="lucide:trash-2" class="w-4 h-4" />
+                      Hapus
+                    </DropdownItem>
+                  {/snippet}
+                </Dropdown>
+              </div>
+
+              <p
+                class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 min-h-10"
+                title={position.description}
+              >
+                {position.description ||
+                  'Posisi dalam struktur organisasi dengan tanggung jawab dan wewenang tertentu.'}
+              </p>
+
+              <div
+                class="flex flex-col gap-2 mt-1 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800"
+              >
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold text-slate-700 dark:text-slate-300">
+                    Terisi: <span class="text-slate-900 dark:text-slate-100">{occupied}</span> org
+                  </span>
+                  <span class="font-medium text-slate-500 dark:text-slate-400">
+                    Quota: {quota}
+                  </span>
+                </div>
+
+                <div
+                  class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"
+                >
+                  <div
+                    class="h-full rounded-full transition-all duration-500 {occupied >= quota &&
+                    quota > 0
+                      ? 'bg-emerald-500'
+                      : 'bg-brand-primary'}"
+                    style="width: {quota > 0 ? Math.min(100, (occupied / quota) * 100) : 0}%"
+                  ></div>
+                </div>
+
+                <div
+                  class="flex items-center gap-1.5 text-[11px] font-medium {remaining > 0
+                    ? 'text-amber-600 dark:text-amber-500'
+                    : 'text-emerald-600 dark:text-emerald-500'}"
+                >
+                  {#if remaining > 0}
+                    <Icon icon="lucide:alert-circle" class="w-3.5 h-3.5" />
+                    Dibutuhkan {remaining} karyawan lagi
+                  {:else if quota === 0}
+                    <Icon icon="lucide:minus-circle" class="w-3.5 h-3.5 text-slate-400" />
+                    <span class="text-slate-500">Tidak ada quota</span>
+                  {:else}
+                    <Icon icon="lucide:check-circle-2" class="w-3.5 h-3.5" />
+                    Quota sudah terpenuhi
                   {/if}
-                </TableUI.Cell>
-              {/each}
-            </TableUI.Row>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div
+                class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
+              >
+                <div class="flex items-center gap-2">
+                  {#if occupied > 0}
+                    <div class="flex items-center gap-2.5">
+                      <div class="flex -space-x-2.5 hover:space-x-0 transition-all duration-300">
+                        <Avatar name="Sarah Jeni" size="sm" class="w-7 h-7 text-[10px] border-2 border-white dark:border-slate-800 shadow-sm transition-all duration-300" />
+                        {#if occupied > 1}
+                          <Avatar name="Budi Santoso" size="sm" class="w-7 h-7 text-[10px] border-2 border-white dark:border-slate-800 shadow-sm transition-all duration-300" variant="default" />
+                        {/if}
+                        {#if occupied > 2}
+                          <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-white dark:border-slate-800 flex items-center justify-center text-[10px] font-medium text-slate-500 shadow-sm shrink-0 z-10 transition-all duration-300">
+                            +{occupied - 2}
+                          </div>
+                        {/if}
+                      </div>
+                      <span class="text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                        {#if occupied === 1}
+                          Sarah Jeni
+                        {:else if occupied === 2}
+                          Sarah & Budi
+                        {:else}
+                          Sarah, Budi & {occupied - 2} lainnya
+                        {/if}
+                      </span>
+                    </div>
+                  {:else}
+                    <span class="text-[11px] text-slate-400 font-medium">Belum ada karyawan</span>
+                  {/if}
+                </div>
+                
+                {@render statusBadge(position.status)}
+              </div>
+            </div>
           {/each}
-        </TableUI.Body>
-      </TableUI.Root>
-    {:else}
-      <JobPositionOrgChart table={dir.table} />
-    {/if}
-  </Card>
+
+          <button
+            onclick={dir.openCreate}
+            class="flex flex-col sm:flex-row items-center justify-center gap-5 p-6 bg-transparent border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-primary rounded-2xl hover:bg-brand-light/30 dark:hover:bg-brand-primary/5 transition-all duration-300 w-full cursor-pointer h-full min-h-45 group text-center sm:text-left"
+          >
+            <div
+              class="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover:bg-brand-light dark:group-hover:bg-brand-primary/20 group-hover:text-brand-primary flex items-center justify-center shrink-0 group-hover:scale-110 transition-all duration-300"
+            >
+              <Icon icon="lucide:plus" class="w-6 h-6" />
+            </div>
+            <div class="flex flex-col gap-1 max-w-45">
+              <span
+                class="text-base font-bold text-slate-600 dark:text-slate-300 group-hover:text-brand-primary transition-colors duration-300"
+                >Tambah Posisi</span
+              >
+              <span class="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+                Buat posisi baru dalam struktur organisasi
+              </span>
+            </div>
+          </button>
+        {/if}
+      </div>
+    </div>
+  </section>
 </div>
 
 <JobPositionFormDialog
   bind:isOpen={() => dir.isFormOpen, (v) => (dir.isFormOpen = v)}
   position={dir.editingPosition}
   parentOptions={dir.parentOptions}
+  departmentOptions={dir.departmentOptions}
+  jobTitleOptions={dir.jobTitleOptions}
   isSubmitting={dir.isSubmitting}
-  onSubmit={() => {}}
+  onSubmit={dir.submit}
   onClose={dir.closeForm}
 />
 

@@ -14,7 +14,7 @@
     class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col"
   >
     <div class="p-6 border-b border-slate-100 dark:border-slate-800">
-      <Typography variant="h4">Detail Job Position</Typography>
+      <Typography variant="h4">Detail Posisi</Typography>
     </div>
     <div class="flex-1 p-6 overflow-y-auto">
       <Typography variant="body-sm" color="secondary">Placeholder for details drawer.</Typography>

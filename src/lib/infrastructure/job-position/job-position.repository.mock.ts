@@ -17,6 +17,7 @@ const mockData: JobPositionModel[] = [
     jobTitleName: 'Manager',
     parentId: null,
     headcountQuota: 1,
+    employeeCount: 1,
     status: 'active'
   },
   {
@@ -29,6 +30,20 @@ const mockData: JobPositionModel[] = [
     parentId: '1',
     parentName: 'Engineering Manager',
     headcountQuota: 5,
+    employeeCount: 2,
+    status: 'active'
+  },
+  {
+    id: '3',
+    name: 'Backend Developer',
+    departmentId: 'dept-1',
+    departmentName: 'Engineering',
+    jobTitleId: 'jt-3',
+    jobTitleName: 'Senior',
+    parentId: '1',
+    parentName: 'Engineering Manager',
+    headcountQuota: 10,
+    employeeCount: 4,
     status: 'active'
   }
 ];
@@ -58,8 +73,11 @@ export class JobPositionRepositoryMock implements IJobPositionRepository {
     await new Promise((resolve) => setTimeout(resolve, 500));
     const newModel: JobPositionModel = {
       ...input,
-      id: Math.random().toString(36).substr(2, 9),
-      createdAt: new Date().toISOString()
+      id: Math.random().toString(36).substring(7),
+      departmentName: 'Mock Dept',
+      jobTitleName: 'Mock Title',
+      employeeCount: 0,
+      createdAt: new Date().toISOString(),
     };
     mockData.push(newModel);
     return newModel;
