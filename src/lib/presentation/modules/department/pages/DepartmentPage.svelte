@@ -11,7 +11,6 @@
   import { Badge } from '$lib/presentation/shared/components/badge';
   import DepartmentFormDialog from '../components/DepartmentFormDialog.svelte';
   import DepartmentDetailDrawer from '../components/DepartmentDetailDrawer.svelte';
-  import DepartmentOrgChart from '../components/DepartmentOrgChart.svelte';
   import { useDepartmentDirectory } from '../runes/department-directory.svelte';
 
   const dir = useDepartmentDirectory();
@@ -70,46 +69,59 @@
 
 <div class="flex flex-col gap-3">
   <!-- Page Header -->
-  <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-    <div class="flex flex-col gap-1">
-      <Typography variant="h4" weight="bold">Departemen</Typography>
-      <Typography variant="body-sm" color="secondary">
-        Kelola hierarki unit organisasi perusahaan.
-      </Typography>
-    </div>
+  <section
+    id="page-header"
+    data-testid="page-header"
+    class="relative w-full rounded-xl bg-neutral-card border border-neutral-border overflow-hidden"
+  >
+    <!-- Decorative background elements -->
+    <div
+      class="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-brand-primary/10 dark:bg-brand-primary/20 blur-[50px] rounded-full pointer-events-none"
+    ></div>
+    <div
+      class="absolute bottom-0 right-1/3 w-32 h-32 bg-emerald-500/5 dark:bg-emerald-500/10 blur-2xl rounded-full pointer-events-none"
+    ></div>
 
     <div
-      class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 h-9 shrink-0"
+      class="relative p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
     >
-      <button
-        class={cn(
-          'h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors',
-          dir.viewMode === 'table'
-            ? 'bg-brand-primary text-white shadow-xs'
-            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-        )}
-        onclick={() => (dir.viewMode = 'table')}
-      >
-        <Icon icon="lucide:layout-panel-left" class="w-4 h-4" />
-        <span class="hidden sm:inline">Direktori</span>
-      </button>
-      <button
-        class={cn(
-          'h-full px-3 rounded-md text-xs flex items-center gap-1.5 transition-colors',
-          dir.viewMode === 'orgChart'
-            ? 'bg-brand-primary text-white shadow-xs'
-            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-        )}
-        onclick={() => (dir.viewMode = 'orgChart')}
-      >
-        <Icon icon="lucide:network" class="w-4 h-4" />
-        <span class="hidden sm:inline">Bagan</span>
-      </button>
-    </div>
-  </div>
+      <div class="flex items-center gap-5">
+        <div
+          class="w-14 h-14 rounded-xl bg-brand-primary/5 dark:bg-brand-primary/10 border border-brand-primary/10 flex items-center justify-center backdrop-blur-md shrink-0"
+        >
+          <Icon icon="lucide:network" class="w-7 h-7 text-brand-primary drop-shadow-sm" />
+        </div>
+        <div class="flex flex-col gap-1.5 text-slate-900 dark:text-slate-100">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight drop-shadow-sm">
+            Manajemen Departemen
+          </h1>
+          <p
+            class="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-lg leading-relaxed"
+          >
+            Kelola hierarki unit organisasi perusahaan.
+          </p>
+        </div>
+      </div>
 
-  {#if dir.viewMode === 'table'}
-    <!-- Master-Detail Split Pane (Bento Grid) -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto self-stretch lg:self-auto">
+        <!-- Stat Item -->
+        <div
+          class="w-full sm:w-auto flex flex-col gap-1.5 bg-white dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl px-5 py-3.5 min-w-32.5 backdrop-blur-sm"
+        >
+          <span
+            class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1.5"
+          >
+            <Icon icon="lucide:layers" class="w-3.5 h-3.5" /> Total Departemen
+          </span>
+          <span class="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-none"
+            >{dir.stats.total}</span
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Master-Detail Split Pane (Bento Grid) -->
     <div class="flex flex-col md:flex-row gap-4 flex-1 h-150">
       <!-- Master List Card -->
       <Card class="w-full md:w-70 flex flex-col shrink-0 overflow-hidden self-start max-h-full">
@@ -691,11 +703,6 @@
         {/if}
       </Card>
     </div>
-  {:else}
-    <Card class="h-150 p-5">
-      <DepartmentOrgChart departments={dir.tree} onSelectDepartment={dir.openDetail} />
-    </Card>
-  {/if}
 </div>
 
 <DepartmentFormDialog
