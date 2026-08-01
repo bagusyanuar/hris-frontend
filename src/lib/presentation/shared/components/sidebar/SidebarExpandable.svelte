@@ -36,13 +36,13 @@
     class="w-full flex items-center rounded-xl text-left transition-all duration-150 group relative cursor-pointer
 			{sidebar.isCollapsed ? 'justify-center p-2.5' : 'justify-between p-2.5'}
 			{isActive
-      ? 'bg-brand-primary text-white font-medium'
+      ? 'text-slate-900 dark:text-white font-medium bg-slate-50/50 dark:bg-slate-800/50 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:bg-brand-primary before:rounded-r-md'
       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/60'}"
   >
     <div class="flex items-center {sidebar.isCollapsed ? '' : 'gap-3'}">
       <Icon
         {icon}
-        class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-105"
+        class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-105 {isActive ? 'text-brand-primary' : ''}"
       />
       {#if !sidebar.isCollapsed}
         <span class="text-sm">{label}</span>
@@ -51,7 +51,7 @@
     {#if !sidebar.isCollapsed}
       <Icon
         icon="lucide:chevron-down"
-        class="w-3.5 h-3.5 transition-transform duration-200 {isActive ? 'text-white/80' : 'text-slate-400'} {isExpanded
+        class="w-3.5 h-3.5 transition-transform duration-200 {isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'} {isExpanded
           ? 'rotate-180'
           : ''}"
       />
