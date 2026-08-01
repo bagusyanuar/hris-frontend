@@ -13,6 +13,10 @@
   --color-brand-text: var(--color-emerald-700);
   --color-brand-border: var(--color-emerald-100);
 
+  /* Deep brand surface tokens (always-dark showcase/marketing panels) */
+  --color-brand-deep: var(--color-emerald-950);
+  --color-brand-deep-soft: var(--color-emerald-900);
+
   /* Neutral layout and container theme tokens - Light Mode */
   --color-neutral-bg: var(--color-slate-50);
   --color-neutral-card: var(--color-white);
