@@ -494,3 +494,32 @@ This is the central reference catalog of all reusable presentation components in
     Aktif
   </Badge>
   ```
+
+### 24. Carousel
+
+- **Path:** [Carousel.svelte](file:///Users/dystopia/svelte/hris-frontend/src/lib/presentation/shared/components/carousel/Carousel.svelte)
+- **Props:**
+  - `id`: `string` (**required**; descriptive identifier for the `<section>` landmark — a11y & e2e testing)
+  - `items`: `T[]` (generic slide data list)
+  - `slide`: `Snippet<[T, number]>` (renders one slide; receives the item and its index)
+  - `activeIndex`: `number` (bindable; defaults to `0`)
+  - `autoplay`: `boolean` (defaults to `true`)
+  - `interval`: `number` (autoplay delay in ms; defaults to `6000`)
+  - `pauseOnHover`: `boolean` (defaults to `true`; also pauses on `focusin`)
+  - `showIndicators`: `boolean` (defaults to `true`)
+  - `showArrows`: `boolean` (defaults to `false`)
+  - `tone`: `'dark' | 'light'` (defaults to `'dark'`; use `'light'` on dark/brand surfaces)
+  - `label`: `string` (aria-label of the carousel region)
+  - `class` / `controlsClass`: `string` (wrapper and controls-row classes)
+- **Description:**
+  - Generic, type-safe autoplay carousel. Slides are stacked in a single CSS grid cell so the track keeps the tallest slide's height (no layout jump between slides), cross-fading with a translate offset. Inactive slides get `inert` so keyboard focus never leaks into hidden content. Autoplay restarts whenever the slide changes manually, and pauses on hover/focus.
+- **Example:**
+  ```svelte
+  <Carousel id="feature-carousel" items={slides} tone="light" interval={7000} class="flex-1">
+    {#snippet slide(item: FeatureSlide)}
+      <article class="text-center">
+        <Typography variant="h4" weight="bold" color="inherit">{item.title}</Typography>
+      </article>
+    {/snippet}
+  </Carousel>
+  ```
